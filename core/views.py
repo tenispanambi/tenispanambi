@@ -22,8 +22,9 @@ from .models import (
     InscricaoTorneio,
     CategoriaTorneio,
 )
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def home(request):
     ultimos_jogos = Jogo.objects.all().order_by('-data_jogo')[:5]
 
@@ -41,6 +42,7 @@ def home(request):
     )
 
 
+@login_required
 def ranking(request):
     ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
@@ -65,6 +67,7 @@ def ranking(request):
     )
 
 
+@login_required
 def jogador(request, jogador_id):
     jogador = get_object_or_404(
         Jogador,
@@ -133,6 +136,7 @@ def jogador(request, jogador_id):
     )
 
 
+@login_required
 def headtohead(request):
     jogadores = Jogador.objects.all().order_by('nome')
 
