@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Chaveamento</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#f2f2f2;
+    font-family:Arial;
+}
+
+.topo{
+    background:#0b5394;
+    color:white;
+    padding:30px;
+    text-align:center;
+}
+
+.container{
+    padding:40px;
+    overflow-x:auto;
+}
+
+.chaveamento{
+    display:flex;
+    gap:70px;
+    align-items:flex-start;
+    min-width:max-content;
+}
+
+.coluna{
+    min-width:320px;
+}
+
+.titulo{
+    background:#083763;
+    color:white;
+    text-align:center;
+    padding:18px;
+    border-radius:12px;
+    font-size:24px;
+    margin-bottom:30px;
+}
+
+.jogo{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    margin-bottom:45px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    position:relative;
+}
+
+.jogo::after{
+    content:'';
+    position:absolute;
+    right:-40px;
+    top:50%;
+    width:40px;
+    height:2px;
+    background:#999;
+}
+
+.jogador{
+    padding:16px;
+    border-bottom:1px solid #eee;
+    font-size:18px;
+}
+
+.vencedor{
+    background:#d9ead3;
+    font-weight:bold;
+}
+
+.status{
+    background:#f7f7f7;
+    padding:12px;
+    text-align:center;
+    font-size:14px;
+}
+
+.placar{
+    text-align:center;
+    padding:15px;
+    font-size:24px;
+    font-weight:bold;
+    color:#38761d;
+}
+
+.campeao{
+    background:#ffd966;
+    text-align:center;
+    padding:30px;
+    border-radius:20px;
+    font-size:30px;
+    font-weight:bold;
+    color:#7f6000;
+    box-shadow:0 0 20px rgba(0,0,0,0.15);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <h1>
+
+        {{ torneio.nome }}
+
+    </h1>
+
+    <h2>
+
+        Categoria {{ categoria.categoria }}
+
+    </h2>
+
+</div>
+
+<div class="container">
+
+<div class="chaveamento">
+
+{% for rodada, jogos in rodadas.items %}
+
+<div class="coluna">
+
+    <div class="titulo">
+
+        {% if rodada == 1 %}
+            Oitavas
+        {% elif rodada == 2 %}
+            Quartas
+        {% elif rodada == 3 %}
+            Semi Final
+        {% elif rodada == 4 %}
+            Final
+        {% else %}
+            Rodada {{ rodada }}
+        {% endif %}
+
+    </div>
+
+    {% for jogo in jogos %}
+
+    <div class="jogo">
+
+        {% for p in jogo.participantes.all %}
+
+        <div class="jogador {% if p.vencedor %}vencedor{% endif %}">
+
+            {{ p.jogador.nome }}
+
+        </div>
+
+        {% endfor %}
+
+        {% if jogo.sets.all %}
+
+        <div class="placar">
+
+            {% for s in jogo.sets.all %}
+
+                {{ s.games_lado_a }}
+                x
+                {{ s.games_lado_b }}
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <div class="status">
+
+            {{ jogo.get_status_display }}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</body>
+</html>

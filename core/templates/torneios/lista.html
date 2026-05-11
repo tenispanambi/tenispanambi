@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Torneios</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+.topo{
+    background:#0b5394;
+    color:white;
+    padding:30px;
+    text-align:center;
+    font-size:34px;
+    font-weight:bold;
+}
+
+.container{
+    max-width:1200px;
+    margin:40px auto;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:30px;
+    margin-bottom:30px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.nome{
+    font-size:28px;
+    color:#0b5394;
+    font-weight:bold;
+}
+
+.info{
+    margin-top:10px;
+    color:#666;
+    font-size:18px;
+}
+
+.categorias{
+    margin-top:25px;
+}
+
+.categoria{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#f7f7f7;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.titulo-categoria{
+    font-size:20px;
+    font-weight:bold;
+    color:#0b5394;
+}
+
+.botoes{
+    display:flex;
+    gap:10px;
+}
+
+.botao{
+    background:#0b5394;
+    color:white;
+    text-decoration:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.botao:hover{
+    opacity:0.9;
+}
+
+.gerar{
+    background:#38761d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    Torneios Abertos
+
+</div>
+
+<div class="container">
+
+{% for t in torneios %}
+
+<div class="card">
+
+    <div class="nome">
+
+        {{ t.nome }}
+
+    </div>
+
+    <div class="info">
+
+        {{ t.get_tipo_display }}
+        |
+        {{ t.get_disputa_display }}
+
+    </div>
+
+    <div class="categorias">
+
+        {% for c in t.categorias.all %}
+
+        <div class="categoria">
+
+            <div class="titulo-categoria">
+
+                Categoria {{ c.categoria }}
+
+            </div>
+
+            <div class="botoes">
+
+                <a
+                    href="/inscrever/{{ t.id }}/{{ c.id }}/"
+                    class="botao"
+                >
+
+                    Participar
+
+                </a>
+
+                <a
+                    href="/gerar-torneio/{{ t.id }}/{{ c.id }}/"
+                    class="botao gerar"
+                >
+
+                    Gerar Chave
+
+<a
+    href="/chaveamento/{{ t.id }}/{{ c.id }}/"
+    class="botao"
+    style="background:#674ea7;"
+>
+
+    Ver Chave
+
+</a>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

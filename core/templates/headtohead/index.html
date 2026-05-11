@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Head to Head</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+.topo{
+    background:#0b5394;
+    color:white;
+    padding:35px;
+    text-align:center;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.formulario{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    margin-bottom:30px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+select{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #ccc;
+    margin-bottom:15px;
+}
+
+button{
+    background:#0b5394;
+    color:white;
+    border:none;
+    padding:14px 30px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.placar{
+    display:grid;
+    grid-template-columns:1fr 180px 1fr;
+    gap:20px;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+.jogador-card{
+    background:white;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.foto{
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    object-fit:cover;
+    border:6px solid #0b5394;
+}
+
+.nome{
+    font-size:30px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+.numero{
+    font-size:90px;
+    color:#0b5394;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+.vs{
+    text-align:center;
+    font-size:60px;
+    font-weight:bold;
+    color:#0b5394;
+}
+
+.secao{
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:30px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.titulo{
+    background:#083763;
+    color:white;
+    padding:18px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#0b5394;
+    color:white;
+    padding:15px;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+tr:hover{
+    background:#f9f9f9;
+}
+
+.cards-juntos{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    padding:20px;
+}
+
+.card-juntos{
+    background:#f8f8f8;
+    border-radius:15px;
+    padding:25px;
+    text-align:center;
+}
+
+.numero-juntos{
+    font-size:55px;
+    font-weight:bold;
+    color:#0b5394;
+}
+
+@media(max-width:768px){
+
+    .placar{
+        grid-template-columns:1fr;
+    }
+
+    .vs{
+        font-size:40px;
+    }
+
+    .foto{
+        width:130px;
+        height:130px;
+    }
+
+    .numero{
+        font-size:60px;
+    }
+
+    .cards-juntos{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <h1>Head to Head</h1>
+
+</div>
+
+<div class="container">
+
+    <div class="formulario">
+
+        <form method="GET">
+
+            <select name="j1">
+
+                <option value="">
+                    Jogador 1
+                </option>
+
+                {% for j in jogadores %}
+
+                    <option
+                        value="{{ j.id }}"
+                    >
+
+                        {{ j.nome }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <select name="j2">
+
+                <option value="">
+                    Jogador 2
+                </option>
+
+                {% for j in jogadores %}
+
+                    <option
+                        value="{{ j.id }}"
+                    >
+
+                        {{ j.nome }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">
+
+                Comparar
+
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if jogador1 and jogador2 %}
+
+    <div class="placar">
+
+        <div class="jogador-card">
+
+            {% if jogador1.foto %}
+
+                <img
+                    src="{{ jogador1.foto.url }}"
+                    class="foto"
+                >
+
+            {% endif %}
+
+            <div class="nome">
+                {{ jogador1.nome }}
+            </div>
+
+            <div class="numero">
+                {{ vitorias_j1 }}
+            </div>
+
+        </div>
+
+        <div class="vs">
+            VS
+        </div>
+
+        <div class="jogador-card">
+
+            {% if jogador2.foto %}
+
+                <img
+                    src="{{ jogador2.foto.url }}"
+                    class="foto"
+                >
+
+            {% endif %}
+
+            <div class="nome">
+                {{ jogador2.nome }}
+            </div>
+
+            <div class="numero">
+                {{ vitorias_j2 }}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="secao">
+
+        <div class="titulo">
+            Jogos como parceiros
+        </div>
+
+        <div class="cards-juntos">
+
+            <div class="card-juntos">
+
+                <div class="numero-juntos">
+                    {{ vitorias_juntos }}
+                </div>
+
+                <div>
+                    Vitórias juntos
+                </div>
+
+            </div>
+
+            <div class="card-juntos">
+
+                <div class="numero-juntos">
+                    {{ derrotas_juntos }}
+                </div>
+
+                <div>
+                    Derrotas juntos
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="secao">
+
+        <div class="titulo">
+            Confrontos diretos
+        </div>
+
+        <table>
+
+            <tr>
+
+                <th>Data</th>
+                <th>Rodada</th>
+                <th>Confronto</th>
+
+            </tr>
+
+            {% for jogo in confrontos %}
+
+            <tr>
+
+                <td>
+                    {{ jogo.data_jogo }}
+                </td>
+
+                <td>
+                    {{ jogo.rodada }}
+                </td>
+
+                <td>
+                    {{ jogo.descricao_confronto }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

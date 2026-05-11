@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Meus Jogos</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#f2f2f2;
+    font-family:Arial;
+}
+
+.topo{
+    background:#0b5394;
+    color:white;
+    padding:30px;
+    text-align:center;
+}
+
+.container{
+    max-width:1200px;
+    margin:40px auto;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 0 10px rgba(0,0,0,0.08);
+}
+
+.torneio{
+    color:#0b5394;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.info{
+    margin-top:10px;
+    color:#666;
+    font-size:18px;
+}
+
+.jogadores{
+    margin-top:20px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.status{
+    margin-top:15px;
+    font-size:18px;
+}
+
+.botoes{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+}
+
+.botao{
+    text-decoration:none;
+    color:white;
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.resultado{
+    background:#0b5394;
+}
+
+.ver{
+    background:#674ea7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <h1>Meus Jogos</h1>
+
+</div>
+
+<div class="container">
+
+{% for p in participacoes %}
+
+<div class="card">
+
+    <div class="torneio">
+
+        {{ p.jogo.torneio.nome }}
+
+    </div>
+
+    <div class="info">
+
+        Categoria {{ p.jogo.categoria.categoria }}
+        |
+        Rodada {{ p.jogo.rodada }}
+
+    </div>
+
+    <div class="jogadores">
+
+        {% for jogador in p.jogo.participantes.all %}
+
+            {{ jogador.jogador.nome }}
+
+            {% if not forloop.last %}
+                x
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+<div
+    style="
+        margin-top:15px;
+        font-size:24px;
+        font-weight:bold;
+        color:#38761d;
+    "
+>
+
+    {% for s in p.jogo.sets.all %}
+
+        {{ s.games_lado_a }}
+        x
+        {{ s.games_lado_b }}
+
+    {% endfor %}
+
+</div>
+
+    <div class="status">
+
+        Status:
+        {{ p.jogo.get_status_display }}
+
+    </div>
+
+    <div class="botoes">
+
+        <a
+            href="/lancar-resultado/{{ p.jogo.id }}/"
+            class="botao resultado"
+        >
+
+            Lançar Resultado
+
+        </a>
+
+        <a
+            href="/chaveamento/{{ p.jogo.torneio.id }}/{{ p.jogo.categoria.id }}/"
+            class="botao ver"
+        >
+
+            Ver Chave
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

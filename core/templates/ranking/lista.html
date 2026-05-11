@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Ranking - TenisPanambi</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family: Arial;
+            background:#f2f2f2;
+        }
+
+        header{
+            background:#0b5394;
+            color:white;
+            padding:25px;
+            text-align:center;
+        }
+
+        header h1{
+            margin:0;
+            font-size:32px;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:auto;
+            padding:20px;
+        }
+
+        .card{
+            background:white;
+            border-radius:15px;
+            overflow:hidden;
+            box-shadow:0 0 15px rgba(0,0,0,0.1);
+            margin-bottom:40px;
+        }
+
+        .titulo-categoria{
+            background:#083763;
+            color:white;
+            padding:18px;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#0b5394;
+            color:white;
+            padding:15px;
+            font-size:14px;
+        }
+
+        td{
+            padding:14px;
+            text-align:center;
+            border-bottom:1px solid #eee;
+            font-size:14px;
+        }
+
+        tr:hover{
+            background:#f9f9f9;
+        }
+
+        .classificado{
+            background:#d9ead3;
+        }
+
+        .rebaixado{
+            background:#f4cccc;
+        }
+
+        .acesso{
+            background:#cfe2f3;
+        }
+
+        .jogador{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            text-align:left;
+        }
+
+        .foto{
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            background:#ddd;
+            object-fit:cover;
+        }
+
+        .status{
+            font-weight:bold;
+            padding:6px 10px;
+            border-radius:20px;
+            font-size:12px;
+            display:inline-block;
+        }
+
+        .status-classificado{
+            background:#6aa84f;
+            color:white;
+        }
+
+        .status-rebaixado{
+            background:#cc0000;
+            color:white;
+        }
+
+        .status-acesso{
+            background:#0b5394;
+            color:white;
+        }
+
+        .status-normal{
+            background:#999;
+            color:white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Ranking TenisPanambi</h1>
+
+</header>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="titulo-categoria">
+            Categoria A
+        </div>
+
+        {% include 'ranking/tabela.html' with ranking=ranking_a %}
+
+    </div>
+
+    <div class="card">
+
+        <div class="titulo-categoria">
+            Categoria B
+        </div>
+
+        {% include 'ranking/tabela.html' with ranking=ranking_b %}
+
+    </div>
+
+    <div class="card">
+
+        <div class="titulo-categoria">
+            Categoria C
+        </div>
+
+        {% include 'ranking/tabela.html' with ranking=ranking_c %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

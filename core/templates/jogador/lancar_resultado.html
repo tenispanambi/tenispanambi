@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Lançar Resultado</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+.container{
+    max-width:700px;
+    margin:50px auto;
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+h1{
+    color:#0b5394;
+    margin-top:0;
+}
+
+select,
+input{
+    width:100%;
+    padding:14px;
+    margin-bottom:20px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>
+        Lançar Resultado
+    </h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <select name="adversario">
+
+            {% for j in jogadores %}
+
+                <option value="{{ j.id }}">
+
+                    {{ j.nome }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+        <input
+            type="number"
+            name="placar_a"
+            placeholder="Seus games"
+        >
+
+        <input
+            type="number"
+            name="placar_b"
+            placeholder="Games adversário"
+        >
+
+        <button type="submit">
+
+            Salvar Resultado
+
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

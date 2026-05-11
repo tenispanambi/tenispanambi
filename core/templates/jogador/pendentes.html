@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Resultados Pendentes</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+.container{
+    max-width:1000px;
+    margin:40px auto;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.topo{
+    background:#0b5394;
+    color:white;
+    padding:25px;
+    font-size:28px;
+}
+
+.item{
+    padding:25px;
+    border-bottom:1px solid #eee;
+}
+
+.nome{
+    font-size:22px;
+    font-weight:bold;
+    color:#0b5394;
+}
+
+.info{
+    margin-top:10px;
+    color:#666;
+}
+
+.botoes{
+    margin-top:20px;
+    display:flex;
+    gap:15px;
+}
+
+.botao{
+    padding:12px 20px;
+    border-radius:10px;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.confirmar{
+    background:#38761d;
+}
+
+.contestar{
+    background:#cc0000;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+
+        Resultados Pendentes
+
+    </div>
+
+    {% for p in pendentes %}
+
+    <div class="item">
+
+        <div class="nome">
+
+            {{ p.jogo.descricao_confronto }}
+
+        </div>
+
+        <div class="info">
+
+            Rodada {{ p.jogo.rodada }}
+
+        </div>
+
+        <div class="botoes">
+
+            <a
+               href="/confirmar-resultado/{{ p.jogo.id }}/"
+                class="botao confirmar"
+            >
+
+                Confirmar
+
+            </a>
+
+            <a
+                href="/contestar-resultado/{{ p.jogo.id }}/"
+                class="botao contestar"
+            >
+
+                Contestar
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

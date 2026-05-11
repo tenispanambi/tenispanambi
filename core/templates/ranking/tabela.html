@@ -1,0 +1,136 @@
+<table>
+
+    <tr>
+
+        <th>Pos</th>
+        <th>Jogador</th>
+        <th>Pts</th>
+        <th>Vit</th>
+        <th>Der</th>
+        <th>Games</th>
+        <th>%</th>
+        <th>Status</th>
+
+    </tr>
+
+    {% for r in ranking %}
+
+    <tr class="
+        {% if r.status_ranking == 'CLASSIFICADO' %}
+            classificado
+        {% endif %}
+
+        {% if r.status_ranking == 'REBAIXADO' %}
+            rebaixado
+        {% endif %}
+
+        {% if r.status_ranking == 'ACESSO' %}
+            acesso
+        {% endif %}
+    ">
+
+        <td>
+            <strong>
+                {{ r.posicao }}
+            </strong>
+        </td>
+
+        <td>
+
+            <div class="jogador">
+
+                {% if r.jogador.foto %}
+
+                    <img
+                        src="{{ r.jogador.foto.url }}"
+                        class="foto"
+                    >
+
+                {% else %}
+
+                    <div class="foto"></div>
+
+                {% endif %}
+
+                <div>
+
+                    <strong>
+                        <a href="/jogador/{{ r.jogador.id }}/"
+   style="
+   text-decoration:none;
+   color:#0b5394;
+   font-weight:bold;
+">
+
+    {{ r.jogador.nome }}
+
+</a>
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </td>
+
+        <td>
+            <strong>
+                {{ r.pontos }}
+            </strong>
+        </td>
+
+        <td>{{ r.vitorias }}</td>
+
+        <td>{{ r.derrotas }}</td>
+
+        <td>{{ r.games_feitos }}</td>
+
+        <td>
+            {{ r.aproveitamento }}%
+        </td>
+
+        <td>
+
+            {% if r.status_ranking == 'CLASSIFICADO' %}
+
+                <span class="status status-classificado">
+                    CLASSIFICADO
+                </span>
+
+            {% elif r.status_ranking == 'REBAIXADO' %}
+
+                <span class="status status-rebaixado">
+                    REBAIXADO
+                </span>
+
+            {% elif r.status_ranking == 'ACESSO' %}
+
+                <span class="status status-acesso">
+                    ACESSO
+                </span>
+
+            {% else %}
+
+                <span class="status status-normal">
+                    NORMAL
+                </span>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+
+        <td colspan="8">
+            Nenhum jogador nesta categoria
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
