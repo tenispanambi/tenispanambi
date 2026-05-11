@@ -1,0 +1,122 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TenisPanambi</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#eef2f7;
+}
+
+.topo{
+    background:linear-gradient(90deg,#063b73,#0b5aa0);
+    color:white;
+    padding:14px 35px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 3px 12px rgba(0,0,0,0.18);
+}
+
+.logo img{
+    height:68px;
+}
+
+.menu{
+    display:flex;
+    gap:12px;
+    align-items:center;
+}
+
+.menu a{
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    padding:10px 14px;
+    border-radius:10px;
+    transition:0.2s;
+}
+
+.menu a:hover{
+    background:rgba(255,255,255,0.18);
+}
+
+.usuario{
+    background:white;
+    color:#0b4d91;
+    padding:9px 14px;
+    border-radius:20px;
+    font-weight:bold;
+    margin-left:10px;
+}
+
+.conteudo{
+    padding:35px;
+}
+
+@media(max-width:900px){
+    .topo{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .menu{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .logo img{
+        height:55px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="topo">
+
+    <div class="logo">
+        <a href="/">
+            <img src="{% static 'img/logo-tenis.png' %}">
+        </a>
+    </div>
+
+    <div class="menu">
+
+        <a href="/">Início</a>
+        <a href="/meu-painel/">Meu Painel</a>
+        <a href="/meus-jogos/">Meus Jogos</a>
+        <a href="/torneios/">Torneios</a>
+        <a href="/ranking/">Ranking</a>
+        <a href="/headtohead/">Head to Head</a>
+
+        {% if user.is_authenticated %}
+            <span class="usuario">
+                {{ user.username }}
+            </span>
+
+            <a href="/logout/">Sair</a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="conteudo">
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+</body>
+</html>

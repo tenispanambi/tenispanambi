@@ -57,4 +57,5 @@ path(
     views.meus_jogos,
     name='meus_jogos'
 ),
+path('cadastro/', views.cadastro, name='cadastro'),
 ]

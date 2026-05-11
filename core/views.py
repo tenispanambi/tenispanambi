@@ -4,6 +4,9 @@ from django.shortcuts import (
     redirect
 )
 
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+
 from django.contrib.auth.decorators import login_required
 
 from .services.ranking import recalcular_ranking
@@ -546,3 +549,37 @@ def meus_jogos(request):
             'participacoes': participacoes
         }
     )
+
+def cadastro(request):
+
+    if request.method == 'POST':
+
+        nome = request.POST.get('nome')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        if User.objects.filter(username=username).exists():
+            return render(request, 'registration/cadastro.html', {
+                'erro': 'Este usuário já existe.'
+            })
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=senha
+        )
+
+        jogador = Jogador.objects.create(
+            usuario=user,
+            nome=nome,
+            email=email,
+            categoria='C',
+            ativo=True
+        )
+
+        login(request, user)
+
+        return redirect('meu_painel')
+
+    return render(request, 'registration/cadastro.html')

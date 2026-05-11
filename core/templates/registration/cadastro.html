@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro - TenisPanambi</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.box{
+    background:white;
+    width:420px;
+    padding:40px;
+    border-radius:20px;
+}
+h1{
+    text-align:center;
+    color:#0b4d91;
+}
+input{
+    width:100%;
+    padding:14px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#0b4d91;
+    color:white;
+    font-size:17px;
+}
+.erro{
+    color:red;
+    text-align:center;
+    margin-bottom:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>Criar conta</h1>
+
+    {% if erro %}
+        <div class="erro">{{ erro }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input type="text" name="nome" placeholder="Nome completo" required>
+
+        <input type="text" name="username" placeholder="Usuário para login" required>
+
+        <input type="email" name="email" placeholder="E-mail">
+
+        <input type="password" name="senha" placeholder="Senha" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+</div>
+
+</body>
+</html>
