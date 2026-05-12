@@ -27,7 +27,7 @@ from .models import (
 )
 from django.contrib.auth.decorators import login_required
 
-@login_required
+
 def home(request):
     ultimos_jogos = Jogo.objects.all().order_by('-data_jogo')[:5]
 
