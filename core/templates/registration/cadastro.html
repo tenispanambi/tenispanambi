@@ -12,18 +12,21 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    min-height:100vh;
 }
+
 .box{
     background:white;
     width:420px;
     padding:40px;
     border-radius:20px;
 }
+
 h1{
     text-align:center;
     color:#0b4d91;
 }
+
 input{
     width:100%;
     padding:14px;
@@ -32,6 +35,7 @@ input{
     border:1px solid #ccc;
     box-sizing:border-box;
 }
+
 button{
     width:100%;
     padding:15px;
@@ -40,11 +44,38 @@ button{
     background:#0b4d91;
     color:white;
     font-size:17px;
+    cursor:pointer;
 }
+
 .erro{
-    color:red;
+    background:#f8d7da;
+    color:#721c24;
+    padding:15px;
+    border-radius:10px;
     text-align:center;
     margin-bottom:15px;
+    font-weight:bold;
+}
+
+.sucesso{
+    background:#d4edda;
+    color:#155724;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    margin-bottom:20px;
+    font-weight:bold;
+}
+
+.voltar{
+    text-align:center;
+    margin-top:20px;
+}
+
+.voltar a{
+    color:#0b4d91;
+    text-decoration:none;
+    font-weight:bold;
 }
 </style>
 </head>
@@ -55,23 +86,60 @@ button{
 
     <h1>Criar conta</h1>
 
-    {% if erro %}
-        <div class="erro">{{ erro }}</div>
+    {% if sucesso %}
+        <div class="sucesso">
+            {{ sucesso }}
+        </div>
     {% endif %}
+
+    {% if erro %}
+        <div class="erro">
+            {{ erro }}
+        </div>
+    {% endif %}
+
+    {% if not sucesso %}
 
     <form method="post">
         {% csrf_token %}
 
-        <input type="text" name="nome" placeholder="Nome completo" required>
+        <input
+            type="text"
+            name="nome"
+            placeholder="Nome completo"
+            required
+        >
 
-        <input type="text" name="username" placeholder="Usuário para login" required>
+        <input
+            type="text"
+            name="username"
+            placeholder="Usuário para login"
+            required
+        >
 
-        <input type="email" name="email" placeholder="E-mail">
+        <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+        >
 
-        <input type="password" name="senha" placeholder="Senha" required>
+        <input
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            required
+        >
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit">
+            Enviar cadastro
+        </button>
     </form>
+
+    {% endif %}
+
+    <div class="voltar">
+        <a href="/login/">Voltar para o login</a>
+    </div>
 
 </div>
 

@@ -1,0 +1,404 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div style="
+max-width:1100px;
+margin:40px auto;
+background:white;
+padding:50px;
+border-radius:25px;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
+">
+
+    <h1 style="
+    color:#0b4d91;
+    margin-bottom:40px;
+    font-size:48px;
+    ">
+        Meu Perfil
+    </h1>
+
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div style="text-align:center;margin-bottom:50px;">
+
+            {% if jogador.foto %}
+                <img
+                    src="{{ jogador.foto.url }}"
+                    style="
+                    width:170px;
+                    height:170px;
+                    border-radius:50%;
+                    object-fit:cover;
+                    border:5px solid #0b4d91;
+                    "
+                >
+            {% else %}
+                <div style="
+                width:170px;
+                height:170px;
+                border-radius:50%;
+                background:#ddd;
+                margin:auto;
+                ">
+                </div>
+            {% endif %}
+
+            <div style="margin-top:20px;">
+                <input
+                    type="file"
+                    name="foto"
+                    style="
+                    font-size:18px;
+                    "
+                >
+            </div>
+
+        </div>
+
+        <div style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:35px;
+        ">
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Nome
+                </label>
+
+                <input
+                    type="text"
+                    name="nome"
+                    value="{{ jogador.nome }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ jogador.email }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Telefone
+                </label>
+
+                <input
+                    type="text"
+                    name="telefone"
+                    value="{{ jogador.telefone }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Cidade
+                </label>
+
+                <input
+                    type="text"
+                    name="cidade"
+                    value="{{ jogador.cidade }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Categoria
+                </label>
+
+                <select
+                    name="categoria"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+
+                    <option value="A"
+                        {% if jogador.categoria == 'A' %}
+                            selected
+                        {% endif %}
+                    >
+                        Categoria A
+                    </option>
+
+                    <option value="B"
+                        {% if jogador.categoria == 'B' %}
+                            selected
+                        {% endif %}
+                    >
+                        Categoria B
+                    </option>
+
+                    <option value="C"
+                        {% if jogador.categoria == 'C' %}
+                            selected
+                        {% endif %}
+                    >
+                        Categoria C
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Nível
+                </label>
+
+                <select
+                    name="nivel"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+
+                    <option value="INICIANTE"
+                        {% if jogador.nivel == 'INICIANTE' %}
+                            selected
+                        {% endif %}
+                    >
+                        Iniciante
+                    </option>
+
+                    <option value="INTERMEDIARIO"
+                        {% if jogador.nivel == 'INTERMEDIARIO' %}
+                            selected
+                        {% endif %}
+                    >
+                        Intermediário
+                    </option>
+
+                    <option value="AVANCADO"
+                        {% if jogador.nivel == 'AVANCADO' %}
+                            selected
+                        {% endif %}
+                    >
+                        Avançado
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Mão dominante
+                </label>
+
+                <select
+                    name="mao_dominante"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+
+                    <option value="DIREITA"
+                        {% if jogador.mao_dominante == 'DIREITA' %}
+                            selected
+                        {% endif %}
+                    >
+                        Direita
+                    </option>
+
+                    <option value="ESQUERDA"
+                        {% if jogador.mao_dominante == 'ESQUERDA' %}
+                            selected
+                        {% endif %}
+                    >
+                        Esquerda
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Raquete
+                </label>
+
+                <input
+                    type="text"
+                    name="raquete"
+                    value="{{ jogador.raquete }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+            <div style="grid-column:1/3;">
+
+                <label style="
+                font-size:20px;
+                font-weight:bold;
+                display:block;
+                margin-bottom:10px;
+                color:#0b4d91;
+                ">
+                    Instagram
+                </label>
+
+                <input
+                    type="text"
+                    name="instagram"
+                    value="{{ jogador.instagram }}"
+                    style="
+                    width:100%;
+                    padding:18px;
+                    border-radius:14px;
+                    border:1px solid #ccc;
+                    font-size:18px;
+                    box-sizing:border-box;
+                    "
+                >
+            </div>
+
+        </div>
+
+        <button
+            type="submit"
+            style="
+            margin-top:40px;
+            width:100%;
+            padding:20px;
+            background:#0b4d91;
+            color:white;
+            border:none;
+            border-radius:14px;
+            font-size:22px;
+            font-weight:bold;
+            cursor:pointer;
+            "
+        >
+            Salvar Perfil
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

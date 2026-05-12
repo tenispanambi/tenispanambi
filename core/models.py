@@ -4,18 +4,29 @@ from django.contrib.auth.models import User
 
 class Jogador(models.Model):
 
+    CATEGORIAS = [
+        ('A', 'Categoria A'),
+        ('B', 'Categoria B'),
+        ('C', 'Categoria C'),
+    ]
+
+    NIVEIS = [
+        ('INICIANTE', 'Iniciante'),
+        ('INTERMEDIARIO', 'Intermediário'),
+        ('AVANCADO', 'Avançado'),
+    ]
+
+    MAOS = [
+        ('DIREITA', 'Direita'),
+        ('ESQUERDA', 'Esquerda'),
+    ]
+
     usuario = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
         blank=True,
         null=True
     )
-
-    CATEGORIAS = [
-        ('A', 'Categoria A'),
-        ('B', 'Categoria B'),
-        ('C', 'Categoria C'),
-    ]
 
     nome = models.CharField(max_length=100)
 
@@ -36,18 +47,47 @@ class Jogador(models.Model):
         null=True
     )
 
+    cidade = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
     categoria = models.CharField(
         max_length=1,
         choices=CATEGORIAS,
         default='C'
     )
 
+    nivel = models.CharField(
+        max_length=20,
+        choices=NIVEIS,
+        default='INICIANTE'
+    )
+
+    mao_dominante = models.CharField(
+        max_length=20,
+        choices=MAOS,
+        blank=True,
+        null=True
+    )
+
+    raquete = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    instagram = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
     ativo = models.BooleanField(default=True)
 
     jogos_historicos = models.IntegerField(default=0)
-
     vitorias_historicas = models.IntegerField(default=0)
-
     derrotas_historicas = models.IntegerField(default=0)
 
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -58,10 +98,7 @@ class Jogador(models.Model):
         if total == 0:
             return 0
 
-        return round(
-            (self.vitorias_historicas / total) * 100,
-            2
-        )
+        return round((self.vitorias_historicas / total) * 100, 2)
 
     def __str__(self):
         return self.nome
@@ -87,9 +124,7 @@ class Torneio(models.Model):
     ]
 
     nome = models.CharField(max_length=100)
-
     edicao = models.IntegerField(default=1)
-
     ano = models.IntegerField(default=2026)
 
     tipo = models.CharField(
@@ -117,9 +152,7 @@ class Torneio(models.Model):
         default='ABERTO'
     )
 
-    criado_em = models.DateTimeField(
-        auto_now_add=True
-    )
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.nome} - {self.edicao}ª edição'
@@ -144,25 +177,12 @@ class CategoriaTorneio(models.Model):
         choices=CATEGORIAS
     )
 
-    quantidade_jogadores = models.IntegerField(
-        default=20
-    )
-
-    classificados_finais = models.IntegerField(
-        default=8
-    )
-
+    quantidade_jogadores = models.IntegerField(default=20)
+    classificados_finais = models.IntegerField(default=8)
     promovidos = models.IntegerField(default=0)
-
     rebaixados = models.IntegerField(default=0)
-
-    melhores_resultados = models.IntegerField(
-        default=10
-    )
-
-    max_jogos_por_rodada = models.IntegerField(
-        default=2
-    )
+    melhores_resultados = models.IntegerField(default=10)
+    max_jogos_por_rodada = models.IntegerField(default=2)
 
     def __str__(self):
         return f'{self.torneio} - Categoria {self.categoria}'
@@ -187,9 +207,7 @@ class InscricaoTorneio(models.Model):
 
     ativo = models.BooleanField(default=True)
 
-    criado_em = models.DateTimeField(
-        auto_now_add=True
-    )
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.jogador} - {self.torneio}'
@@ -255,9 +273,7 @@ class Jogo(models.Model):
         default='PENDENTE'
     )
 
-    criado_em = models.DateTimeField(
-        auto_now_add=True
-    )
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     observacoes = models.TextField(
         blank=True,
@@ -314,6 +330,7 @@ class Jogo(models.Model):
         vencedor = self.vencedor_lado()
 
         for p in self.participantes.all():
+
             p.vencedor = p.lado == vencedor
 
             if p.lado == 'A':
@@ -349,6 +366,7 @@ class Jogo(models.Model):
         placares = []
 
         for s in self.sets.all().order_by('numero_set'):
+
             placar = f'{s.games_lado_a}x{s.games_lado_b}'
 
             if s.teve_tiebreak:
@@ -396,13 +414,9 @@ class ParticipanteJogo(models.Model):
         choices=LADOS
     )
 
-    vencedor = models.BooleanField(
-        default=False
-    )
+    vencedor = models.BooleanField(default=False)
 
-    pontos_ranking = models.IntegerField(
-        default=0
-    )
+    pontos_ranking = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.jogador} - {self.jogo}'
@@ -419,12 +433,9 @@ class SetJogo(models.Model):
     numero_set = models.IntegerField()
 
     games_lado_a = models.IntegerField()
-
     games_lado_b = models.IntegerField()
 
-    teve_tiebreak = models.BooleanField(
-        default=False
-    )
+    teve_tiebreak = models.BooleanField(default=False)
 
     tiebreak_lado_a = models.IntegerField(
         blank=True,
@@ -463,18 +474,12 @@ class RankingJogador(models.Model):
     )
 
     pontos = models.IntegerField(default=0)
-
     vitorias = models.IntegerField(default=0)
-
     derrotas = models.IntegerField(default=0)
-
     games_feitos = models.IntegerField(default=0)
-
     games_sofridos = models.IntegerField(default=0)
 
-    aproveitamento = models.FloatField(
-        default=0
-    )
+    aproveitamento = models.FloatField(default=0)
 
     posicao = models.IntegerField(default=0)
 

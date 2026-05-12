@@ -4,16 +4,12 @@ from django.shortcuts import (
     redirect
 )
 
-from django.contrib.auth.models import User
-from django.contrib.auth import login
-
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from .services.ranking import recalcular_ranking
-
-from .services.chaveamento import gerar_chaveamento
-
 from .services.avanco import avancar_vencedor
+from .services.chaveamento import gerar_chaveamento
 
 from .models import (
     RankingJogador,
@@ -25,7 +21,6 @@ from .models import (
     InscricaoTorneio,
     CategoriaTorneio,
 )
-from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -42,6 +37,57 @@ def home(request):
             'ultimos_jogos': ultimos_jogos,
             'ranking': ranking_top,
         }
+    )
+
+
+def cadastro(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        senha = request.POST.get('senha')
+
+        if User.objects.filter(username=username).exists():
+            return render(
+                request,
+                'registration/cadastro.html',
+                {
+                    'erro': 'Este usuário já existe.'
+                }
+            )
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=senha
+        )
+
+        user.is_active = False
+        user.save()
+
+        Jogador.objects.create(
+            usuario=user,
+            nome=nome,
+            email=email,
+            categoria='C',
+            ativo=False
+        )
+
+        return render(
+            request,
+            'registration/cadastro.html',
+            {
+                'sucesso': (
+                    'Cadastro enviado com sucesso. '
+                    'Aguarde aprovação do administrador '
+                    'para acessar o sistema.'
+                )
+            }
+        )
+
+    return render(
+        request,
+        'registration/cadastro.html'
     )
 
 
@@ -271,11 +317,32 @@ def meu_painel(request):
 
 
 @login_required
-def lancar_resultado(
-    request,
-    jogo_id
-):
+def meus_jogos(request):
+    jogador = Jogador.objects.get(
+        usuario=request.user
+    )
 
+    participacoes = ParticipanteJogo.objects.filter(
+        jogador=jogador
+    ).select_related(
+        'jogo',
+        'jogo__torneio',
+        'jogo__categoria'
+    ).order_by(
+        '-jogo__data_jogo'
+    )
+
+    return render(
+        request,
+        'jogador/meus_jogos.html',
+        {
+            'participacoes': participacoes
+        }
+    )
+
+
+@login_required
+def lancar_resultado(request, jogo_id):
     jogador = Jogador.objects.get(
         usuario=request.user
     )
@@ -290,22 +357,12 @@ def lancar_resultado(
     adversarios = []
 
     for p in participantes:
-
         if p.jogador.id != jogador.id:
-
-            adversarios.append(
-                p.jogador
-            )
+            adversarios.append(p.jogador)
 
     if request.method == 'POST':
-
-        placar_a = int(
-            request.POST.get('placar_a')
-        )
-
-        placar_b = int(
-            request.POST.get('placar_b')
-        )
+        placar_a = int(request.POST.get('placar_a'))
+        placar_b = int(request.POST.get('placar_b'))
 
         jogo.sets.all().delete()
 
@@ -322,20 +379,15 @@ def lancar_resultado(
             vencedor_lado = 'B'
 
         for p in participantes:
-
             p.vencedor = (
                 p.lado == vencedor_lado
             )
-
             p.save()
 
         jogo.status = 'PENDENTE'
-
         jogo.save()
 
-        return redirect(
-            'meus_jogos'
-        )
+        return redirect('meus_jogos')
 
     return render(
         request,
@@ -378,10 +430,7 @@ def confirmar_resultado(request, jogo_id):
     jogo.save()
 
     if jogo.fase:
-
-        avancar_vencedor(
-            jogo
-        )
+        avancar_vencedor(jogo)
 
     if jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS':
         recalcular_ranking(
@@ -451,13 +500,9 @@ def inscrever_torneio(request, torneio_id, categoria_id):
 
     return redirect('torneios')
 
-@login_required
-def gerar_torneio(
-    request,
-    torneio_id,
-    categoria_id
-):
 
+@login_required
+def gerar_torneio(request, torneio_id, categoria_id):
     torneio = get_object_or_404(
         Torneio,
         id=torneio_id
@@ -473,17 +518,11 @@ def gerar_torneio(
         categoria
     )
 
-    return redirect(
-        'torneios'
-    )
+    return redirect('torneios')
+
 
 @login_required
-def chaveamento(
-    request,
-    torneio_id,
-    categoria_id
-):
-
+def chaveamento(request, torneio_id, categoria_id):
     torneio = get_object_or_404(
         Torneio,
         id=torneio_id
@@ -507,7 +546,6 @@ def chaveamento(
     rodadas = {}
 
     for jogo in jogos:
-
         rodada = jogo.rodada
 
         if rodada not in rodadas:
@@ -524,62 +562,36 @@ def chaveamento(
             'rodadas': rodadas,
         }
     )
-
 @login_required
-def meus_jogos(request):
+def meu_perfil(request):
 
     jogador = Jogador.objects.get(
         usuario=request.user
     )
 
-    participacoes = ParticipanteJogo.objects.filter(
-        jogador=jogador
-    ).select_related(
-        'jogo',
-        'jogo__torneio',
-        'jogo__categoria'
-    ).order_by(
-        '-jogo__data_jogo'
-    )
+    if request.method == 'POST':
+
+        jogador.nome = request.POST.get('nome')
+        jogador.email = request.POST.get('email')
+        jogador.telefone = request.POST.get('telefone')
+        jogador.cidade = request.POST.get('cidade')
+        jogador.categoria = request.POST.get('categoria')
+        jogador.nivel = request.POST.get('nivel')
+        jogador.mao_dominante = request.POST.get('mao_dominante')
+        jogador.raquete = request.POST.get('raquete')
+        jogador.instagram = request.POST.get('instagram')
+
+        if request.FILES.get('foto'):
+            jogador.foto = request.FILES.get('foto')
+
+        jogador.save()
+
+        return redirect('meu_perfil')
 
     return render(
         request,
-        'jogador/meus_jogos.html',
+        'jogador/meu_perfil.html',
         {
-            'participacoes': participacoes
+            'jogador': jogador
         }
     )
-
-def cadastro(request):
-
-    if request.method == 'POST':
-
-        nome = request.POST.get('nome')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        senha = request.POST.get('senha')
-
-        if User.objects.filter(username=username).exists():
-            return render(request, 'registration/cadastro.html', {
-                'erro': 'Este usuário já existe.'
-            })
-
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=senha
-        )
-
-        jogador = Jogador.objects.create(
-            usuario=user,
-            nome=nome,
-            email=email,
-            categoria='C',
-            ativo=True
-        )
-
-        login(request, user)
-
-        return redirect('meu_painel')
-
-    return render(request, 'registration/cadastro.html')

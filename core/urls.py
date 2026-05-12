@@ -6,6 +6,7 @@ urlpatterns = [
     path('ranking/', views.ranking, name='ranking'),
     path('jogador/<int:jogador_id>/', views.jogador, name='jogador'),
     path('headtohead/', views.headtohead, name='headtohead'),
+    path('meu-perfil/', views.meu_perfil, name='meu_perfil'),
 path(
     'meu-painel/',
     views.meu_painel,
@@ -58,4 +59,5 @@ path(
     name='meus_jogos'
 ),
 path('cadastro/', views.cadastro, name='cadastro'),
+path('meu-perfil/', views.meu_perfil, name='meu_perfil'),
 ]

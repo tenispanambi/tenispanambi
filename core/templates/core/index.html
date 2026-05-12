@@ -7,6 +7,7 @@
 <title>TenisPanambi</title>
 
 <style>
+
 body{
     margin:0;
     font-family:Arial;
@@ -40,24 +41,26 @@ body{
 }
 
 .hero{
-    max-width:1200px;
+    max-width:1300px;
     margin:50px auto;
     background:linear-gradient(135deg,#063b73,#0b5aa0);
     color:white;
-    border-radius:30px;
-    padding:60px;
+    border-radius:35px;
+    padding:70px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    box-shadow:0 8px 30px rgba(0,0,0,0.18);
 }
 
 .hero h1{
-    font-size:54px;
+    font-size:64px;
     margin:0;
 }
 
 .hero p{
-    font-size:22px;
+    font-size:24px;
+    max-width:600px;
 }
 
 .hero img{
@@ -65,45 +68,58 @@ body{
 }
 
 .cards{
-    max-width:1200px;
+    max-width:1300px;
     margin:40px auto;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:25px;
+    gap:30px;
 }
 
 .card{
     background:white;
-    padding:30px;
-    border-radius:22px;
+    padding:35px;
+    border-radius:25px;
     box-shadow:0 5px 18px rgba(0,0,0,0.08);
 }
 
 .card h2{
     color:#0b4d91;
+    margin-top:0;
+    font-size:32px;
 }
 
 .footer{
     text-align:center;
-    padding:30px;
+    padding:40px;
     color:#555;
+    font-size:18px;
 }
 
-@media(max-width:900px){
+@media(max-width:1000px){
+
     .hero{
         flex-direction:column;
         text-align:center;
+        margin:20px;
+        padding:40px;
     }
 
     .hero img{
         height:180px;
+        margin-top:30px;
     }
 
     .cards{
         grid-template-columns:1fr;
         margin:20px;
     }
+
+    .hero h1{
+        font-size:42px;
+    }
+
 }
+
 </style>
 </head>
 
@@ -116,10 +132,23 @@ body{
     </div>
 
     <div class="menu">
-        <a href="/ranking/">Ranking</a>
-        <a href="/headtohead/">Head to Head</a>
-        <a href="/login/" class="botao">Entrar</a>
-        <a href="/cadastro/" class="botao">Criar conta</a>
+
+        <a href="/ranking/">
+            Ranking
+        </a>
+
+        <a href="/headtohead/">
+            Head to Head
+        </a>
+
+        <a href="/login/" class="botao">
+            Entrar
+        </a>
+
+        <a href="/cadastro/" class="botao">
+            Criar conta
+        </a>
+
     </div>
 
 </div>
@@ -127,11 +156,17 @@ body{
 <div class="hero">
 
     <div>
-        <h1>TenisPanambi</h1>
+
+        <h1>
+            TenisPanambi
+        </h1>
+
         <p>
-            Plataforma oficial de rankings, torneios,
-            estatísticas e confrontos do tênis em Panambi.
+            Plataforma oficial de rankings,
+            torneios, estatísticas e confrontos
+            do tênis em Panambi.
         </p>
+
     </div>
 
     <img src="{% static 'img/logo-tenis.png' %}">
@@ -141,42 +176,148 @@ body{
 <div class="cards">
 
     <div class="card">
-        <h2>Últimos jogos</h2>
+
+        <h2>
+            Últimos jogos
+        </h2>
 
         {% for jogo in ultimos_jogos %}
-            <p>
-                <strong>{{ jogo.descricao_confronto }}</strong><br>
-                Rodada {{ jogo.rodada }}
-            </p>
+
+            <div style="
+            margin-bottom:20px;
+            padding-bottom:15px;
+            border-bottom:1px solid #eee;
+            ">
+
+                <div style="
+                font-size:20px;
+                font-weight:bold;
+                color:#0b4d91;
+                ">
+                    {{ jogo.descricao_confronto }}
+                </div>
+
+                <div style="
+                margin-top:5px;
+                color:#666;
+                ">
+                    Rodada {{ jogo.rodada }}
+                </div>
+
+            </div>
+
         {% empty %}
-            <p>Nenhum jogo cadastrado ainda.</p>
+
+            <p>
+                Nenhum jogo cadastrado ainda.
+            </p>
+
         {% endfor %}
+
     </div>
 
     <div class="card">
-        <h2>Top 5 Ranking</h2>
+
+        <h2>
+            Top 5 Ranking
+        </h2>
 
         {% for r in ranking %}
-            <p>
-                <strong>{{ r.posicao }}º {{ r.jogador.nome }}</strong><br>
-                {{ r.pontos }} pontos
-            </p>
+
+        <div style="
+        display:flex;
+        align-items:center;
+        gap:15px;
+        margin-bottom:20px;
+        padding-bottom:15px;
+        border-bottom:1px solid #eee;
+        ">
+
+            {% if r.jogador.foto %}
+
+                <img
+                    src="{{ r.jogador.foto.url }}"
+                    style="
+                    width:65px;
+                    height:65px;
+                    border-radius:50%;
+                    object-fit:cover;
+                    "
+                >
+
+            {% else %}
+
+                <div style="
+                width:65px;
+                height:65px;
+                border-radius:50%;
+                background:#ddd;
+                ">
+                </div>
+
+            {% endif %}
+
+            <div>
+
+                <div style="
+                font-size:22px;
+                font-weight:bold;
+                color:#0b4d91;
+                ">
+                    {{ r.posicao }}º {{ r.jogador.nome }}
+                </div>
+
+                <div style="
+                font-size:16px;
+                color:#666;
+                ">
+                    {{ r.pontos }} pontos
+                </div>
+
+            </div>
+
+        </div>
+
         {% empty %}
-            <p>Ranking ainda não iniciado.</p>
+
+        <p>
+            Ranking ainda não iniciado.
+        </p>
+
         {% endfor %}
+
     </div>
 
     <div class="card">
-        <h2>Acesso rápido</h2>
-        <p>Entre na plataforma para acompanhar seus jogos, rankings e torneios.</p>
 
-        <p>
-            <a href="/login/" class="botao">Entrar</a>
+        <h2>
+            Acesso rápido
+        </h2>
+
+        <p style="
+        font-size:18px;
+        line-height:1.6;
+        ">
+            Entre na plataforma para acompanhar
+            seus jogos, rankings e torneios.
         </p>
 
-        <p>
-            <a href="/cadastro/" class="botao">Criar conta</a>
+        <p style="margin-top:30px;">
+
+            <a href="/login/" class="botao">
+                Entrar
+            </a>
+
         </p>
+
+        <p style="margin-top:30px;">
+
+            <a href="/cadastro/" class="botao">
+                Criar conta
+            </a>
+
+        </p>
+
     </div>
 
 </div>
