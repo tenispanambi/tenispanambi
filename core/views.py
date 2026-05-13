@@ -6,10 +6,12 @@ from django.shortcuts import (
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Count
 
 from .services.ranking import recalcular_ranking
 from .services.avanco import avancar_vencedor
 from .services.chaveamento import gerar_chaveamento
+from datetime import date
 
 from .models import (
     RankingJogador,
@@ -24,18 +26,53 @@ from .models import (
 
 
 def home(request):
-    ultimos_jogos = Jogo.objects.all().order_by('-data_jogo')[:5]
+    total_jogadores = Jogador.objects.filter(
+        ativo=True
+    ).count()
 
-    ranking_top = RankingJogador.objects.filter(
+    total_jogos = Jogo.objects.filter(
+        status='CONFIRMADO'
+    ).count()
+
+    total_torneios = Torneio.objects.count()
+
+    jogos_semana = Jogo.objects.filter(
+        status='CONFIRMADO'
+    ).count()
+
+    ultimos_jogos = Jogo.objects.filter(
+        status='CONFIRMADO'
+    ).order_by('-data_jogo')[:5]
+
+    ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
     ).order_by('posicao')[:5]
+
+    ranking_b = RankingJogador.objects.filter(
+        categoria__categoria='B'
+    ).order_by('posicao')[:5]
+
+    ranking_c = RankingJogador.objects.filter(
+        categoria__categoria='C'
+    ).order_by('posicao')[:5]
+
+    proximos_torneios = Torneio.objects.filter(
+        data_inicio__gte=date.today()
+    ).order_by('data_inicio')[:3]
 
     return render(
         request,
         'core/index.html',
         {
+            'total_jogadores': total_jogadores,
+            'total_jogos': total_jogos,
+            'total_torneios': total_torneios,
+            'jogos_semana': jogos_semana,
             'ultimos_jogos': ultimos_jogos,
-            'ranking': ranking_top,
+            'ranking_a': ranking_a,
+            'ranking_b': ranking_b,
+            'ranking_c': ranking_c,
+            'proximos_torneios': proximos_torneios,
         }
     )
 

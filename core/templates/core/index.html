@@ -7,119 +7,318 @@
 <title>TenisPanambi</title>
 
 <style>
-
 body{
     margin:0;
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     background:#eef2f7;
+    color:#0f172a;
 }
 
 .topo{
     background:linear-gradient(90deg,#063b73,#0b5aa0);
-    padding:20px 40px;
+    padding:16px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    box-shadow:0 4px 18px rgba(0,0,0,0.18);
 }
 
 .logo img{
-    height:80px;
+    height:75px;
+}
+
+.menu{
+    display:flex;
+    gap:25px;
+    align-items:center;
 }
 
 .menu a{
     color:white;
     text-decoration:none;
-    margin-left:20px;
     font-weight:bold;
+    font-size:17px;
+}
+
+.menu a:hover{
+    opacity:0.85;
 }
 
 .botao{
     background:white;
     color:#0b4d91!important;
-    padding:12px 18px;
+    padding:13px 20px;
     border-radius:12px;
 }
 
-.hero{
-    max-width:1300px;
-    margin:50px auto;
-    background:linear-gradient(135deg,#063b73,#0b5aa0);
-    color:white;
-    border-radius:35px;
-    padding:70px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 8px 30px rgba(0,0,0,0.18);
+.botao-verde{
+    background:#d7ff00!important;
+    color:#062b55!important;
+    padding:13px 20px;
+    border-radius:12px;
 }
 
-.hero h1{
-    font-size:64px;
-    margin:0;
+.container{
+    max-width:1400px;
+    margin:0 auto;
+    padding:35px 35px 60px 35px;
 }
 
-.hero p{
-    font-size:24px;
-    max-width:600px;
+.titulo-home{
+    text-align:center;
+    margin:15px 0 35px 0;
 }
 
-.hero img{
-    height:260px;
+.titulo-home h1{
+    font-size:48px;
+    color:#0b4d91;
+    margin-bottom:10px;
 }
 
-.cards{
-    max-width:1300px;
-    margin:40px auto;
+.titulo-home p{
+    font-size:23px;
+    color:#44546a;
+    margin-top:0;
+}
+
+.cards-status{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:30px;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+    margin-bottom:30px;
+}
+
+.status-card{
+    background:white;
+    border-radius:18px;
+    padding:28px;
+    display:flex;
+    align-items:center;
+    gap:22px;
+    box-shadow:0 5px 18px rgba(0,0,0,0.07);
+}
+
+.icone{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:38px;
+}
+
+.azul{
+    background:#e8f1ff;
+}
+
+.verde{
+    background:#e9fbe9;
+}
+
+.laranja{
+    background:#fff1df;
+}
+
+.roxo{
+    background:#f0e9ff;
+}
+
+.status-card h2{
+    margin:0;
+    font-size:36px;
+    color:#062b55;
+}
+
+.status-card p{
+    margin:5px 0 0 0;
+    font-size:17px;
+    color:#44546a;
+}
+
+.grade-principal{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+    margin-bottom:30px;
 }
 
 .card{
     background:white;
-    padding:35px;
-    border-radius:25px;
-    box-shadow:0 5px 18px rgba(0,0,0,0.08);
+    border-radius:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,0.07);
+    overflow:hidden;
 }
 
-.card h2{
+.card-header{
+    padding:25px 30px;
+    border-bottom:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card-header h2{
+    margin:0;
     color:#0b4d91;
-    margin-top:0;
-    font-size:32px;
+    font-size:28px;
+}
+
+.card-header a{
+    color:#005cc8;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.ranking-item{
+    display:flex;
+    align-items:center;
+    padding:16px 30px;
+    border-bottom:1px solid #edf0f4;
+    gap:16px;
+}
+
+.posicao{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#0b4d91;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.avatar{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#ddd;
+}
+
+.ranking-nome{
+    flex:1;
+    font-size:18px;
+    font-weight:bold;
+    color:#062b55;
+}
+
+.ranking-pontos{
+    font-size:17px;
+    font-weight:bold;
+    color:#005cc8;
+}
+
+.torneio-item{
+    display:flex;
+    align-items:center;
+    padding:20px 30px;
+    border-bottom:1px solid #edf0f4;
+    gap:20px;
+}
+
+.data-box{
+    width:72px;
+    height:72px;
+    background:#f1f4f8;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#062b55;
+    font-weight:bold;
+}
+
+.data-box .dia{
+    font-size:27px;
+}
+
+.data-box .mes{
+    font-size:14px;
+}
+
+.torneio-info{
+    flex:1;
+}
+
+.torneio-info strong{
+    font-size:19px;
+    color:#062b55;
+}
+
+.torneio-info div{
+    margin-top:6px;
+    color:#44546a;
+}
+
+.status-torneio{
+    background:#d4edda;
+    color:#155724;
+    padding:7px 12px;
+    border-radius:14px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.ultimos-jogos{
+    background:white;
+    border-radius:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,0.07);
+    overflow:hidden;
+}
+
+.tabela-jogos{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabela-jogos th{
+    background:#f4f7fb;
+    color:#243b5a;
+    padding:16px;
+    text-align:left;
+}
+
+.tabela-jogos td{
+    padding:18px 16px;
+    border-bottom:1px solid #edf0f4;
+    font-size:16px;
+}
+
+.placar{
+    font-weight:bold;
+    color:#0b4d91;
 }
 
 .footer{
     text-align:center;
-    padding:40px;
-    color:#555;
-    font-size:18px;
+    padding:35px;
+    color:#64748b;
 }
 
 @media(max-width:1000px){
-
-    .hero{
+    .topo{
         flex-direction:column;
-        text-align:center;
-        margin:20px;
-        padding:40px;
+        gap:15px;
     }
 
-    .hero img{
-        height:180px;
-        margin-top:30px;
+    .menu{
+        flex-wrap:wrap;
+        justify-content:center;
     }
 
-    .cards{
+    .cards-status,
+    .grade-principal{
         grid-template-columns:1fr;
-        margin:20px;
     }
 
-    .hero h1{
-        font-size:42px;
+    .titulo-home h1{
+        font-size:36px;
     }
-
 }
-
 </style>
 </head>
 
@@ -132,195 +331,293 @@ body{
     </div>
 
     <div class="menu">
-
-        <a href="/ranking/">
-            Ranking
-        </a>
-
-        <a href="/headtohead/">
-            Head to Head
-        </a>
-
-        <a href="/login/" class="botao">
-            Entrar
-        </a>
-
-        <a href="/cadastro/" class="botao">
-            Criar conta
-        </a>
-
+        <a href="/">Início</a>
+        <a href="/ranking/">Ranking</a>
+        <a href="/torneios/">Torneios</a>
+        <a href="/meus-jogos/">Jogos</a>
+        <a href="/login/" class="botao">Login</a>
+        <a href="/cadastro/" class="botao-verde">Criar conta</a>
     </div>
 
 </div>
 
-<div style="
-max-width:1300px;
-margin:50px auto 20px auto;
-padding:0 20px;
-">
+<div class="container">
 
-    <h1 style="
-    font-size:52px;
-    color:#0b4d91;
-    margin-bottom:10px;
-    ">
-        Plataforma Oficial do Tênis Panambi
-    </h1>
+    <div class="titulo-home">
+        <h1>Plataforma oficial do Tênis Panambi</h1>
+        <p>Rankings, torneios, estatísticas e confrontos dos tenistas de Panambi.</p>
+    </div>
 
-    <p style="
-    font-size:24px;
-    color:#666;
-    margin-top:0;
-    ">
-        Rankings, torneios, estatísticas e confrontos dos tenistas de Panambi.
-    </p>
+    <div class="cards-status">
 
+        <div class="status-card">
+            <div class="icone azul">🏆</div>
+            <div>
+                <h2>{{ total_jogadores }}</h2>
+                <p>Jogadores cadastrados</p>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="icone verde">🎾</div>
+            <div>
+                <h2>{{ total_jogos }}</h2>
+                <p>Jogos realizados</p>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <div class="icone laranja">🏅</div>
+            <div>
+                <h2>{{ total_torneios }}</h2>
+                <p>Torneios cadastrados</p>
+            </div>
+        </div>
+
+        <div class="status-card">
+    <div class="icone roxo">🎾</div>
+    <div>
+        <h2>{{ jogos_semana }}</h2>
+        <p>Jogos na Semana</p>
+    </div>
 </div>
 
-<div class="cards">
+    </div>
 
-    <div class="card">
+    <div class="grade-principal">
 
-        <h2>
-            Últimos jogos
-        </h2>
+        <div class="card">
 
-        {% for jogo in ultimos_jogos %}
-
-            <div style="
-            margin-bottom:20px;
-            padding-bottom:15px;
-            border-bottom:1px solid #eee;
-            ">
-
-                <div style="
-                font-size:20px;
-                font-weight:bold;
-                color:#0b4d91;
-                ">
-                    {{ jogo.descricao_confronto }}
-                </div>
-
-                <div style="
-                margin-top:5px;
-                color:#666;
-                ">
-                    Rodada {{ jogo.rodada }}
-                </div>
-
+            <div class="card-header">
+                <h2>Ranking Atual</h2>
+                <a href="/ranking/">Ver ranking completo →</a>
             </div>
 
-        {% empty %}
+           <div style="
+padding:20px 25px 0 25px;
+display:flex;
+gap:12px;
+">
 
-            <p>
-                Nenhum jogo cadastrado ainda.
-            </p>
-
-        {% endfor %}
-
-    </div>
-
-    <div class="card">
-
-        <h2>
-            Top 5 Ranking
-        </h2>
-
-        {% for r in ranking %}
-
-        <div style="
-        display:flex;
-        align-items:center;
-        gap:15px;
-        margin-bottom:20px;
-        padding-bottom:15px;
-        border-bottom:1px solid #eee;
+    <button
+        onclick="mostrarRanking('A')"
+        id="btnA"
+        style="
+        background:#0b4d91;
+        color:white;
+        border:none;
+        border-radius:12px;
+        padding:12px 18px;
+        font-weight:bold;
+        cursor:pointer;
         ">
+        Categoria A
+    </button>
+
+    <button
+        onclick="mostrarRanking('B')"
+        id="btnB"
+        style="
+        background:#d9e3f0;
+        color:#0b4d91;
+        border:none;
+        border-radius:12px;
+        padding:12px 18px;
+        font-weight:bold;
+        cursor:pointer;
+        ">
+        Categoria B
+    </button>
+
+    <button
+        onclick="mostrarRanking('C')"
+        id="btnC"
+        style="
+        background:#d9e3f0;
+        color:#0b4d91;
+        border:none;
+        border-radius:12px;
+        padding:12px 18px;
+        font-weight:bold;
+        cursor:pointer;
+        ">
+        Categoria C
+    </button>
+
+</div>
+
+<div id="rankingA">
+
+    {% for r in ranking_a %}
+
+        <div class="ranking-item">
+
+            <div class="posicao">
+                {{ r.posicao }}
+            </div>
 
             {% if r.jogador.foto %}
-
-                <img
-                    src="{{ r.jogador.foto.url }}"
-                    style="
-                    width:65px;
-                    height:65px;
-                    border-radius:50%;
-                    object-fit:cover;
-                    "
-                >
-
+                <img class="avatar" src="{{ r.jogador.foto.url }}">
             {% else %}
-
-                <div style="
-                width:65px;
-                height:65px;
-                border-radius:50%;
-                background:#ddd;
-                ">
-                </div>
-
+                <div class="avatar"></div>
             {% endif %}
 
-            <div>
+            <div class="ranking-nome">
+                {{ r.jogador.nome }}
+            </div>
 
-                <div style="
-                font-size:22px;
-                font-weight:bold;
-                color:#0b4d91;
-                ">
-                    {{ r.posicao }}º {{ r.jogador.nome }}
-                </div>
-
-                <div style="
-                font-size:16px;
-                color:#666;
-                ">
-                    {{ r.pontos }} pontos
-                </div>
-
+            <div class="ranking-pontos">
+                {{ r.pontos }} pts
             </div>
 
         </div>
 
-        {% empty %}
+    {% endfor %}
 
-        <p>
-            Ranking ainda não iniciado.
-        </p>
+</div>
 
-        {% endfor %}
+<div id="rankingB" style="display:none;">
+
+    {% for r in ranking_b %}
+
+        <div class="ranking-item">
+
+            <div class="posicao">
+                {{ r.posicao }}
+            </div>
+
+            {% if r.jogador.foto %}
+                <img class="avatar" src="{{ r.jogador.foto.url }}">
+            {% else %}
+                <div class="avatar"></div>
+            {% endif %}
+
+            <div class="ranking-nome">
+                {{ r.jogador.nome }}
+            </div>
+
+            <div class="ranking-pontos">
+                {{ r.pontos }} pts
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+<div id="rankingC" style="display:none;">
+
+    {% for r in ranking_c %}
+
+        <div class="ranking-item">
+
+            <div class="posicao">
+                {{ r.posicao }}
+            </div>
+
+            {% if r.jogador.foto %}
+                <img class="avatar" src="{{ r.jogador.foto.url }}">
+            {% else %}
+                <div class="avatar"></div>
+            {% endif %}
+
+            <div class="ranking-nome">
+                {{ r.jogador.nome }}
+            </div>
+
+            <div class="ranking-pontos">
+                {{ r.pontos }} pts
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-header">
+                <h2>Próximos Torneios</h2>
+                <a href="/torneios/">Ver todos →</a>
+            </div>
+
+            {% for torneio in proximos_torneios %}
+
+                <div class="torneio-item">
+
+                    <div class="data-box">
+                        <div class="dia">{{ torneio.data_inicio|date:"d" }}</div>
+                        <div class="mes">{{ torneio.data_inicio|date:"M" }}</div>
+                    </div>
+
+                    <div class="torneio-info">
+                        <strong>{{ torneio.nome }}</strong>
+                        <div>Panambi/RS</div>
+                    </div>
+
+                    <div class="status-torneio">
+                        {{ torneio.get_status_display }}
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div style="padding:25px;color:#64748b;">
+                    Nenhum torneio futuro cadastrado.
+                </div>
+
+            {% endfor %}
+
+        </div>
 
     </div>
 
-    <div class="card">
+    <div class="ultimos-jogos">
 
-        <h2>
-            Acesso rápido
-        </h2>
+        <div class="card-header">
+            <h2>Últimos Jogos</h2>
+        </div>
 
-        <p style="
-        font-size:18px;
-        line-height:1.6;
-        ">
-            Entre na plataforma para acompanhar
-            seus jogos, rankings e torneios.
-        </p>
+        <table class="tabela-jogos">
 
-        <p style="margin-top:30px;">
+            <tr>
+                <th>Data</th>
+                <th>Confronto</th>
+                <th>Placar</th>
+                <th>Torneio</th>
+            </tr>
 
-            <a href="/login/" class="botao">
-                Entrar
-            </a>
+            {% for jogo in ultimos_jogos %}
 
-        </p>
+            <tr>
+                <td>{{ jogo.data_jogo|date:"d/m/Y" }}</td>
+                <td><strong>{{ jogo.descricao_confronto }}</strong></td>
+                <td class="placar">{{ jogo.placar_resumido }}</td>
+                <td>
+                    {% if jogo.torneio %}
+                        {{ jogo.torneio.nome }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
 
-        <p style="margin-top:30px;">
+            {% empty %}
 
-            <a href="/cadastro/" class="botao">
-                Criar conta
-            </a>
+            <tr>
+                <td colspan="4" style="text-align:center;color:#64748b;">
+                    Nenhum jogo confirmado ainda.
+                </td>
+            </tr>
 
-        </p>
+            {% endfor %}
+
+        </table>
 
     </div>
 
@@ -329,6 +626,29 @@ padding:0 20px;
 <div class="footer">
     TenisPanambi © 2026
 </div>
+<script>
+
+function mostrarRanking(cat){
+
+    document.getElementById('rankingA').style.display = 'none';
+    document.getElementById('rankingB').style.display = 'none';
+    document.getElementById('rankingC').style.display = 'none';
+
+    document.getElementById('btnA').style.background = '#d9e3f0';
+    document.getElementById('btnB').style.background = '#d9e3f0';
+    document.getElementById('btnC').style.background = '#d9e3f0';
+
+    document.getElementById('btnA').style.color = '#0b4d91';
+    document.getElementById('btnB').style.color = '#0b4d91';
+    document.getElementById('btnC').style.color = '#0b4d91';
+
+    document.getElementById('ranking'+cat).style.display = 'block';
+
+    document.getElementById('btn'+cat).style.background = '#0b4d91';
+    document.getElementById('btn'+cat).style.color = 'white';
+}
+
+</script>
 
 </body>
 </html>
