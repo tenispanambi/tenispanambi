@@ -1,186 +1,90 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% extends 'base/base.html' %}
 
-<meta charset="UTF-8">
+{% block content %}
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<div style="max-width:1200px;margin:40px auto;background:white;padding:35px;border-radius:25px;">
 
-<title>Meus Jogos</title>
+    <h1 style="color:#0b4d91;font-size:42px;">
+        Meus Jogos
+    </h1>
 
-<style>
+    <table style="width:100%;border-collapse:collapse;margin-top:25px;">
 
-body{
-    margin:0;
-    background:#f2f2f2;
-    font-family:Arial;
-}
+        <tr style="background:#0b4d91;color:white;">
+            <th style="padding:16px;text-align:left;">Data</th>
+            <th style="padding:16px;text-align:left;">Confronto</th>
+            <th style="padding:16px;text-align:center;">Rodada</th>
+            <th style="padding:16px;text-align:center;">Resultado</th>
+            <th style="padding:16px;text-align:center;">Ranking</th>
+        </tr>
 
-.topo{
-    background:#0b5394;
-    color:white;
-    padding:30px;
-    text-align:center;
-}
+        {% for p in participacoes %}
 
-.container{
-    max-width:1200px;
-    margin:40px auto;
-}
+        <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:16px;">
+                {{ p.jogo.data_jogo }}
+            </td>
 
-.card{
-    background:white;
-    border-radius:18px;
-    padding:25px;
-    margin-bottom:25px;
-    box-shadow:0 0 10px rgba(0,0,0,0.08);
-}
+            <td style="padding:16px;">
+                <strong>{{ p.jogo.descricao_confronto }}</strong><br>
+                <small>{{ p.jogo.placar_resumido }}</small>
+            </td>
 
-.torneio{
-    color:#0b5394;
-    font-size:28px;
-    font-weight:bold;
-}
+            <td style="padding:16px;text-align:center;">
+                {{ p.jogo.rodada }}
+            </td>
 
-.info{
-    margin-top:10px;
-    color:#666;
-    font-size:18px;
-}
+            <td style="padding:16px;text-align:center;">
+                {% if p.vencedor %}
+                    <span style="color:#1e8e3e;font-weight:bold;">Vitória</span>
+                {% else %}
+                    <span style="color:#d93025;font-weight:bold;">Derrota</span>
+                {% endif %}
+            </td>
 
-.jogadores{
-    margin-top:20px;
-    font-size:22px;
-    font-weight:bold;
-}
+            <td style="padding:16px;text-align:center;">
+                {% if p.contabilizado %}
+                    <span style="
+                    background:#d4edda;
+                    color:#155724;
+                    padding:8px 14px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    ">
+                        🟢 Contabilizado
+                    </span>
+                {% else %}
+                    <div>
+                        <span style="
+                        background:#f8d7da;
+                        color:#721c24;
+                        padding:8px 14px;
+                        border-radius:20px;
+                        font-weight:bold;
+                        ">
+                            🔴 Desconsiderado
+                        </span>
+                    </div>
 
-.status{
-    margin-top:15px;
-    font-size:18px;
-}
+                    <small style="color:#777;">
+                        {{ p.motivo_desconsiderado }}
+                    </small>
+                {% endif %}
+            </td>
+        </tr>
 
-.botoes{
-    margin-top:20px;
-    display:flex;
-    gap:10px;
-}
+        {% empty %}
 
-.botao{
-    text-decoration:none;
-    color:white;
-    padding:12px 18px;
-    border-radius:10px;
-    font-weight:bold;
-}
-
-.resultado{
-    background:#0b5394;
-}
-
-.ver{
-    background:#674ea7;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="topo">
-
-    <h1>Meus Jogos</h1>
-
-</div>
-
-<div class="container">
-
-{% for p in participacoes %}
-
-<div class="card">
-
-    <div class="torneio">
-
-        {{ p.jogo.torneio.nome }}
-
-    </div>
-
-    <div class="info">
-
-        Categoria {{ p.jogo.categoria.categoria }}
-        |
-        Rodada {{ p.jogo.rodada }}
-
-    </div>
-
-    <div class="jogadores">
-
-        {% for jogador in p.jogo.participantes.all %}
-
-            {{ jogador.jogador.nome }}
-
-            {% if not forloop.last %}
-                x
-            {% endif %}
+        <tr>
+            <td colspan="5" style="padding:25px;text-align:center;color:#777;">
+                Nenhum jogo encontrado.
+            </td>
+        </tr>
 
         {% endfor %}
 
-    </div>
-
-<div
-    style="
-        margin-top:15px;
-        font-size:24px;
-        font-weight:bold;
-        color:#38761d;
-    "
->
-
-    {% for s in p.jogo.sets.all %}
-
-        {{ s.games_lado_a }}
-        x
-        {{ s.games_lado_b }}
-
-    {% endfor %}
+    </table>
 
 </div>
 
-    <div class="status">
-
-        Status:
-        {{ p.jogo.get_status_display }}
-
-    </div>
-
-    <div class="botoes">
-
-        <a
-            href="/lancar-resultado/{{ p.jogo.id }}/"
-            class="botao resultado"
-        >
-
-            Lançar Resultado
-
-        </a>
-
-        <a
-            href="/chaveamento/{{ p.jogo.torneio.id }}/{{ p.jogo.categoria.id }}/"
-            class="botao ver"
-        >
-
-            Ver Chave
-
-        </a>
-
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</body>
-</html>
+{% endblock %}

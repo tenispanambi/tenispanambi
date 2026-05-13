@@ -318,9 +318,12 @@ def meu_painel(request):
 
 @login_required
 def meus_jogos(request):
-    jogador = Jogador.objects.get(
+    jogador = Jogador.objects.filter(
         usuario=request.user
-    )
+    ).first()
+
+    if not jogador:
+        return redirect('meu_perfil')
 
     participacoes = ParticipanteJogo.objects.filter(
         jogador=jogador
@@ -329,7 +332,46 @@ def meus_jogos(request):
         'jogo__torneio',
         'jogo__categoria'
     ).order_by(
-        '-jogo__data_jogo'
+        'jogo__rodada',
+        'jogo__id'
+    )
+
+    controle_rodadas = {}
+
+    for p in participacoes:
+        jogo = p.jogo
+        categoria = jogo.categoria
+        rodada = jogo.rodada or 0
+
+        p.contabilizado = True
+        p.motivo_desconsiderado = ''
+
+        if jogo.status != 'CONFIRMADO':
+            p.contabilizado = False
+            p.motivo_desconsiderado = 'Jogo ainda não confirmado.'
+
+        elif categoria and rodada > categoria.rodadas_contabilizadas:
+            p.contabilizado = False
+            p.motivo_desconsiderado = 'Rodada fora do limite contabilizado.'
+
+        else:
+            chave = f'{jogador.id}_{categoria.id}_{rodada}'
+
+            if chave not in controle_rodadas:
+                controle_rodadas[chave] = 0
+
+            if categoria and controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+                p.contabilizado = False
+                p.motivo_desconsiderado = 'Excedeu o limite de jogos contabilizados nesta rodada.'
+            else:
+                controle_rodadas[chave] += 1
+
+    participacoes = sorted(
+        participacoes,
+        key=lambda p: (
+            -(p.jogo.data_jogo.toordinal() if p.jogo.data_jogo else 0),
+            -(p.jogo.id or 0)
+        )
     )
 
     return render(
@@ -565,12 +607,20 @@ def chaveamento(request, torneio_id, categoria_id):
 @login_required
 def meu_perfil(request):
 
-    jogador = Jogador.objects.get(
+    jogador = Jogador.objects.filter(
         usuario=request.user
-    )
+    ).first()
+
+    if not jogador:
+        jogador = Jogador.objects.create(
+            usuario=request.user,
+            nome=request.user.username,
+            email=request.user.email,
+            categoria='C',
+            ativo=True
+        )
 
     if request.method == 'POST':
-
         jogador.nome = request.POST.get('nome')
         jogador.email = request.POST.get('email')
         jogador.telefone = request.POST.get('telefone')

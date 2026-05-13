@@ -1,173 +1,92 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% extends 'base/base.html' %}
 
-    <meta charset="UTF-8">
+{% block content %}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<div style="
+max-width:1300px;
+margin:40px auto;
+">
 
-    <title>Ranking - TenisPanambi</title>
+    <h1 style="
+    font-size:52px;
+    color:#0b4d91;
+    margin-bottom:30px;
+    ">
+        Ranking Oficial
+    </h1>
 
-    <style>
+    <div style="
+    display:flex;
+    gap:15px;
+    margin-bottom:35px;
+    ">
 
-        body{
-            margin:0;
-            font-family: Arial;
-            background:#f2f2f2;
-        }
-
-        header{
-            background:#0b5394;
+        <button
+            onclick="mostrarCategoria('A')"
+            id="btnA"
+            style="
+            padding:16px 28px;
+            border:none;
+            border-radius:14px;
+            background:#0b4d91;
             color:white;
-            padding:25px;
-            text-align:center;
-        }
-
-        header h1{
-            margin:0;
-            font-size:32px;
-        }
-
-        .container{
-            max-width:1200px;
-            margin:auto;
-            padding:20px;
-        }
-
-        .card{
-            background:white;
-            border-radius:15px;
-            overflow:hidden;
-            box-shadow:0 0 15px rgba(0,0,0,0.1);
-            margin-bottom:40px;
-        }
-
-        .titulo-categoria{
-            background:#083763;
-            color:white;
-            padding:18px;
-            font-size:22px;
+            font-size:20px;
             font-weight:bold;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-        }
-
-        th{
-            background:#0b5394;
-            color:white;
-            padding:15px;
-            font-size:14px;
-        }
-
-        td{
-            padding:14px;
-            text-align:center;
-            border-bottom:1px solid #eee;
-            font-size:14px;
-        }
-
-        tr:hover{
-            background:#f9f9f9;
-        }
-
-        .classificado{
-            background:#d9ead3;
-        }
-
-        .rebaixado{
-            background:#f4cccc;
-        }
-
-        .acesso{
-            background:#cfe2f3;
-        }
-
-        .jogador{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            text-align:left;
-        }
-
-        .foto{
-            width:45px;
-            height:45px;
-            border-radius:50%;
-            background:#ddd;
-            object-fit:cover;
-        }
-
-        .status{
-            font-weight:bold;
-            padding:6px 10px;
-            border-radius:20px;
-            font-size:12px;
-            display:inline-block;
-        }
-
-        .status-classificado{
-            background:#6aa84f;
-            color:white;
-        }
-
-        .status-rebaixado{
-            background:#cc0000;
-            color:white;
-        }
-
-        .status-acesso{
-            background:#0b5394;
-            color:white;
-        }
-
-        .status-normal{
-            background:#999;
-            color:white;
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-<header>
-
-    <h1>Ranking TenisPanambi</h1>
-
-</header>
-
-<div class="container">
-
-    <div class="card">
-
-        <div class="titulo-categoria">
+            cursor:pointer;
+            "
+        >
             Categoria A
-        </div>
+        </button>
+
+        <button
+            onclick="mostrarCategoria('B')"
+            id="btnB"
+            style="
+            padding:16px 28px;
+            border:none;
+            border-radius:14px;
+            background:#d9e3f0;
+            color:#0b4d91;
+            font-size:20px;
+            font-weight:bold;
+            cursor:pointer;
+            "
+        >
+            Categoria B
+        </button>
+
+        <button
+            onclick="mostrarCategoria('C')"
+            id="btnC"
+            style="
+            padding:16px 28px;
+            border:none;
+            border-radius:14px;
+            background:#d9e3f0;
+            color:#0b4d91;
+            font-size:20px;
+            font-weight:bold;
+            cursor:pointer;
+            "
+        >
+            Categoria C
+        </button>
+
+    </div>
+
+    <div id="rankingA">
 
         {% include 'ranking/tabela.html' with ranking=ranking_a %}
 
     </div>
 
-    <div class="card">
-
-        <div class="titulo-categoria">
-            Categoria B
-        </div>
+    <div id="rankingB" style="display:none;">
 
         {% include 'ranking/tabela.html' with ranking=ranking_b %}
 
     </div>
 
-    <div class="card">
-
-        <div class="titulo-categoria">
-            Categoria C
-        </div>
+    <div id="rankingC" style="display:none;">
 
         {% include 'ranking/tabela.html' with ranking=ranking_c %}
 
@@ -175,5 +94,28 @@
 
 </div>
 
-</body>
-</html>
+<script>
+
+function mostrarCategoria(cat){
+
+    document.getElementById('rankingA').style.display = 'none';
+    document.getElementById('rankingB').style.display = 'none';
+    document.getElementById('rankingC').style.display = 'none';
+
+    document.getElementById('btnA').style.background = '#d9e3f0';
+    document.getElementById('btnB').style.background = '#d9e3f0';
+    document.getElementById('btnC').style.background = '#d9e3f0';
+
+    document.getElementById('btnA').style.color = '#0b4d91';
+    document.getElementById('btnB').style.color = '#0b4d91';
+    document.getElementById('btnC').style.color = '#0b4d91';
+
+    document.getElementById('ranking'+cat).style.display = 'block';
+
+    document.getElementById('btn'+cat).style.background = '#0b4d91';
+    document.getElementById('btn'+cat).style.color = 'white';
+}
+
+</script>
+
+{% endblock %}

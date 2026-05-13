@@ -17,8 +17,12 @@ def recalcular_ranking(torneio, categoria):
     participantes = ParticipanteJogo.objects.filter(
         jogo__torneio=torneio,
         jogo__categoria=categoria,
-        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
-    ).order_by('jogo__rodada', 'jogo__id')
+        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS',
+        jogo__status='CONFIRMADO'
+    ).order_by(
+        'jogo__rodada',
+        'jogo__id'
+    )
 
     dados = {}
     controle_rodadas = {}
@@ -26,7 +30,10 @@ def recalcular_ranking(torneio, categoria):
     for p in participantes:
         jogador = p.jogador
         jogo = p.jogo
-        rodada = jogo.rodada
+        rodada = jogo.rodada or 0
+
+        if rodada > categoria.rodadas_contabilizadas:
+            continue
 
         if jogador.id not in dados:
             dados[jogador.id] = {
@@ -139,7 +146,9 @@ def recalcular_ranking(torneio, categoria):
                 status = 'REBAIXADO'
 
         elif categoria.categoria == 'C':
-            if posicao <= categoria.classificados_finais:
+            if posicao <= categoria.promovidos:
+                status = 'ACESSO'
+            elif posicao <= categoria.classificados_finais:
                 status = 'CLASSIFICADO'
 
         r.posicao = posicao

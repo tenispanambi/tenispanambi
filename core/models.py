@@ -24,16 +24,12 @@ class Jogador(models.Model):
     usuario = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
-        blank=True,
-        null=True
+        null=True,
+        blank=True
     )
 
-    nome = models.CharField(max_length=100)
-
-    foto = models.ImageField(
-        upload_to='jogadores/',
-        blank=True,
-        null=True
+    nome = models.CharField(
+        max_length=150
     )
 
     email = models.EmailField(
@@ -42,7 +38,7 @@ class Jogador(models.Model):
     )
 
     telefone = models.CharField(
-        max_length=20,
+        max_length=30,
         blank=True,
         null=True
     )
@@ -68,8 +64,7 @@ class Jogador(models.Model):
     mao_dominante = models.CharField(
         max_length=20,
         choices=MAOS,
-        blank=True,
-        null=True
+        default='DIREITA'
     )
 
     raquete = models.CharField(
@@ -84,24 +79,25 @@ class Jogador(models.Model):
         null=True
     )
 
-    ativo = models.BooleanField(default=True)
+    foto = models.ImageField(
+        upload_to='jogadores/',
+        blank=True,
+        null=True
+    )
 
-    jogos_historicos = models.IntegerField(default=0)
-    vitorias_historicas = models.IntegerField(default=0)
-    derrotas_historicas = models.IntegerField(default=0)
+    ativo = models.BooleanField(
+        default=False
+    )
 
-    criado_em = models.DateTimeField(auto_now_add=True)
-
-    def aproveitamento(self):
-        total = self.vitorias_historicas + self.derrotas_historicas
-
-        if total == 0:
-            return 0
-
-        return round((self.vitorias_historicas / total) * 100, 2)
+    criado_em = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
-        return self.nome
+        return f'{self.nome} - Categoria {self.categoria}'
+
+    class Meta:
+        ordering = ['categoria', 'nome']
 
 
 class Torneio(models.Model):
@@ -183,6 +179,9 @@ class CategoriaTorneio(models.Model):
     rebaixados = models.IntegerField(default=0)
     melhores_resultados = models.IntegerField(default=10)
     max_jogos_por_rodada = models.IntegerField(default=2)
+    rodadas_contabilizadas = models.IntegerField(
+    default=10
+)
 
     def __str__(self):
         return f'{self.torneio} - Categoria {self.categoria}'

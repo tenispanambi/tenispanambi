@@ -1,136 +1,204 @@
-<table>
-
-    <tr>
-
-        <th>Pos</th>
-        <th>Jogador</th>
-        <th>Pts</th>
-        <th>Vit</th>
-        <th>Der</th>
-        <th>Games</th>
-        <th>%</th>
-        <th>Status</th>
-
-    </tr>
-
-    {% for r in ranking %}
-
-    <tr class="
-        {% if r.status_ranking == 'CLASSIFICADO' %}
-            classificado
-        {% endif %}
-
-        {% if r.status_ranking == 'REBAIXADO' %}
-            rebaixado
-        {% endif %}
-
-        {% if r.status_ranking == 'ACESSO' %}
-            acesso
-        {% endif %}
-    ">
-
-        <td>
-            <strong>
-                {{ r.posicao }}
-            </strong>
-        </td>
-
-        <td>
-
-            <div class="jogador">
-
-                {% if r.jogador.foto %}
-
-                    <img
-                        src="{{ r.jogador.foto.url }}"
-                        class="foto"
-                    >
-
-                {% else %}
-
-                    <div class="foto"></div>
-
-                {% endif %}
-
-                <div>
-
-                    <strong>
-                        <a href="/jogador/{{ r.jogador.id }}/"
-   style="
-   text-decoration:none;
-   color:#0b5394;
-   font-weight:bold;
+<div style="
+background:white;
+border-radius:25px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.08);
 ">
 
-    {{ r.jogador.nome }}
+    <table style="
+    width:100%;
+    border-collapse:collapse;
+    ">
 
-</a>
-                    </strong>
+        <tr style="
+        background:#0b4d91;
+        color:white;
+        font-size:18px;
+        ">
+            <th style="padding:18px;text-align:center;">Pos</th>
+            <th style="padding:18px;text-align:left;">Jogador</th>
+            <th style="padding:18px;text-align:center;">Pts</th>
+            <th style="padding:18px;text-align:center;">Vit</th>
+            <th style="padding:18px;text-align:center;">Der</th>
+            <th style="padding:18px;text-align:center;">Aproveitamento</th>
+        </tr>
+
+        {% for r in ranking %}
+
+        <tr style="
+        border-bottom:1px solid #eee;
+        font-size:18px;
+
+        {% if r.status_ranking == 'ACESSO' %}
+            background:#e8f1ff;
+        {% elif r.status_ranking == 'CLASSIFICADO' %}
+            background:#edfdf1;
+        {% elif r.status_ranking == 'REBAIXADO' %}
+            background:#fff1f1;
+        {% endif %}
+        ">
+
+            <td style="
+            padding:18px;
+            text-align:center;
+            font-size:28px;
+            font-weight:bold;
+            color:#0b4d91;
+            ">
+                {% if r.posicao == 1 %}
+                    🥇
+                {% elif r.posicao == 2 %}
+                    🥈
+                {% elif r.posicao == 3 %}
+                    🥉
+                {% else %}
+                    {{ r.posicao }}
+                {% endif %}
+            </td>
+
+            <td style="padding:18px;">
+
+                <div style="
+                display:flex;
+                align-items:center;
+                gap:16px;
+                ">
+
+                    {% if r.jogador.foto %}
+                        <img
+                            src="{{ r.jogador.foto.url }}"
+                            style="
+                            width:65px;
+                            height:65px;
+                            border-radius:50%;
+                            object-fit:cover;
+                            border:3px solid #0b4d91;
+                            "
+                        >
+                    {% else %}
+                        <div style="
+                        width:65px;
+                        height:65px;
+                        border-radius:50%;
+                        background:#ddd;
+                        ">
+                        </div>
+                    {% endif %}
+
+                    <div>
+
+                        <div style="
+                        font-size:22px;
+                        font-weight:bold;
+                        color:#0b4d91;
+                        ">
+                            {{ r.jogador.nome }}
+                        </div>
+
+                        <div style="
+                        color:#777;
+                        font-size:15px;
+                        ">
+                            Categoria {{ r.categoria.categoria }}
+
+                            {% if r.status_ranking == 'ACESSO' %}
+
+                                {% if r.categoria.categoria == 'B' %}
+                                    · 🔵 Acesso Cat. A
+                                {% elif r.categoria.categoria == 'C' %}
+                                    · 🔵 Acesso Cat. B
+                                {% endif %}
+
+                            {% elif r.status_ranking == 'CLASSIFICADO' %}
+
+                                · 🟢 Classificado Finais
+
+                            {% elif r.status_ranking == 'REBAIXADO' %}
+
+                                · 🔴 Rebaixamento
+
+                            {% endif %}
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </td>
 
-        </td>
-
-        <td>
-            <strong>
+            <td style="
+            padding:18px;
+            text-align:center;
+            font-weight:bold;
+            ">
                 {{ r.pontos }}
-            </strong>
-        </td>
+            </td>
 
-        <td>{{ r.vitorias }}</td>
+            <td style="
+            padding:18px;
+            text-align:center;
+            color:#1e8e3e;
+            font-weight:bold;
+            ">
+                {{ r.vitorias }}
+            </td>
 
-        <td>{{ r.derrotas }}</td>
+            <td style="
+            padding:18px;
+            text-align:center;
+            color:#d93025;
+            font-weight:bold;
+            ">
+                {{ r.derrotas }}
+            </td>
 
-        <td>{{ r.games_feitos }}</td>
+            <td style="
+            padding:18px;
+            text-align:center;
+            ">
 
-        <td>
-            {{ r.aproveitamento }}%
-        </td>
+                <div style="
+                width:100%;
+                background:#e5e7eb;
+                border-radius:20px;
+                overflow:hidden;
+                height:16px;
+                ">
+                    <div style="
+                    width:{{ r.aproveitamento }}%;
+                    background:#0b4d91;
+                    height:16px;
+                    ">
+                    </div>
+                </div>
 
-        <td>
+                <div style="
+                margin-top:8px;
+                font-weight:bold;
+                color:#0b4d91;
+                ">
+                    {{ r.aproveitamento }}%
+                </div>
 
-            {% if r.status_ranking == 'CLASSIFICADO' %}
+            </td>
 
-                <span class="status status-classificado">
-                    CLASSIFICADO
-                </span>
+        </tr>
 
-            {% elif r.status_ranking == 'REBAIXADO' %}
+        {% empty %}
 
-                <span class="status status-rebaixado">
-                    REBAIXADO
-                </span>
+        <tr>
+            <td colspan="6" style="
+            padding:30px;
+            text-align:center;
+            color:#777;
+            font-size:20px;
+            ">
+                Nenhum jogador no ranking desta categoria.
+            </td>
+        </tr>
 
-            {% elif r.status_ranking == 'ACESSO' %}
+        {% endfor %}
 
-                <span class="status status-acesso">
-                    ACESSO
-                </span>
+    </table>
 
-            {% else %}
-
-                <span class="status status-normal">
-                    NORMAL
-                </span>
-
-            {% endif %}
-
-        </td>
-
-    </tr>
-
-    {% empty %}
-
-    <tr>
-
-        <td colspan="8">
-            Nenhum jogador nesta categoria
-        </td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
+</div>
