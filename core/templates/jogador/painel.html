@@ -3,17 +3,17 @@
 {% block content %}
 
 <div style="
-max-width:1300px;
+max-width:1350px;
 margin:40px auto;
 ">
 
     <div style="
     background:white;
     border-radius:30px;
-    padding:40px;
+    padding:35px;
     box-shadow:0 5px 20px rgba(0,0,0,0.08);
     display:flex;
-    gap:40px;
+    gap:35px;
     align-items:center;
     ">
 
@@ -24,8 +24,8 @@ margin:40px auto;
                 <img
                     src="{{ jogador.foto.url }}"
                     style="
-                    width:220px;
-                    height:220px;
+                    width:190px;
+                    height:190px;
                     border-radius:50%;
                     object-fit:cover;
                     border:6px solid #0b4d91;
@@ -35,8 +35,8 @@ margin:40px auto;
             {% else %}
 
                 <div style="
-                width:220px;
-                height:220px;
+                width:190px;
+                height:190px;
                 border-radius:50%;
                 background:#ddd;
                 ">
@@ -51,58 +51,75 @@ margin:40px auto;
             <h1 style="
             margin:0;
             color:#0b4d91;
-            font-size:52px;
+            font-size:54px;
             ">
                 {{ jogador.nome }}
             </h1>
 
             <div style="
-            margin-top:15px;
-            font-size:22px;
-            color:#666;
-            line-height:1.8;
+            margin-top:20px;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:16px;
+            font-size:21px;
+            color:#475569;
             ">
 
                 <div>
                     🎾 Categoria:
-                    <strong>{{ jogador.categoria }}</strong>
+                    <strong style="color:#0b4d91;">
+                        {{ jogador.categoria }}
+                    </strong>
+                </div>
+
+                <div>
+                    🏆 Ranking:
+                    <strong style="color:#0b4d91;">
+                        {{ ranking.posicao }}º Lugar
+                    </strong>
                 </div>
 
                 <div>
                     📈 Nível:
-                    <strong>{{ jogador.nivel }}</strong>
+                    <strong>
+                        {{ jogador.nivel }}
+                    </strong>
                 </div>
 
                 <div>
                     📍 Cidade:
-                    <strong>{{ jogador.cidade }}</strong>
+                    <strong>
+                        {{ jogador.cidade }}
+                    </strong>
                 </div>
 
                 <div>
                     🎾 Raquete:
-                    <strong>{{ jogador.raquete }}</strong>
+                    <strong>
+                        {{ jogador.raquete }}
+                    </strong>
                 </div>
 
                 <div>
                     📸 Instagram:
-                    <strong>{{ jogador.instagram }}</strong>
+                    <strong>
+                        {{ jogador.instagram }}
+                    </strong>
                 </div>
 
             </div>
 
-            <div style="
-            margin-top:30px;
-            ">
+            <div style="margin-top:28px;">
 
                 <a
                     href="/meu-perfil/"
                     style="
                     background:#0b4d91;
                     color:white;
-                    padding:16px 24px;
-                    border-radius:12px;
+                    padding:14px 22px;
+                    border-radius:14px;
                     text-decoration:none;
-                    font-size:20px;
+                    font-size:18px;
                     font-weight:bold;
                     "
                 >
@@ -119,19 +136,19 @@ margin:40px auto;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     gap:25px;
-    margin-top:40px;
+    margin-top:35px;
     ">
 
         <div style="
         background:white;
         border-radius:25px;
-        padding:35px;
+        padding:30px;
         text-align:center;
         box-shadow:0 5px 18px rgba(0,0,0,0.08);
         ">
 
             <div style="
-            font-size:58px;
+            font-size:64px;
             color:#0b4d91;
             font-weight:bold;
             ">
@@ -140,8 +157,8 @@ margin:40px auto;
 
             <div style="
             margin-top:10px;
-            font-size:24px;
-            color:#666;
+            font-size:20px;
+            color:#475569;
             ">
                 Jogos
             </div>
@@ -151,13 +168,13 @@ margin:40px auto;
         <div style="
         background:white;
         border-radius:25px;
-        padding:35px;
+        padding:30px;
         text-align:center;
         box-shadow:0 5px 18px rgba(0,0,0,0.08);
         ">
 
             <div style="
-            font-size:58px;
+            font-size:64px;
             color:#1e8e3e;
             font-weight:bold;
             ">
@@ -166,8 +183,8 @@ margin:40px auto;
 
             <div style="
             margin-top:10px;
-            font-size:24px;
-            color:#666;
+            font-size:20px;
+            color:#475569;
             ">
                 Vitórias
             </div>
@@ -177,13 +194,13 @@ margin:40px auto;
         <div style="
         background:white;
         border-radius:25px;
-        padding:35px;
+        padding:30px;
         text-align:center;
         box-shadow:0 5px 18px rgba(0,0,0,0.08);
         ">
 
             <div style="
-            font-size:58px;
+            font-size:64px;
             color:#d93025;
             font-weight:bold;
             ">
@@ -192,8 +209,8 @@ margin:40px auto;
 
             <div style="
             margin-top:10px;
-            font-size:24px;
-            color:#666;
+            font-size:20px;
+            color:#475569;
             ">
                 Derrotas
             </div>
@@ -203,13 +220,13 @@ margin:40px auto;
         <div style="
         background:white;
         border-radius:25px;
-        padding:35px;
+        padding:30px;
         text-align:center;
         box-shadow:0 5px 18px rgba(0,0,0,0.08);
         ">
 
             <div style="
-            font-size:58px;
+            font-size:64px;
             color:#f9ab00;
             font-weight:bold;
             ">
@@ -218,8 +235,8 @@ margin:40px auto;
 
             <div style="
             margin-top:10px;
-            font-size:24px;
-            color:#666;
+            font-size:20px;
+            color:#475569;
             ">
                 Aproveitamento
             </div>
@@ -265,6 +282,14 @@ margin:40px auto;
                     Resultado
                 </th>
 
+                <th style="padding:18px;text-align:left;">
+                    Placar
+                </th>
+
+                <th style="padding:18px;text-align:left;">
+                    Ranking
+                </th>
+
             </tr>
 
             {% for j in jogos %}
@@ -305,14 +330,51 @@ margin:40px auto;
 
                 </td>
 
+                <td style="
+                padding:18px;
+                font-weight:bold;
+                color:#0b4d91;
+                ">
+                    {{ j.jogo.placar_resumido }}
+                </td>
+
+                <td style="padding:18px;">
+
+                    {% if j.contabilizado %}
+
+                        <span style="
+                        color:#1e8e3e;
+                        font-weight:bold;
+                        ">
+                            Contabilizado
+                        </span>
+
+                    {% else %}
+
+                        <span style="
+                        color:#d93025;
+                        font-weight:bold;
+                        ">
+                            Desconsiderado
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
             </tr>
 
             {% empty %}
 
             <tr>
-                <td colspan="3" style="padding:20px;">
+
+                <td colspan="5" style="
+                padding:20px;
+                color:#64748b;
+                ">
                     Nenhum jogo registrado.
                 </td>
+
             </tr>
 
             {% endfor %}
