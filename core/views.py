@@ -22,6 +22,7 @@ from .models import (
     Torneio,
     InscricaoTorneio,
     CategoriaTorneio,
+    CampeaoTorneio,
 )
 
 
@@ -224,64 +225,190 @@ def jogador(request, jogador_id):
 
 @login_required
 def headtohead(request):
-    jogadores = Jogador.objects.all().order_by('nome')
+
+    jogadores = Jogador.objects.filter(
+        ativo=True
+    ).order_by('categoria', 'nome')
 
     jogador1_id = request.GET.get('j1')
     jogador2_id = request.GET.get('j2')
+    modalidade = request.GET.get('modalidade', 'TODOS')
 
     jogador1 = None
     jogador2 = None
-
     confrontos = []
-    parceiros = []
 
-    vitorias_j1 = 0
-    vitorias_j2 = 0
+    vitorias1 = 0
+    vitorias2 = 0
+    total_h2h = 0
 
-    vitorias_juntos = 0
-    derrotas_juntos = 0
+    percentual_h2h_1 = 0
+    percentual_h2h_2 = 0
 
-    if jogador1_id and jogador2_id:
-        jogador1 = get_object_or_404(
-            Jogador,
-            id=jogador1_id
+    sets1 = 0
+    sets2 = 0
+    games1 = 0
+    games2 = 0
+
+    ranking1 = '-'
+    ranking2 = '-'
+
+    stats1 = {
+        'simples_jogos': 0,
+        'simples_vitorias': 0,
+        'simples_derrotas': 0,
+        'duplas_jogos': 0,
+        'duplas_vitorias': 0,
+        'duplas_derrotas': 0,
+    }
+
+    stats2 = {
+        'simples_jogos': 0,
+        'simples_vitorias': 0,
+        'simples_derrotas': 0,
+        'duplas_jogos': 0,
+        'duplas_vitorias': 0,
+        'duplas_derrotas': 0,
+    }
+
+    if jogador1_id:
+        jogador1 = get_object_or_404(Jogador, id=jogador1_id)
+
+        r1 = RankingJogador.objects.filter(
+            jogador=jogador1
+        ).first()
+
+        if r1:
+            ranking1 = f'{r1.posicao}º'
+
+    if jogador2_id:
+        jogador2 = get_object_or_404(Jogador, id=jogador2_id)
+
+        r2 = RankingJogador.objects.filter(
+            jogador=jogador2
+        ).first()
+
+        if r2:
+            ranking2 = f'{r2.posicao}º'
+
+    def calcular_stats(jogador):
+
+        simples = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO',
+            jogo__tipo_jogo='SIMPLES'
         )
 
-        jogador2 = get_object_or_404(
-            Jogador,
-            id=jogador2_id
+        duplas = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO'
+        ).exclude(
+            jogo__tipo_jogo='SIMPLES'
         )
 
-        jogos = Jogo.objects.all().order_by('-data_jogo')
+        return {
+            'simples_jogos': simples.count(),
+            'simples_vitorias': simples.filter(vencedor=True).count(),
+            'simples_derrotas': simples.filter(vencedor=False).count(),
+
+            'duplas_jogos': duplas.count(),
+            'duplas_vitorias': duplas.filter(vencedor=True).count(),
+            'duplas_derrotas': duplas.filter(vencedor=False).count(),
+        }
+
+    if jogador1:
+        stats1 = calcular_stats(jogador1)
+
+        stats1['duplas_jogos'] += jogador1.jogos_historicos
+        stats1['duplas_vitorias'] += jogador1.vitorias_historicas
+        stats1['duplas_derrotas'] += jogador1.derrotas_historicas
+
+    if jogador2:
+        stats2 = calcular_stats(jogador2)
+
+        stats2['duplas_jogos'] += jogador2.jogos_historicos
+        stats2['duplas_vitorias'] += jogador2.vitorias_historicas
+        stats2['duplas_derrotas'] += jogador2.derrotas_historicas
+
+    if jogador1 and jogador2:
+
+        jogos = Jogo.objects.filter(
+            status='CONFIRMADO'
+        ).prefetch_related(
+            'participantes',
+            'sets'
+        ).order_by('-data_jogo')
+
+        if modalidade == 'SIMPLES':
+            jogos = jogos.filter(tipo_jogo='SIMPLES')
+
+        elif modalidade == 'DUPLAS':
+            jogos = jogos.exclude(tipo_jogo='SIMPLES')
 
         for jogo in jogos:
+
             participantes = jogo.participantes.all()
 
             p1 = None
             p2 = None
 
             for p in participantes:
+
                 if p.jogador.id == jogador1.id:
                     p1 = p
 
                 if p.jogador.id == jogador2.id:
                     p2 = p
 
-            if p1 and p2:
-                if p1.lado == p2.lado:
-                    parceiros.append(jogo)
+            if p1 and p2 and p1.lado != p2.lado:
 
-                    if p1.vencedor:
-                        vitorias_juntos += 1
-                    else:
-                        derrotas_juntos += 1
+                total_h2h += 1
+
+                if p1.vencedor:
+                    vitorias1 += 1
                 else:
-                    confrontos.append(jogo)
+                    vitorias2 += 1
 
-                    if p1.vencedor:
-                        vitorias_j1 += 1
+                if p1.lado == 'A':
+                    games_j1 = jogo.total_games_lado_a()
+                    games_j2 = jogo.total_games_lado_b()
+                else:
+                    games_j1 = jogo.total_games_lado_b()
+                    games_j2 = jogo.total_games_lado_a()
+
+                games1 += games_j1
+                games2 += games_j2
+
+                sets_j1 = 0
+                sets_j2 = 0
+
+                for s in jogo.sets.all():
+
+                    if p1.lado == 'A':
+
+                        if s.games_lado_a > s.games_lado_b:
+                            sets_j1 += 1
+                        else:
+                            sets_j2 += 1
+
                     else:
-                        vitorias_j2 += 1
+
+                        if s.games_lado_b > s.games_lado_a:
+                            sets_j1 += 1
+                        else:
+                            sets_j2 += 1
+
+                sets1 += sets_j1
+                sets2 += sets_j2
+
+                jogo.vencedor_nome = jogador1.nome if p1.vencedor else jogador2.nome
+                jogo.jogadores_partida = jogo.descricao_confronto()
+
+                confrontos.append(jogo)
+
+        if total_h2h > 0:
+            percentual_h2h_1 = round((vitorias1 / total_h2h) * 100, 1)
+            percentual_h2h_2 = round((vitorias2 / total_h2h) * 100, 1)
 
     return render(
         request,
@@ -290,53 +417,340 @@ def headtohead(request):
             'jogadores': jogadores,
             'jogador1': jogador1,
             'jogador2': jogador2,
+            'modalidade': modalidade,
+
             'confrontos': confrontos,
-            'parceiros': parceiros,
-            'vitorias_j1': vitorias_j1,
-            'vitorias_j2': vitorias_j2,
-            'vitorias_juntos': vitorias_juntos,
-            'derrotas_juntos': derrotas_juntos,
+
+            'vitorias1': vitorias1,
+            'vitorias2': vitorias2,
+            'total_h2h': total_h2h,
+
+            'percentual_h2h_1': percentual_h2h_1,
+            'percentual_h2h_2': percentual_h2h_2,
+
+            'sets1': sets1,
+            'sets2': sets2,
+            'games1': games1,
+            'games2': games2,
+
+            'ranking1': ranking1,
+            'ranking2': ranking2,
+
+            'stats1': stats1,
+            'stats2': stats2,
+        }
+    )
+
+    def calcular_stats(jogador):
+        simples = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO',
+            jogo__tipo_jogo='SIMPLES'
+        )
+
+        duplas = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO'
+        ).exclude(
+            jogo__tipo_jogo='SIMPLES'
+        )
+
+        return {
+            'simples_jogos': simples.count(),
+            'simples_vitorias': simples.filter(vencedor=True).count(),
+            'simples_derrotas': simples.filter(vencedor=False).count(),
+
+            'duplas_jogos': duplas.count(),
+            'duplas_vitorias': duplas.filter(vencedor=True).count(),
+            'duplas_derrotas': duplas.filter(vencedor=False).count(),
+        }
+
+    if jogador1:
+        stats1 = calcular_stats(jogador1)
+
+        stats1['duplas_jogos'] += jogador1.jogos_historicos
+        stats1['duplas_vitorias'] += jogador1.vitorias_historicas
+        stats1['duplas_derrotas'] += jogador1.derrotas_historicas
+
+    if jogador2:
+        stats2 = calcular_stats(jogador2)
+
+        stats2['duplas_jogos'] += jogador2.jogos_historicos
+        stats2['duplas_vitorias'] += jogador2.vitorias_historicas
+        stats2['duplas_derrotas'] += jogador2.derrotas_historicas
+
+    if jogador1 and jogador2:
+
+        jogos = Jogo.objects.filter(
+            status='CONFIRMADO'
+        ).order_by('-data_jogo')
+
+        if modalidade == 'SIMPLES':
+            jogos = jogos.filter(tipo_jogo='SIMPLES')
+
+        elif modalidade == 'DUPLAS':
+            jogos = jogos.exclude(tipo_jogo='SIMPLES')
+
+        for jogo in jogos:
+
+            participantes = jogo.participantes.all()
+
+            p1 = None
+            p2 = None
+
+            for p in participantes:
+
+                if p.jogador.id == jogador1.id:
+                    p1 = p
+
+                if p.jogador.id == jogador2.id:
+                    p2 = p
+
+            if p1 and p2 and p1.lado != p2.lado:
+
+                total_h2h += 1
+
+                if p1.vencedor:
+                    vitorias1 += 1
+                else:
+                    vitorias2 += 1
+
+                if p1.lado == 'A':
+                    games_j1 = jogo.total_games_lado_a()
+                    games_j2 = jogo.total_games_lado_b()
+                else:
+                    games_j1 = jogo.total_games_lado_b()
+                    games_j2 = jogo.total_games_lado_a()
+
+                games1 += games_j1
+                games2 += games_j2
+
+                sets_j1 = 0
+                sets_j2 = 0
+
+                for s in jogo.sets.all():
+
+                    if p1.lado == 'A':
+                        if s.games_lado_a > s.games_lado_b:
+                            sets_j1 += 1
+                        else:
+                            sets_j2 += 1
+                    else:
+                        if s.games_lado_b > s.games_lado_a:
+                            sets_j1 += 1
+                        else:
+                            sets_j2 += 1
+
+                sets1 += sets_j1
+                sets2 += sets_j2
+
+                jogo.vencedor_nome = jogador1.nome if p1.vencedor else jogador2.nome
+                jogo.jogadores_partida = jogo.descricao_confronto()
+
+                confrontos.append(jogo)
+
+        if total_h2h > 0:
+            percentual_h2h_1 = round((vitorias1 / total_h2h) * 100, 1)
+            percentual_h2h_2 = round((vitorias2 / total_h2h) * 100, 1)
+
+    return render(
+        request,
+        'headtohead/index.html',
+        {
+            'jogadores': jogadores,
+            'jogador1': jogador1,
+            'jogador2': jogador2,
+            'modalidade': modalidade,
+
+            'confrontos': confrontos,
+
+            'vitorias1': vitorias1,
+            'vitorias2': vitorias2,
+            'total_h2h': total_h2h,
+
+            'percentual_h2h_1': percentual_h2h_1,
+            'percentual_h2h_2': percentual_h2h_2,
+
+            'sets1': sets1,
+            'sets2': sets2,
+            'games1': games1,
+            'games2': games2,
+
+            'ranking1': ranking1,
+            'ranking2': ranking2,
+
+            'stats1': stats1,
+            'stats2': stats2,
         }
     )
 
 
 @login_required
 def meu_painel(request):
-    jogador = Jogador.objects.get(
-        usuario=request.user
-    )
 
-    jogos_query = ParticipanteJogo.objects.filter(
-        jogador=jogador
-    ).select_related(
-        'jogo'
-    ).order_by(
-        '-jogo__data_jogo'
-    )
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador:
+        return redirect('/meu-perfil/')
 
     ranking = RankingJogador.objects.filter(
         jogador=jogador
     ).first()
 
-    vitorias = jogos_query.filter(
-        vencedor=True
-    ).count()
+    jogos_query = ParticipanteJogo.objects.filter(
+        jogador=jogador
+    ).select_related(
+        'jogo',
+        'jogo__torneio',
+        'jogo__categoria'
+    ).order_by(
+        'jogo__rodada',
+        'jogo__id'
+    )
 
-    derrotas = jogos_query.filter(
-        vencedor=False
-    ).count()
+    controle_rodadas = {}
+    jogos_validos = []
 
-    jogos = jogos_query[:10]
+    for p in jogos_query:
+        jogo = p.jogo
+        categoria = jogo.categoria
+        rodada = jogo.rodada or 0
 
-    total = vitorias + derrotas
+        p.contabilizado = False
+        p.historico_valido = False
+        p.motivo_desconsiderado = ''
+        p.pontos_calculados = 0
+
+        if jogo.status != 'CONFIRMADO':
+            p.motivo_desconsiderado = 'Jogo ainda não confirmado.'
+
+        elif jogo.tipo_jogo != 'CHAMPIONSHIP_DUPLAS':
+            p.historico_valido = True
+            p.motivo_desconsiderado = 'Histórico / amistoso.'
+
+        elif categoria and rodada > categoria.rodadas_contabilizadas:
+            p.motivo_desconsiderado = 'Rodada fora do limite.'
+
+        else:
+            categoria_id = categoria.id if categoria else 0
+            chave = f'{jogador.id}_{categoria_id}_{rodada}'
+
+            if chave not in controle_rodadas:
+                controle_rodadas[chave] = 0
+
+            if categoria and controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+                p.motivo_desconsiderado = 'Excedeu limite da rodada.'
+            else:
+                controle_rodadas[chave] += 1
+                p.historico_valido = True
+
+                if p.lado == 'A':
+                    games_feitos = jogo.total_games_lado_a()
+                else:
+                    games_feitos = jogo.total_games_lado_b()
+
+                if p.vencedor:
+                    p.pontos_calculados = 20 + games_feitos
+                else:
+                    p.pontos_calculados = 5 + games_feitos
+
+                jogos_validos.append(p)
+
+    jogos_validos_ordenados = sorted(
+        jogos_validos,
+        key=lambda p: p.pontos_calculados,
+        reverse=True
+    )
+
+    categorias_processadas = {}
+
+    for p in jogos_validos_ordenados:
+        categoria = p.jogo.categoria
+
+        if not categoria:
+            continue
+
+        if categoria.id not in categorias_processadas:
+            categorias_processadas[categoria.id] = 0
+
+        if categorias_processadas[categoria.id] < categoria.melhores_resultados:
+            p.contabilizado = True
+            categorias_processadas[categoria.id] += 1
+        else:
+            p.contabilizado = False
+            p.historico_valido = True
+            p.motivo_desconsiderado = 'Fora dos melhores resultados.'
+
+    jogos_ordenados = sorted(
+        jogos_query,
+        key=lambda p: (
+            -(p.jogo.data_jogo.toordinal() if p.jogo.data_jogo else 0),
+            -(p.jogo.id or 0)
+        )
+    )
+
+    total = jogos_query.count()
+    vitorias = jogos_query.filter(vencedor=True).count()
+    derrotas = total - vitorias
 
     aproveitamento = 0
-
     if total > 0:
-        aproveitamento = round(
-            (vitorias / total) * 100,
-            1
+        aproveitamento = round((vitorias / total) * 100, 1)
+
+    jogos = jogos_ordenados[:15]
+
+    parceiros = {}
+
+    for p in jogos_query:
+        jogo = p.jogo
+
+        if jogo.tipo_jogo == 'SIMPLES':
+            continue
+
+        parceiros_mesmo_lado = ParticipanteJogo.objects.filter(
+            jogo=jogo,
+            lado=p.lado
+        ).exclude(
+            jogador=jogador
         )
+
+        for parceiro in parceiros_mesmo_lado:
+            nome = parceiro.jogador.nome
+            parceiros[nome] = parceiros.get(nome, 0) + 1
+
+    parceiros_ordenados = sorted(
+        parceiros.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )[:5]
+
+    vitorias_contra = {}
+    total_confrontos = {}
+
+    for p in jogos_query:
+        adversarios = ParticipanteJogo.objects.filter(
+            jogo=p.jogo
+        ).exclude(
+            lado=p.lado
+        )
+
+        for adv in adversarios:
+            nome = adv.jogador.nome
+
+            total_confrontos[nome] = total_confrontos.get(nome, 0) + 1
+
+            if p.vencedor:
+                vitorias_contra[nome] = vitorias_contra.get(nome, 0) + 1
+
+    maior_fregues = None
+    if vitorias_contra:
+        maior_fregues = max(vitorias_contra, key=vitorias_contra.get)
+
+    maior_rival = None
+    if total_confrontos:
+        maior_rival = max(total_confrontos, key=total_confrontos.get)
 
     return render(
         request,
@@ -344,11 +758,14 @@ def meu_painel(request):
         {
             'jogador': jogador,
             'ranking': ranking,
-            'jogos': jogos,
+            'total': total,
             'vitorias': vitorias,
             'derrotas': derrotas,
-            'total': total,
             'aproveitamento': aproveitamento,
+            'jogos': jogos,
+            'parceiros_ordenados': parceiros_ordenados,
+            'maior_fregues': maior_fregues,
+            'maior_rival': maior_rival,
         }
     )
 
@@ -374,34 +791,80 @@ def meus_jogos(request):
     )
 
     controle_rodadas = {}
+    jogos_validos = []
 
     for p in participacoes:
         jogo = p.jogo
         categoria = jogo.categoria
         rodada = jogo.rodada or 0
 
-        p.contabilizado = True
+        p.contabilizado = False
+        p.historico_valido = False
         p.motivo_desconsiderado = ''
+        p.pontos_calculados = 0
+
+        # Amistoso ou simples não entra no ranking, mas vale para histórico
+        if jogo.tipo_jogo != 'CHAMPIONSHIP_DUPLAS':
+            p.historico_valido = True
+            p.motivo_desconsiderado = 'Jogo amistoso/simples: vale para histórico, mas não soma ranking.'
+            continue
 
         if jogo.status != 'CONFIRMADO':
-            p.contabilizado = False
             p.motivo_desconsiderado = 'Jogo ainda não confirmado.'
 
         elif categoria and rodada > categoria.rodadas_contabilizadas:
-            p.contabilizado = False
             p.motivo_desconsiderado = 'Rodada fora do limite contabilizado.'
 
         else:
-            chave = f'{jogador.id}_{categoria.id}_{rodada}'
+            categoria_id = categoria.id if categoria else 0
+            chave = f'{jogador.id}_{categoria_id}_{rodada}'
 
             if chave not in controle_rodadas:
                 controle_rodadas[chave] = 0
 
             if categoria and controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
-                p.contabilizado = False
                 p.motivo_desconsiderado = 'Excedeu o limite de jogos contabilizados nesta rodada.'
             else:
                 controle_rodadas[chave] += 1
+                p.historico_valido = True
+
+                if p.lado == 'A':
+                    games_feitos = jogo.total_games_lado_a()
+                else:
+                    games_feitos = jogo.total_games_lado_b()
+
+                if p.vencedor:
+                    p.pontos_calculados = 20 + games_feitos
+                else:
+                    p.pontos_calculados = 5 + games_feitos
+
+                jogos_validos.append(p)
+
+    jogos_validos_ordenados = sorted(
+        jogos_validos,
+        key=lambda p: p.pontos_calculados,
+        reverse=True
+    )
+
+    categorias_processadas = {}
+
+    for p in jogos_validos_ordenados:
+        categoria = p.jogo.categoria
+
+        if not categoria:
+            continue
+
+        chave_categoria = categoria.id
+
+        if chave_categoria not in categorias_processadas:
+            categorias_processadas[chave_categoria] = 0
+
+        if categorias_processadas[chave_categoria] < categoria.melhores_resultados:
+            p.contabilizado = True
+            categorias_processadas[chave_categoria] += 1
+        else:
+            p.contabilizado = False
+            p.motivo_desconsiderado = 'Fora dos melhores resultados.'
 
     participacoes = sorted(
         participacoes,
@@ -680,5 +1143,334 @@ def meu_perfil(request):
         'jogador/meu_perfil.html',
         {
             'jogador': jogador
+        }
+    )
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+
+
+def login_view(request):
+
+    if request.user.is_authenticated:
+        return redirect('/meu-painel/')
+
+    if request.method == 'POST':
+
+        usuario_digitado = (
+            request.POST.get('username') or
+            request.POST.get('usuario') or
+            request.POST.get('email')
+        )
+
+        senha_digitada = (
+            request.POST.get('password') or
+            request.POST.get('senha')
+        )
+
+        username_final = usuario_digitado
+
+        if usuario_digitado and '@' in usuario_digitado:
+            usuario_obj = User.objects.filter(
+                email=usuario_digitado
+            ).first()
+
+            if usuario_obj:
+                username_final = usuario_obj.username
+
+        user = authenticate(
+            request,
+            username=username_final,
+            password=senha_digitada
+        )
+
+        if user is not None:
+
+            if user.is_active:
+                login(request, user)
+                return redirect('/meu-painel/')
+
+            messages.error(
+                request,
+                'Usuário ainda não foi aprovado pelo administrador.'
+            )
+
+        else:
+            messages.error(
+                request,
+                'Usuário ou senha inválidos.'
+            )
+
+    return render(
+        request,
+        'registration/login.html'
+    )
+
+
+def logout_view(request):
+
+    logout(request)
+    return redirect('/')
+
+
+def logout_view(request):
+
+    logout(request)
+
+    return redirect('/')
+
+
+def logout_view(request):
+
+    logout(request)
+
+    return redirect('/')
+
+@login_required
+def lancar_jogo(request):
+
+    jogador_logado = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador_logado:
+        return redirect('/meu-perfil/')
+
+    jogadores_todos = Jogador.objects.filter(
+        ativo=True
+    ).exclude(
+        id=jogador_logado.id
+    ).order_by('nome')
+
+    jogadores_categoria = Jogador.objects.filter(
+        ativo=True,
+        categoria=jogador_logado.categoria
+    ).exclude(
+        id=jogador_logado.id
+    ).order_by('nome')
+
+    torneio_duplas_categoria = CategoriaTorneio.objects.filter(
+        torneio__tipo='RANKING',
+        torneio__disputa='DUPLAS',
+        categoria=jogador_logado.categoria,
+        torneio__status__in=[
+            'ABERTO',
+            'EM_ANDAMENTO',
+            'FASE_FINAIS'
+        ]
+    ).select_related(
+        'torneio'
+    ).order_by(
+        '-torneio__ano',
+        '-torneio__edicao',
+        '-id'
+    ).first()
+
+    torneio_duplas = None
+
+    if torneio_duplas_categoria:
+        torneio_duplas = torneio_duplas_categoria.torneio
+
+    if request.method == 'POST':
+
+        tipo_jogo_form = request.POST.get('tipo_jogo')
+        data_jogo_str = request.POST.get('data_jogo')
+        rodada = request.POST.get('rodada')
+        fase = request.POST.get('fase')
+
+        parceiro_a_id = request.POST.get('parceiro_a')
+        adversario_1_id = request.POST.get('adversario_1')
+        adversario_2_id = request.POST.get('adversario_2')
+
+        games_a = int(request.POST.get('games_a'))
+        games_b = int(request.POST.get('games_b'))
+
+        data_jogo = date.fromisoformat(data_jogo_str)
+
+        torneio = None
+        categoria = None
+        tipo_jogo_salvar = 'SIMPLES'
+
+        if tipo_jogo_form == 'DUPLAS':
+
+            if not torneio_duplas_categoria:
+                messages.error(
+                    request,
+                    'Não existe torneio de ranking em duplas aberto ou em fase finais para sua categoria.'
+                )
+                return redirect('/lancar-jogo/')
+
+            categoria = torneio_duplas_categoria
+            torneio = categoria.torneio
+
+            if torneio.status == 'ENCERRADO':
+                messages.error(
+                    request,
+                    'Este torneio está encerrado definitivamente.'
+                )
+                return redirect('/lancar-jogo/')
+
+            if torneio.status in ['ABERTO', 'EM_ANDAMENTO']:
+
+                if fase:
+                    messages.error(
+                        request,
+                        'As finais ainda não foram liberadas para este torneio.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                if not rodada:
+                    messages.error(
+                        request,
+                        'Informe a rodada do jogo classificatório.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                rodada = int(rodada)
+                fase = None
+
+            elif torneio.status == 'FASE_FINAIS':
+
+                if not fase:
+                    messages.error(
+                        request,
+                        'A classificatória está encerrada. Escolha Semifinal ou Final.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                rodada = None
+
+            if not parceiro_a_id or not adversario_2_id:
+                messages.error(
+                    request,
+                    'Para jogo de duplas, informe parceiro e adversário 2.'
+                )
+                return redirect('/lancar-jogo/')
+
+            parceiro = Jogador.objects.get(id=parceiro_a_id)
+            adversario_1 = Jogador.objects.get(id=adversario_1_id)
+            adversario_2 = Jogador.objects.get(id=adversario_2_id)
+
+            jogadores_duplas = [
+                jogador_logado,
+                parceiro,
+                adversario_1,
+                adversario_2
+            ]
+
+            for jogador in jogadores_duplas:
+                if jogador.categoria != jogador_logado.categoria:
+                    messages.error(
+                        request,
+                        'Em jogos de duplas, todos os jogadores precisam ser da mesma categoria.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+            tipo_jogo_salvar = 'CHAMPIONSHIP_DUPLAS'
+
+        else:
+
+            rodada = None
+            fase = None
+            torneio = None
+            categoria = None
+            tipo_jogo_salvar = 'SIMPLES'
+
+            adversario_1 = Jogador.objects.get(
+                id=adversario_1_id
+            )
+
+        jogo = Jogo.objects.create(
+            tipo_jogo=tipo_jogo_salvar,
+            torneio=torneio,
+            categoria=categoria,
+            data_jogo=data_jogo,
+            rodada=rodada,
+            fase=fase,
+            status='PENDENTE'
+        )
+
+        ParticipanteJogo.objects.create(
+            jogo=jogo,
+            jogador=jogador_logado,
+            lado='A'
+        )
+
+        if tipo_jogo_form == 'DUPLAS':
+
+            ParticipanteJogo.objects.create(
+                jogo=jogo,
+                jogador=parceiro,
+                lado='A'
+            )
+
+        ParticipanteJogo.objects.create(
+            jogo=jogo,
+            jogador=adversario_1,
+            lado='B'
+        )
+
+        if tipo_jogo_form == 'DUPLAS':
+
+            ParticipanteJogo.objects.create(
+                jogo=jogo,
+                jogador=adversario_2,
+                lado='B'
+            )
+
+        SetJogo.objects.create(
+            jogo=jogo,
+            numero_set=1,
+            games_lado_a=games_a,
+            games_lado_b=games_b
+        )
+
+        lado_vencedor = 'A'
+
+        if games_b > games_a:
+            lado_vencedor = 'B'
+
+        participantes = ParticipanteJogo.objects.filter(
+            jogo=jogo
+        )
+
+        for p in participantes:
+            p.vencedor = p.lado == lado_vencedor
+            p.save()
+
+        return redirect('/meus-jogos/')
+
+    return render(
+        request,
+        'jogador/lancar_jogo.html',
+        {
+            'jogadores_todos': jogadores_todos,
+            'jogadores_categoria': jogadores_categoria,
+            'torneio_duplas': torneio_duplas
+        }
+    )
+
+def mural_campeoes(request):
+
+    campeoes_a = CampeaoTorneio.objects.filter(
+        categoria='A'
+    ).order_by('-edicao')
+
+    campeoes_b = CampeaoTorneio.objects.filter(
+        categoria='B'
+    ).order_by('-edicao')
+
+    campeoes_c = CampeaoTorneio.objects.filter(
+        categoria='C'
+    ).order_by('-edicao')
+
+    return render(
+        request,
+        'jogador/mural_campeoes.html',
+        {
+            'campeoes_a': campeoes_a,
+            'campeoes_b': campeoes_b,
+            'campeoes_c': campeoes_c,
         }
     )

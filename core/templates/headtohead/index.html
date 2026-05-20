@@ -1,386 +1,672 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% extends 'base/base.html' %}
 
-<meta charset="UTF-8">
+{% block content %}
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<div style="
+max-width:1400px;
+margin:40px auto;
+padding:35px;
+background:#12004f;
+border-radius:35px;
+color:white;
+">
 
-<title>Head to Head</title>
+<form method="GET">
 
-<style>
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:30px;
+flex-wrap:wrap;
+">
 
-body{
-    margin:0;
-    font-family:Arial;
-    background:#f2f2f2;
-}
+    <!-- JOGADOR 1 -->
+    <div style="width:340px;">
 
-.topo{
-    background:#0b5394;
-    color:white;
-    padding:35px;
+        <div style="
+        width:180px;
+        height:180px;
+        margin:auto;
+        border-radius:50%;
+        overflow:hidden;
+        border:6px solid #00c2ff;
+        background:#222;
+        ">
+
+            {% if jogador1 and jogador1.foto %}
+                <img src="{{ jogador1.foto.url }}"
+                     style="
+                     width:100%;
+                     height:100%;
+                     object-fit:cover;
+                     ">
+            {% endif %}
+
+        </div>
+
+        <div style="
+        background:linear-gradient(135deg,#00c2ff,#006eff);
+        padding:18px;
+        border-radius:24px;
+        margin-top:20px;
+        box-shadow:0 12px 25px rgba(0,0,0,0.25);
+        ">
+
+            <input type="hidden"
+                   name="j1"
+                   id="j1_id"
+                   value="{% if jogador1 %}{{ jogador1.id }}{% endif %}">
+
+            <div style="position:relative;">
+
+                <input
+                    type="text"
+                    id="buscaJogador1"
+                    placeholder="Pesquisar jogador..."
+                    value="{% if jogador1 %}{{ jogador1.nome }}{% endif %}"
+                    autocomplete="off"
+
+                    style="
+                    width:100%;
+                    padding:18px 22px;
+                    border:none;
+                    border-radius:18px;
+                    font-size:22px;
+                    font-weight:bold;
+                    outline:none;
+                    box-sizing:border-box;
+                    "
+                >
+
+                <div id="listaJogador1" style="
+                display:none;
+                position:absolute;
+                top:70px;
+                left:0;
+                right:0;
+                background:#0f6f9c;
+                border-radius:18px;
+                overflow:hidden;
+                z-index:999;
+                max-height:320px;
+                overflow-y:auto;
+                box-shadow:0 10px 25px rgba(0,0,0,0.35);
+                ">
+
+                    {% for j in jogadores %}
+
+                        <div
+                            onclick="selecionarJogador('j1_id','buscaJogador1','{{ j.id }}','{{ j.nome }}')"
+
+                            data-nome="{{ j.nome|lower }}"
+                            class="opcao-jogador1"
+
+                            style="
+                            padding:16px 22px;
+                            cursor:pointer;
+                            font-size:20px;
+                            font-weight:bold;
+                            color:white;
+                            border-bottom:1px solid rgba(255,255,255,0.12);
+                            "
+                        >
+                            {{ j.nome }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if jogador1 %}
+
+        <div style="
+        background:rgba(255,255,255,0.10);
+        padding:25px;
+        border-radius:20px;
+        margin-top:25px;
+        line-height:2;
+        font-size:20px;
+        ">
+
+            <div>Ranking: <strong>{{ ranking1 }}</strong></div>
+            <div>Categoria: <strong>{{ jogador1.categoria }}</strong></div>
+            <div>Cidade: <strong>{{ jogador1.cidade }}</strong></div>
+            <div>Nível: <strong>{{ jogador1.nivel }}</strong></div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- CENTRO -->
+    <div style="
+    flex:1;
     text-align:center;
-}
+    min-width:320px;
+    ">
 
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-}
+        <div style="
+        font-size:120px;
+        font-weight:bold;
+        line-height:1;
+        ">
 
-.formulario{
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    margin-bottom:30px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+            {{ vitorias1 }}
+            <span style="color:#9ca3af;">x</span>
+            {{ vitorias2 }}
 
-select{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    border:1px solid #ccc;
-    margin-bottom:15px;
-}
+        </div>
 
-button{
-    background:#0b5394;
-    color:white;
-    border:none;
+        <div style="
+        font-size:38px;
+        color:#93c5fd;
+        margin-top:10px;
+        ">
+            Head to Head
+        </div>
+
+        <div style="
+        margin-top:20px;
+        font-size:24px;
+        color:#d1d5db;
+        ">
+            {{ total_h2h }} jogos entre eles
+        </div>
+
+        <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:80px;
+        margin-top:40px;
+        font-size:28px;
+        font-weight:bold;
+        ">
+
+            <div>
+                <div style="color:#00d084;">
+                    {{ percentual_h2h_1 }}%
+                </div>
+
+                <div style="
+                color:#ccc;
+                font-size:18px;
+                margin-top:5px;
+                ">
+                    Aproveitamento
+                </div>
+            </div>
+
+            <div>
+                <div style="color:#c4ff00;">
+                    {{ percentual_h2h_2 }}%
+                </div>
+
+                <div style="
+                color:#ccc;
+                font-size:18px;
+                margin-top:5px;
+                ">
+                    Aproveitamento
+                </div>
+            </div>
+
+        </div>
+
+        <div style="
+        margin-top:55px;
+        ">
+
+            <div style="
+            font-size:54px;
+            font-weight:bold;
+            margin-bottom:35px;
+            ">
+                CARREIRA
+            </div>
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr 1fr;
+            gap:15px;
+            margin-bottom:28px;
+            align-items:center;
+            font-size:24px;
+            ">
+
+                <div>
+                    {{ stats1.simples_vitorias }}/{{ stats1.simples_derrotas }}
+                </div>
+
+                <div style="color:#d1d5db;">
+                    V/D Simples
+                </div>
+
+                <div>
+                    {{ stats2.simples_vitorias }}/{{ stats2.simples_derrotas }}
+                </div>
+
+            </div>
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr 1fr;
+            gap:15px;
+            margin-bottom:28px;
+            align-items:center;
+            font-size:24px;
+            ">
+
+                <div>
+                    {{ stats1.duplas_vitorias }}/{{ stats1.duplas_derrotas }}
+                </div>
+
+                <div style="color:#d1d5db;">
+                    V/D Duplas
+                </div>
+
+                <div>
+                    {{ stats2.duplas_vitorias }}/{{ stats2.duplas_derrotas }}
+                </div>
+
+            </div>
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr 1fr;
+            gap:15px;
+            margin-bottom:28px;
+            align-items:center;
+            font-size:24px;
+            ">
+
+                <div>{{ games1 }}</div>
+
+                <div style="color:#d1d5db;">
+                    Games H2H
+                </div>
+
+                <div>{{ games2 }}</div>
+
+            </div>
+
+            <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr 1fr;
+            gap:15px;
+            align-items:center;
+            font-size:24px;
+            ">
+
+                <div>{{ sets1 }}</div>
+
+                <div style="color:#d1d5db;">
+                    Sets H2H
+                </div>
+
+                <div>{{ sets2 }}</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JOGADOR 2 -->
+    <div style="width:340px;">
+
+        <div style="
+        width:180px;
+        height:180px;
+        margin:auto;
+        border-radius:50%;
+        overflow:hidden;
+        border:6px solid #c4ff00;
+        background:#222;
+        ">
+
+            {% if jogador2 and jogador2.foto %}
+                <img src="{{ jogador2.foto.url }}"
+                     style="
+                     width:100%;
+                     height:100%;
+                     object-fit:cover;
+                     ">
+            {% endif %}
+
+        </div>
+
+        <div style="
+        background:linear-gradient(135deg,#c4ff00,#00d084);
+        padding:18px;
+        border-radius:24px;
+        margin-top:20px;
+        box-shadow:0 12px 25px rgba(0,0,0,0.25);
+        ">
+
+            <input type="hidden"
+                   name="j2"
+                   id="j2_id"
+                   value="{% if jogador2 %}{{ jogador2.id }}{% endif %}">
+
+            <div style="position:relative;">
+
+                <input
+                    type="text"
+                    id="buscaJogador2"
+                    placeholder="Pesquisar jogador..."
+                    value="{% if jogador2 %}{{ jogador2.nome }}{% endif %}"
+                    autocomplete="off"
+
+                    style="
+                    width:100%;
+                    padding:18px 22px;
+                    border:none;
+                    border-radius:18px;
+                    font-size:22px;
+                    font-weight:bold;
+                    outline:none;
+                    box-sizing:border-box;
+                    "
+                >
+
+                <div id="listaJogador2" style="
+                display:none;
+                position:absolute;
+                top:70px;
+                left:0;
+                right:0;
+                background:#8bd600;
+                border-radius:18px;
+                overflow:hidden;
+                z-index:999;
+                max-height:320px;
+                overflow-y:auto;
+                box-shadow:0 10px 25px rgba(0,0,0,0.35);
+                ">
+
+                    {% for j in jogadores %}
+
+                        <div
+                            onclick="selecionarJogador('j2_id','buscaJogador2','{{ j.id }}','{{ j.nome }}')"
+
+                            data-nome="{{ j.nome|lower }}"
+                            class="opcao-jogador2"
+
+                            style="
+                            padding:16px 22px;
+                            cursor:pointer;
+                            font-size:20px;
+                            font-weight:bold;
+                            color:#111;
+                            border-bottom:1px solid rgba(0,0,0,0.12);
+                            "
+                        >
+                            {{ j.nome }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if jogador2 %}
+
+        <div style="
+        background:rgba(255,255,255,0.10);
+        padding:25px;
+        border-radius:20px;
+        margin-top:25px;
+        line-height:2;
+        font-size:20px;
+        ">
+
+            <div>Ranking: <strong>{{ ranking2 }}</strong></div>
+            <div>Categoria: <strong>{{ jogador2.categoria }}</strong></div>
+            <div>Cidade: <strong>{{ jogador2.cidade }}</strong></div>
+            <div>Nível: <strong>{{ jogador2.nivel }}</strong></div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- BOTÕES MODALIDADE -->
+
+<div style="
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:50px;
+flex-wrap:wrap;
+">
+
+    <a href="?{% if jogador1 %}j1={{ jogador1.id }}{% endif %}{% if jogador2 %}&j2={{ jogador2.id }}{% endif %}&modalidade=TODOS"
+
+    style="
     padding:14px 30px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.placar{
-    display:grid;
-    grid-template-columns:1fr 180px 1fr;
-    gap:20px;
-    align-items:center;
-    margin-bottom:40px;
-}
-
-.jogador-card{
-    background:white;
-    border-radius:20px;
-    padding:30px;
-    text-align:center;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-.foto{
-    width:180px;
-    height:180px;
-    border-radius:50%;
-    object-fit:cover;
-    border:6px solid #0b5394;
-}
-
-.nome{
-    font-size:30px;
+    border-radius:18px;
+    text-decoration:none;
+    font-size:20px;
     font-weight:bold;
-    margin-top:20px;
-}
 
-.numero{
-    font-size:90px;
-    color:#0b5394;
+    {% if modalidade == 'TODOS' %}
+        background:#00d084;
+        color:white;
+    {% else %}
+        background:white;
+        color:#111;
+    {% endif %}
+    ">
+        TODOS
+    </a>
+
+    <a href="?{% if jogador1 %}j1={{ jogador1.id }}{% endif %}{% if jogador2 %}&j2={{ jogador2.id }}{% endif %}&modalidade=SIMPLES"
+
+    style="
+    padding:14px 30px;
+    border-radius:18px;
+    text-decoration:none;
+    font-size:20px;
     font-weight:bold;
-    margin-top:20px;
-}
 
-.vs{
-    text-align:center;
-    font-size:60px;
+    {% if modalidade == 'SIMPLES' %}
+        background:#0ea5e9;
+        color:white;
+    {% else %}
+        background:white;
+        color:#111;
+    {% endif %}
+    ">
+        SIMPLES
+    </a>
+
+    <a href="?{% if jogador1 %}j1={{ jogador1.id }}{% endif %}{% if jogador2 %}&j2={{ jogador2.id }}{% endif %}&modalidade=DUPLAS"
+
+    style="
+    padding:14px 30px;
+    border-radius:18px;
+    text-decoration:none;
+    font-size:20px;
     font-weight:bold;
-    color:#0b5394;
-}
 
-.secao{
-    background:white;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:30px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+    {% if modalidade == 'DUPLAS' %}
+        background:#c4ff00;
+        color:#111;
+    {% else %}
+        background:white;
+        color:#111;
+    {% endif %}
+    ">
+        DUPLAS
+    </a>
 
-.titulo{
-    background:#083763;
-    color:white;
-    padding:18px;
-    font-size:22px;
-    font-weight:bold;
-}
+</div>
 
-table{
+</form>
+
+</div>
+
+<!-- HISTÓRICO -->
+
+<div style="
+max-width:1400px;
+margin:35px auto;
+background:white;
+padding:35px;
+border-radius:30px;
+">
+
+    <h2 style="
+    font-size:48px;
+    color:#0b4d91;
+    margin-top:0;
+    ">
+        Histórico de Jogos
+    </h2>
+
+    <table style="
     width:100%;
     border-collapse:collapse;
-}
+    margin-top:25px;
+    ">
 
-th{
-    background:#0b5394;
-    color:white;
-    padding:15px;
-}
+        <tr style="
+        background:#e5e7eb;
+        ">
 
-td{
-    padding:14px;
-    border-bottom:1px solid #eee;
-    text-align:center;
-}
+            <th style="padding:16px;text-align:left;">Data</th>
+            <th style="padding:16px;text-align:left;">Confronto</th>
+            <th style="padding:16px;text-align:center;">Placar</th>
+            <th style="padding:16px;text-align:center;">Vencedor</th>
 
-tr:hover{
-    background:#f9f9f9;
-}
+        </tr>
 
-.cards-juntos{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    padding:20px;
-}
+        {% for jogo in confrontos %}
 
-.card-juntos{
-    background:#f8f8f8;
-    border-radius:15px;
-    padding:25px;
-    text-align:center;
-}
+        <tr style="
+        border-bottom:1px solid #eee;
+        ">
 
-.numero-juntos{
-    font-size:55px;
-    font-weight:bold;
-    color:#0b5394;
-}
+            <td style="padding:16px;">
+                {{ jogo.data_jogo }}
+            </td>
 
-@media(max-width:768px){
+            <td style="
+            padding:16px;
+            font-weight:bold;
+            ">
+                {{ jogo.jogadores_partida }}
+            </td>
 
-    .placar{
-        grid-template-columns:1fr;
-    }
+            <td style="
+            padding:16px;
+            text-align:center;
+            color:#0b4d91;
+            font-weight:bold;
+            ">
+                {{ jogo.placar_resumido }}
+            </td>
 
-    .vs{
-        font-size:40px;
-    }
+            <td style="
+            padding:16px;
+            text-align:center;
+            color:#16a34a;
+            font-weight:bold;
+            ">
+                {{ jogo.vencedor_nome }}
+            </td>
 
-    .foto{
-        width:130px;
-        height:130px;
-    }
+        </tr>
 
-    .numero{
-        font-size:60px;
-    }
+        {% empty %}
 
-    .cards-juntos{
-        grid-template-columns:1fr;
-    }
+        <tr>
 
-}
+            <td colspan="4"
+                style="
+                padding:30px;
+                text-align:center;
+                color:#777;
+                ">
+                Nenhum confronto encontrado.
+            </td>
 
-</style>
+        </tr>
 
-</head>
+        {% endfor %}
 
-<body>
-
-<div class="topo">
-
-    <h1>Head to Head</h1>
+    </table>
 
 </div>
 
-<div class="container">
+<script>
 
-    <div class="formulario">
+function configurarBusca(inputId, listaId, classeOpcao) {
 
-        <form method="GET">
+    const input = document.getElementById(inputId);
+    const lista = document.getElementById(listaId);
+    const opcoes = document.querySelectorAll('.' + classeOpcao);
 
-            <select name="j1">
+    input.addEventListener('focus', function() {
+        lista.style.display = 'block';
+    });
 
-                <option value="">
-                    Jogador 1
-                </option>
+    input.addEventListener('keyup', function() {
 
-                {% for j in jogadores %}
+        const filtro = input.value.toLowerCase();
 
-                    <option
-                        value="{{ j.id }}"
-                    >
+        lista.style.display = 'block';
 
-                        {{ j.nome }}
+        opcoes.forEach(function(opcao) {
 
-                    </option>
+            const nome = opcao.getAttribute('data-nome');
 
-                {% endfor %}
+            if (nome.includes(filtro)) {
+                opcao.style.display = 'block';
+            } else {
+                opcao.style.display = 'none';
+            }
 
-            </select>
+        });
 
-            <select name="j2">
+    });
 
-                <option value="">
-                    Jogador 2
-                </option>
+}
 
-                {% for j in jogadores %}
+function selecionarJogador(hiddenId, inputId, jogadorId, jogadorNome) {
 
-                    <option
-                        value="{{ j.id }}"
-                    >
+    document.getElementById(hiddenId).value = jogadorId;
+    document.getElementById(inputId).value = jogadorNome;
 
-                        {{ j.nome }}
+    document.querySelector('form').submit();
 
-                    </option>
+}
 
-                {% endfor %}
+configurarBusca(
+    'buscaJogador1',
+    'listaJogador1',
+    'opcao-jogador1'
+);
 
-            </select>
+configurarBusca(
+    'buscaJogador2',
+    'listaJogador2',
+    'opcao-jogador2'
+);
 
-            <button type="submit">
+</script>
 
-                Comparar
-
-            </button>
-
-        </form>
-
-    </div>
-
-    {% if jogador1 and jogador2 %}
-
-    <div class="placar">
-
-        <div class="jogador-card">
-
-            {% if jogador1.foto %}
-
-                <img
-                    src="{{ jogador1.foto.url }}"
-                    class="foto"
-                >
-
-            {% endif %}
-
-            <div class="nome">
-                {{ jogador1.nome }}
-            </div>
-
-            <div class="numero">
-                {{ vitorias_j1 }}
-            </div>
-
-        </div>
-
-        <div class="vs">
-            VS
-        </div>
-
-        <div class="jogador-card">
-
-            {% if jogador2.foto %}
-
-                <img
-                    src="{{ jogador2.foto.url }}"
-                    class="foto"
-                >
-
-            {% endif %}
-
-            <div class="nome">
-                {{ jogador2.nome }}
-            </div>
-
-            <div class="numero">
-                {{ vitorias_j2 }}
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="secao">
-
-        <div class="titulo">
-            Jogos como parceiros
-        </div>
-
-        <div class="cards-juntos">
-
-            <div class="card-juntos">
-
-                <div class="numero-juntos">
-                    {{ vitorias_juntos }}
-                </div>
-
-                <div>
-                    Vitórias juntos
-                </div>
-
-            </div>
-
-            <div class="card-juntos">
-
-                <div class="numero-juntos">
-                    {{ derrotas_juntos }}
-                </div>
-
-                <div>
-                    Derrotas juntos
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="secao">
-
-        <div class="titulo">
-            Confrontos diretos
-        </div>
-
-        <table>
-
-            <tr>
-
-                <th>Data</th>
-                <th>Rodada</th>
-                <th>Confronto</th>
-
-            </tr>
-
-            {% for jogo in confrontos %}
-
-            <tr>
-
-                <td>
-                    {{ jogo.data_jogo }}
-                </td>
-
-                <td>
-                    {{ jogo.rodada }}
-                </td>
-
-                <td>
-                    {{ jogo.descricao_confronto }}
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </table>
-
-    </div>
-
-    {% endif %}
-
-</div>
-
-</body>
-</html>
+{% endblock %}

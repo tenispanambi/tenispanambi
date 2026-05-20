@@ -2,81 +2,199 @@
 
 {% block content %}
 
-<div style="max-width:1200px;margin:40px auto;background:white;padding:35px;border-radius:25px;">
+<div style="
+max-width:1250px;
+margin:40px auto;
+background:white;
+padding:35px;
+border-radius:25px;
+box-shadow:0 5px 18px rgba(0,0,0,0.08);
+">
 
-    <h1 style="color:#0b4d91;font-size:42px;">
+    <h1 style="
+    color:#0b4d91;
+    font-size:42px;
+    margin-top:0;
+    ">
         Meus Jogos
     </h1>
 
-    <table style="width:100%;border-collapse:collapse;margin-top:25px;">
+    <table style="
+    width:100%;
+    border-collapse:collapse;
+    margin-top:25px;
+    ">
 
-        <tr style="background:#0b4d91;color:white;">
+        <tr style="
+        background:#0b4d91;
+        color:white;
+        ">
             <th style="padding:16px;text-align:left;">Data</th>
             <th style="padding:16px;text-align:left;">Confronto</th>
             <th style="padding:16px;text-align:center;">Rodada</th>
+            <th style="padding:16px;text-align:center;">Placar</th>
             <th style="padding:16px;text-align:center;">Resultado</th>
-            <th style="padding:16px;text-align:center;">Ranking</th>
+            <th style="padding:16px;text-align:center;">Status</th>
         </tr>
 
         {% for p in participacoes %}
 
-        <tr style="border-bottom:1px solid #eee;">
+        <tr style="
+        border-bottom:1px solid #eee;
+        ">
+
             <td style="padding:16px;">
                 {{ p.jogo.data_jogo }}
             </td>
 
             <td style="padding:16px;">
-                <strong>{{ p.jogo.descricao_confronto }}</strong><br>
-                <small>{{ p.jogo.placar_resumido }}</small>
+                <strong>
+                    {{ p.jogo.descricao_confronto }}
+                </strong>
             </td>
 
             <td style="padding:16px;text-align:center;">
                 {{ p.jogo.rodada }}
             </td>
 
-            <td style="padding:16px;text-align:center;">
-                {% if p.vencedor %}
-                    <span style="color:#1e8e3e;font-weight:bold;">Vitória</span>
-                {% else %}
-                    <span style="color:#d93025;font-weight:bold;">Derrota</span>
-                {% endif %}
+            <td style="
+            padding:16px;
+            text-align:center;
+            color:#0b4d91;
+            font-weight:bold;
+            ">
+                {{ p.jogo.placar_resumido }}
             </td>
 
             <td style="padding:16px;text-align:center;">
-                {% if p.contabilizado %}
+
+                {% if p.vencedor %}
+
+                    <span style="
+                    color:#1e8e3e;
+                    font-weight:bold;
+                    ">
+                        Vitória
+                    </span>
+
+                {% else %}
+
+                    <span style="
+                    color:#d93025;
+                    font-weight:bold;
+                    ">
+                        Derrota
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td style="padding:16px;text-align:center;">
+
+                {% if p.jogo.tipo_jogo == 'SIMPLES' %}
+
+                    <span style="
+                    background:#e0f2fe;
+                    color:#075985;
+                    padding:8px 14px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                    ">
+                        🔵 Simples / Amistoso
+                    </span>
+
+                    <small style="
+                    color:#777;
+                    display:block;
+                    margin-top:6px;
+                    ">
+                        Conta para histórico, vitórias, derrotas, games, sets e Head to Head.
+                    </small>
+
+                {% elif p.jogo.tipo_jogo == 'DUPLAS' %}
+
+                    <span style="
+                    background:#dcfce7;
+                    color:#166534;
+                    padding:8px 14px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                    ">
+                        🟢 Duplas / Amistoso
+                    </span>
+
+                    <small style="
+                    color:#777;
+                    display:block;
+                    margin-top:6px;
+                    ">
+                        Conta para histórico de duplas e Head to Head.
+                    </small>
+
+                {% elif p.contabilizado %}
+
                     <span style="
                     background:#d4edda;
                     color:#155724;
                     padding:8px 14px;
                     border-radius:20px;
                     font-weight:bold;
+                    display:inline-block;
                     ">
-                        🟢 Contabilizado
+                        🟢 Conta no ranking
                     </span>
-                {% else %}
-                    <div>
-                        <span style="
-                        background:#f8d7da;
-                        color:#721c24;
-                        padding:8px 14px;
-                        border-radius:20px;
-                        font-weight:bold;
-                        ">
-                            🔴 Desconsiderado
-                        </span>
-                    </div>
 
-                    <small style="color:#777;">
+                {% elif p.historico_valido %}
+
+                    <span style="
+                    background:#fff3cd;
+                    color:#856404;
+                    padding:8px 14px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                    ">
+                        🟡 Histórico
+                    </span>
+
+                {% else %}
+
+                    <span style="
+                    background:#f8d7da;
+                    color:#721c24;
+                    padding:8px 14px;
+                    border-radius:20px;
+                    font-weight:bold;
+                    display:inline-block;
+                    ">
+                        🔴 Desconsiderado
+                    </span>
+
+                    <small style="
+                    color:#777;
+                    display:block;
+                    margin-top:6px;
+                    ">
                         {{ p.motivo_desconsiderado }}
                     </small>
+
                 {% endif %}
+
             </td>
+
         </tr>
 
         {% empty %}
 
         <tr>
-            <td colspan="5" style="padding:25px;text-align:center;color:#777;">
+            <td colspan="6" style="
+            padding:25px;
+            text-align:center;
+            color:#777;
+            ">
                 Nenhum jogo encontrado.
             </td>
         </tr>

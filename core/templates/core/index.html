@@ -1,8 +1,9 @@
+{% extends 'base/base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
+{% block content %}
+
+
 <meta charset="UTF-8">
 <title>TenisPanambi</title>
 
@@ -324,23 +325,6 @@ body{
 
 <body>
 
-<div class="topo">
-
-    <div class="logo">
-        <img src="{% static 'img/logo-tenis.png' %}">
-    </div>
-
-    <div class="menu">
-        <a href="/">Início</a>
-        <a href="/ranking/">Ranking</a>
-        <a href="/torneios/">Torneios</a>
-        <a href="/meus-jogos/">Jogos</a>
-        <a href="/login/" class="botao">Login</a>
-        <a href="/cadastro/" class="botao-verde">Criar conta</a>
-    </div>
-
-</div>
-
 <div class="container">
 
     <div class="titulo-home">
@@ -650,5 +634,4 @@ function mostrarRanking(cat){
 
 </script>
 
-</body>
-</html>
+{% endblock %}

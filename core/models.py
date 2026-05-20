@@ -28,9 +28,7 @@ class Jogador(models.Model):
         blank=True
     )
 
-    nome = models.CharField(
-        max_length=150
-    )
+    nome = models.CharField(max_length=150)
 
     email = models.EmailField(
         blank=True,
@@ -50,10 +48,11 @@ class Jogador(models.Model):
     )
 
     categoria = models.CharField(
-        max_length=1,
-        choices=CATEGORIAS,
-        default='C'
-    )
+    max_length=1,
+    choices=CATEGORIAS,
+    blank=True,
+    null=True
+)
 
     nivel = models.CharField(
         max_length=20,
@@ -85,13 +84,13 @@ class Jogador(models.Model):
         null=True
     )
 
-    ativo = models.BooleanField(
-        default=False
-    )
+    jogos_historicos = models.IntegerField(default=0)
+    vitorias_historicas = models.IntegerField(default=0)
+    derrotas_historicas = models.IntegerField(default=0)
 
-    criado_em = models.DateTimeField(
-        auto_now_add=True
-    )
+    ativo = models.BooleanField(default=False)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.nome} - Categoria {self.categoria}'
@@ -106,6 +105,8 @@ class Torneio(models.Model):
         ('RANKING', 'Ranking'),
         ('MATA_MATA', 'Mata-mata'),
         ('GRUPOS', 'Grupos'),
+        ('AMISTOSO', 'Amistoso'),
+        ('TREINO', 'Treino'),
     ]
 
     DISPUTAS = [
@@ -114,10 +115,11 @@ class Torneio(models.Model):
     ]
 
     STATUS = [
-        ('ABERTO', 'Aberto'),
-        ('EM_ANDAMENTO', 'Em andamento'),
-        ('ENCERRADO', 'Encerrado'),
-    ]
+    ('ABERTO', 'Aberto'),
+    ('EM_ANDAMENTO', 'Em andamento'),
+    ('FASE_FINAIS', 'Fase finais'),
+    ('ENCERRADO', 'Encerrado definitivamente'),
+]
 
     nome = models.CharField(max_length=100)
     edicao = models.IntegerField(default=1)
@@ -135,7 +137,10 @@ class Torneio(models.Model):
         default='DUPLAS'
     )
 
-    data_inicio = models.DateField()
+    data_inicio = models.DateField(
+        blank=True,
+        null=True
+    )
 
     data_fim = models.DateField(
         blank=True,
@@ -488,8 +493,8 @@ class RankingJogador(models.Model):
         null=True
     )
 
-    class Meta:
-        unique_together = (
+class Meta:
+    unique_together = (
             'torneio',
             'categoria',
             'jogador'
@@ -497,3 +502,59 @@ class RankingJogador(models.Model):
 
     def __str__(self):
         return f'{self.jogador} - {self.pontos} pts'
+
+
+class CampeaoTorneio(models.Model):
+
+    CATEGORIAS = [
+        ('A', 'Categoria A'),
+        ('B', 'Categoria B'),
+        ('C', 'Categoria C'),
+    ]
+
+    categoria = models.CharField(
+        max_length=1,
+        choices=CATEGORIAS
+    )
+
+    edicao = models.IntegerField()
+
+    data_final = models.DateField()
+
+    campeao_1 = models.CharField(
+        max_length=100
+    )
+
+    campeao_2 = models.CharField(
+        max_length=100
+    )
+
+    finalista_1 = models.CharField(
+        max_length=100
+    )
+
+    finalista_2 = models.CharField(
+        max_length=100
+    )
+
+    placar = models.CharField(
+        max_length=50
+    )
+
+    observacoes = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    criado_em = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = [
+            'categoria',
+            '-edicao'
+        ]
+
+    def __str__(self):
+        return f'{self.get_categoria_display()} - {self.edicao}ª edição'

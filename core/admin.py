@@ -1,23 +1,37 @@
-from .services.ranking import recalcular_ranking
-
 from django.contrib import admin
 
 from .models import (
     Jogador,
     Torneio,
     CategoriaTorneio,
+    InscricaoTorneio,
     Jogo,
     ParticipanteJogo,
+    SetJogo,
     RankingJogador,
-    InscricaoTorneio,
+    CampeaoTorneio,
 )
 
+from .services.ranking import recalcular_ranking
 
-class ParticipanteJogoInline(admin.TabularInline):
+
+# =========================
+# INLINES
+# =========================
+
+class ParticipanteInline(admin.TabularInline):
     model = ParticipanteJogo
     extra = 4
-    autocomplete_fields = ['jogador']
 
+
+class SetInline(admin.TabularInline):
+    model = SetJogo
+    extra = 3
+
+
+# =========================
+# JOGADOR
+# =========================
 
 @admin.register(Jogador)
 class JogadorAdmin(admin.ModelAdmin):
@@ -40,27 +54,28 @@ class JogadorAdmin(admin.ModelAdmin):
         'nome',
         'cidade',
         'instagram',
-        'categoria',
     )
 
-    ordering = (
-        'categoria',
-        'nome',
-    )
 
+# =========================
+# TORNEIO
+# =========================
 
 @admin.register(Torneio)
 class TorneioAdmin(admin.ModelAdmin):
 
     list_display = (
         'nome',
+        'edicao',
+        'ano',
         'tipo',
+        'disputa',
         'status',
-        'data_inicio',
     )
 
     list_filter = (
         'tipo',
+        'disputa',
         'status',
     )
 
@@ -68,6 +83,10 @@ class TorneioAdmin(admin.ModelAdmin):
         'nome',
     )
 
+
+# =========================
+# CATEGORIA TORNEIO
+# =========================
 
 @admin.register(CategoriaTorneio)
 class CategoriaTorneioAdmin(admin.ModelAdmin):
@@ -77,85 +96,19 @@ class CategoriaTorneioAdmin(admin.ModelAdmin):
         'categoria',
         'quantidade_jogadores',
         'classificados_finais',
-        'rebaixados',
-        'promovidos',
+        'melhores_resultados',
+        'max_jogos_por_rodada',
     )
 
     list_filter = (
-        'categoria',
-    )
-
-
-@admin.register(Jogo)
-class JogoAdmin(admin.ModelAdmin):
-
-    list_display = (
-        'id',
-        'descricao_confronto',
-        'tipo_jogo',
-        'torneio',
-        'categoria',
-        'rodada',
-        'data_jogo',
-        'status',
-    )
-
-    list_filter = (
-        'tipo_jogo',
         'categoria',
         'torneio',
-        'rodada',
-        'status',
     )
 
-    search_fields = (
-        'participantes__jogador__nome',
-        'torneio__nome',
-        'categoria__categoria',
-    )
 
-    inlines = [
-        ParticipanteJogoInline
-    ]
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-
-        if (
-            obj.status == 'CONFIRMADO'
-            and obj.tipo_jogo == 'CHAMPIONSHIP_DUPLAS'
-            and obj.torneio
-            and obj.categoria
-        ):
-            recalcular_ranking(
-                obj.torneio,
-                obj.categoria
-            )
-
-
-@admin.register(RankingJogador)
-class RankingJogadorAdmin(admin.ModelAdmin):
-
-    list_display = (
-        'posicao',
-        'jogador',
-        'categoria',
-        'pontos',
-        'vitorias',
-        'derrotas',
-        'status_ranking',
-    )
-
-    list_filter = (
-        'categoria',
-        'status_ranking',
-    )
-
-    ordering = (
-        'categoria',
-        'posicao',
-    )
-
+# =========================
+# INSCRIÇÃO
+# =========================
 
 @admin.register(InscricaoTorneio)
 class InscricaoTorneioAdmin(admin.ModelAdmin):
@@ -168,11 +121,125 @@ class InscricaoTorneioAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        'categoria',
         'ativo',
+        'categoria',
     )
 
     search_fields = (
         'jogador__nome',
-        'torneio__nome',
+    )
+
+
+# =========================
+# JOGOS
+# =========================
+
+@admin.register(Jogo)
+class JogoAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'descricao_confronto',
+        'tipo_jogo',
+        'torneio',
+        'categoria',
+        'fase',
+        'data_jogo',
+        'rodada',
+        'status',
+    )
+
+    list_filter = (
+        'tipo_jogo',
+        'status',
+        'fase',
+        'rodada',
+        'torneio',
+        'categoria',
+    )
+
+    search_fields = (
+        'participantes__jogador__nome',
+    )
+
+    inlines = [
+        ParticipanteInline,
+        SetInline,
+    ]
+
+    def save_model(self, request, obj, form, change):
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change
+        )
+
+        if (
+            obj.status == 'CONFIRMADO'
+            and obj.tipo_jogo == 'CHAMPIONSHIP_DUPLAS'
+            and obj.torneio
+            and obj.categoria
+        ):
+
+            recalcular_ranking(
+                obj.torneio,
+                obj.categoria
+            )
+
+
+# =========================
+# RANKING
+# =========================
+
+@admin.register(RankingJogador)
+class RankingJogadorAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'jogador',
+        'categoria',
+        'pontos',
+        'vitorias',
+        'derrotas',
+        'aproveitamento',
+        'posicao',
+        'status_ranking',
+    )
+
+    list_filter = (
+        'categoria',
+        'status_ranking',
+    )
+
+    search_fields = (
+        'jogador__nome',
+    )
+
+
+# =========================
+# MURAL DOS CAMPEÕES
+# =========================
+
+@admin.register(CampeaoTorneio)
+class CampeaoTorneioAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'categoria',
+        'edicao',
+        'data_final',
+        'campeao_1',
+        'campeao_2',
+        'placar',
+    )
+
+    list_filter = (
+        'categoria',
+        'edicao',
+    )
+
+    search_fields = (
+        'campeao_1',
+        'campeao_2',
+        'finalista_1',
+        'finalista_2',
     )

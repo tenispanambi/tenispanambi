@@ -1,122 +1,298 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TenisPanambi</title>
+    <meta charset="UTF-8">
 
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#eef2f7;
-}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-.topo{
-    background:linear-gradient(90deg,#063b73,#0b5aa0);
-    color:white;
-    padding:14px 35px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 3px 12px rgba(0,0,0,0.18);
-}
+    <title>Tênis Panambi</title>
 
-.logo img{
-    height:68px;
-}
+    {% load static %}
 
-.menu{
-    display:flex;
-    gap:12px;
-    align-items:center;
-}
+    <style>
 
-.menu a{
-    color:white;
-    text-decoration:none;
-    font-weight:bold;
-    padding:10px 14px;
-    border-radius:10px;
-    transition:0.2s;
-}
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
 
-.menu a:hover{
-    background:rgba(255,255,255,0.18);
-}
+        body{
+            background:#eef2f7;
+        }
 
-.usuario{
-    background:white;
-    color:#0b4d91;
-    padding:9px 14px;
-    border-radius:20px;
-    font-weight:bold;
-    margin-left:10px;
-}
+        .topo{
 
-.conteudo{
-    padding:35px;
-}
+            width:100%;
+            background:#0b4d91;
 
-@media(max-width:900px){
-    .topo{
-        flex-direction:column;
-        gap:15px;
-    }
+            padding:18px 35px;
 
-    .menu{
-        flex-wrap:wrap;
-        justify-content:center;
-    }
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
 
-    .logo img{
-        height:55px;
-    }
-}
-</style>
+            box-shadow:0 2px 10px rgba(0,0,0,0.12);
+        }
+
+        .logo-area{
+
+            display:flex;
+            align-items:center;
+            gap:15px;
+        }
+
+        .logo-area img{
+            height:60px;
+        }
+
+        .logo-texto{
+
+            color:white;
+            font-size:26px;
+            font-weight:bold;
+        }
+
+        .menu{
+
+            display:flex;
+            align-items:center;
+            gap:24px;
+            flex-wrap:wrap;
+        }
+
+        .menu a{
+
+            color:white;
+            text-decoration:none;
+            font-size:17px;
+            font-weight:bold;
+
+            transition:0.2s;
+        }
+
+        .menu a:hover{
+            opacity:0.8;
+        }
+
+        .btn-login{
+
+            background:white;
+            color:#0b4d91 !important;
+
+            padding:12px 22px;
+            border-radius:12px;
+        }
+
+        .btn-criar{
+
+            background:#d7ff00;
+            color:#111 !important;
+
+            padding:12px 22px;
+            border-radius:12px;
+        }
+
+        .usuario-logado{
+
+            color:#d7ff00;
+            font-weight:bold;
+            font-size:17px;
+            white-space:nowrap;
+            cursor:pointer;
+
+            padding:8px 0;
+        }
+
+        .dropdown-usuario{
+            position:relative;
+        }
+
+        .dropdown-conteudo{
+
+            display:none;
+
+            position:absolute;
+
+            right:0;
+            top:25px;
+
+            padding-top:14px;
+
+            background:transparent;
+
+            min-width:240px;
+
+            z-index:999;
+        }
+
+        .dropdown-box{
+
+            background:white;
+
+            border-radius:16px;
+
+            overflow:hidden;
+
+            box-shadow:0 6px 20px rgba(0,0,0,0.18);
+        }
+
+        .dropdown-box a{
+
+            display:block;
+
+            padding:16px 20px;
+
+            color:#0b4d91 !important;
+
+            font-weight:bold;
+
+            border-bottom:1px solid #eee;
+
+            background:white;
+        }
+
+        .dropdown-box a:hover{
+            background:#f4f7fb;
+        }
+
+        .dropdown-usuario:hover .dropdown-conteudo{
+            display:block;
+        }
+
+        .conteudo{
+            padding:35px;
+        }
+
+        @media(max-width:1100px){
+
+            .topo{
+                flex-direction:column;
+                gap:20px;
+                padding:20px;
+            }
+
+            .menu{
+                justify-content:center;
+            }
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<div class="topo">
+    <div class="topo">
 
-    <div class="logo">
-        <a href="/">
-            <img src="{% static 'img/logo-tenis.png' %}">
-        </a>
+        <div class="logo-area">
+
+            <img src="{% static 'img/logo.png' %}">
+
+            <div class="logo-texto">
+                Tênis Panambi
+            </div>
+
+        </div>
+
+        <div class="menu">
+
+            <a href="/">
+                Início
+            </a>
+
+            <a href="/ranking/">
+                Ranking
+            </a>
+
+            <a href="/mural-campeoes/">
+                Mural dos Campeões
+            </a>
+
+            <a href="/torneios/">
+                Torneios
+            </a>
+
+            <a href="/head-to-head/">
+                Head to Head
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <a href="/meu-painel/">
+                    Meu Painel
+                </a>
+
+                <a href="/meu-perfil/">
+                    Meu Perfil
+                </a>
+
+                <a href="/meus-jogos/">
+                    Meus Jogos
+                </a>
+
+                <a href="/lancar-jogo/">
+                    Lançar Jogo
+                </a>
+
+                <div class="dropdown-usuario">
+
+                    <div class="usuario-logado">
+                        👤 {{ user.username }}
+                    </div>
+
+                    <div class="dropdown-conteudo">
+
+                        <div class="dropdown-box">
+
+                            <a href="/meu-painel/">
+                                Meu Painel
+                            </a>
+
+                            <a href="/meu-perfil/">
+                                Meu Perfil
+                            </a>
+
+                            <a href="/password_change/">
+                                Trocar Senha
+                            </a>
+
+                            <a href="/logout/">
+                                Sair
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <a href="/login/" class="btn-login">
+                    Login
+                </a>
+
+                <a href="/cadastro/" class="btn-criar">
+                    Criar conta
+                </a>
+
+            {% endif %}
+
+        </div>
+
     </div>
 
-    <div class="menu">
+    <div class="conteudo">
 
-        <a href="/">Início</a>
-        <a href="/meu-painel/">Meu Painel</a>
-        <a href="/meus-jogos/">Meus Jogos</a>
-        <a href="/torneios/">Torneios</a>
-        <a href="/ranking/">Ranking</a>
-        <a href="/headtohead/">Head to Head</a>
-
-        {% if user.is_authenticated %}
-            <span class="usuario">
-                {{ user.username }}
-            </span>
-
-            <a href="/logout/">Sair</a>
-        {% endif %}
+        {% block content %}
+        {% endblock %}
 
     </div>
-
-</div>
-
-<div class="conteudo">
-
-    {% block content %}
-    {% endblock %}
-
-</div>
 
 </body>
+
 </html>

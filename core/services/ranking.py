@@ -1,158 +1,159 @@
-from core.models import RankingJogador, ParticipanteJogo
+from django.db.models import Q
 
-
-def pontos_championship(vencedor, games_feitos):
-    if vencedor:
-        return 20 + games_feitos
-
-    return 5 + games_feitos
+from core.models import (
+    RankingJogador,
+    ParticipanteJogo,
+    Jogo,
+)
 
 
 def recalcular_ranking(torneio, categoria):
+
+    if not torneio or not categoria:
+        return
+
     RankingJogador.objects.filter(
         torneio=torneio,
         categoria=categoria
     ).delete()
 
-    participantes = ParticipanteJogo.objects.filter(
-        jogo__torneio=torneio,
-        jogo__categoria=categoria,
-        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS',
-        jogo__status='CONFIRMADO'
+    jogos = Jogo.objects.filter(
+        torneio=torneio,
+        categoria=categoria,
+        status='CONFIRMADO',
+        tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    ).filter(
+        Q(fase__isnull=True) | Q(fase='')
     ).order_by(
-        'jogo__rodada',
-        'jogo__id'
+        'rodada',
+        'id'
     )
 
-    dados = {}
     controle_rodadas = {}
+    resultados_por_jogador = {}
 
-    for p in participantes:
-        jogador = p.jogador
-        jogo = p.jogo
-        rodada = jogo.rodada or 0
+    for jogo in jogos:
 
-        if rodada > categoria.rodadas_contabilizadas:
-            continue
-
-        if jogador.id not in dados:
-            dados[jogador.id] = {
-                'jogador': jogador,
-                'resultados': [],
-                'vitorias': 0,
-                'derrotas': 0,
-                'games_feitos': 0,
-                'games_sofridos': 0,
-            }
-
-        chave = f'{jogador.id}_{rodada}'
-
-        if chave not in controle_rodadas:
-            controle_rodadas[chave] = 0
-
-        if controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
-            continue
-
-        controle_rodadas[chave] += 1
-
-        if p.lado == 'A':
-            games_feitos = jogo.total_games_lado_a()
-            games_sofridos = jogo.total_games_lado_b()
-        else:
-            games_feitos = jogo.total_games_lado_b()
-            games_sofridos = jogo.total_games_lado_a()
-
-        pontos = pontos_championship(
-            p.vencedor,
-            games_feitos
+        participantes = ParticipanteJogo.objects.filter(
+            jogo=jogo
         )
 
-        dados[jogador.id]['resultados'].append(pontos)
-        dados[jogador.id]['games_feitos'] += games_feitos
-        dados[jogador.id]['games_sofridos'] += games_sofridos
+        for p in participantes:
 
-        if p.vencedor:
-            dados[jogador.id]['vitorias'] += 1
-        else:
-            dados[jogador.id]['derrotas'] += 1
+            jogador = p.jogador
+            rodada = jogo.rodada or 0
 
-    ranking_final = []
+            chave = f'{jogador.id}_{rodada}'
 
-    for item in dados.values():
-        resultados = sorted(
-            item['resultados'],
+            if chave not in controle_rodadas:
+                controle_rodadas[chave] = 0
+
+            if controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+                continue
+
+            controle_rodadas[chave] += 1
+
+            if p.lado == 'A':
+                games_feitos = jogo.total_games_lado_a()
+                games_sofridos = jogo.total_games_lado_b()
+            else:
+                games_feitos = jogo.total_games_lado_b()
+                games_sofridos = jogo.total_games_lado_a()
+
+            if p.vencedor:
+                pontos = 20 + games_feitos
+                vitoria = 1
+                derrota = 0
+            else:
+                pontos = 5 + games_feitos
+                vitoria = 0
+                derrota = 1
+
+            if jogador.id not in resultados_por_jogador:
+                resultados_por_jogador[jogador.id] = {
+                    'jogador': jogador,
+                    'resultados': []
+                }
+
+            resultados_por_jogador[jogador.id]['resultados'].append({
+                'pontos': pontos,
+                'vitoria': vitoria,
+                'derrota': derrota,
+                'games_feitos': games_feitos,
+                'games_sofridos': games_sofridos,
+            })
+
+    ranking_lista = []
+
+    for dados in resultados_por_jogador.values():
+
+        jogador = dados['jogador']
+
+        melhores = sorted(
+            dados['resultados'],
+            key=lambda r: r['pontos'],
             reverse=True
-        )
+        )[:categoria.melhores_resultados]
 
-        melhores = resultados[:categoria.melhores_resultados]
-        pontos = sum(melhores)
+        pontos = sum(r['pontos'] for r in melhores)
+        vitorias = sum(r['vitoria'] for r in melhores)
+        derrotas = sum(r['derrota'] for r in melhores)
+        games_feitos = sum(r['games_feitos'] for r in melhores)
+        games_sofridos = sum(r['games_sofridos'] for r in melhores)
 
-        jogos = item['vitorias'] + item['derrotas']
+        total_jogos = vitorias + derrotas
 
         aproveitamento = 0
 
-        if jogos > 0:
+        if total_jogos > 0:
             aproveitamento = round(
-                (item['vitorias'] / jogos) * 100,
+                (vitorias / total_jogos) * 100,
                 2
             )
 
-        ranking = RankingJogador.objects.create(
+        ranking_lista.append({
+            'jogador': jogador,
+            'pontos': pontos,
+            'vitorias': vitorias,
+            'derrotas': derrotas,
+            'games_feitos': games_feitos,
+            'games_sofridos': games_sofridos,
+            'aproveitamento': aproveitamento,
+        })
+
+    ranking_lista = sorted(
+        ranking_lista,
+        key=lambda r: (
+            r['pontos'],
+            r['vitorias'],
+            r['games_feitos'] - r['games_sofridos'],
+            r['games_feitos']
+        ),
+        reverse=True
+    )
+
+    total_jogadores = len(ranking_lista)
+
+    for indice, item in enumerate(ranking_lista, start=1):
+
+        status_ranking = ''
+
+        if categoria.classificados_finais and indice <= categoria.classificados_finais:
+            status_ranking = 'CLASSIFICADO'
+
+        if categoria.rebaixados and indice > total_jogadores - categoria.rebaixados:
+            status_ranking = 'REBAIXADO'
+
+        RankingJogador.objects.create(
             torneio=torneio,
             categoria=categoria,
             jogador=item['jogador'],
-            pontos=pontos,
+            pontos=item['pontos'],
             vitorias=item['vitorias'],
             derrotas=item['derrotas'],
             games_feitos=item['games_feitos'],
             games_sofridos=item['games_sofridos'],
-            aproveitamento=aproveitamento
+            aproveitamento=item['aproveitamento'],
+            posicao=indice,
+            status_ranking=status_ranking
         )
-
-        ranking_final.append(ranking)
-
-    ranking_final.sort(
-        key=lambda x: (
-            -x.pontos,
-            -x.vitorias,
-            -x.games_feitos,
-            -x.aproveitamento
-        )
-    )
-
-    posicao = 1
-
-    for r in ranking_final:
-        status = 'NORMAL'
-
-        if categoria.categoria == 'A':
-            if posicao <= categoria.classificados_finais:
-                status = 'CLASSIFICADO'
-            elif posicao > (
-                categoria.quantidade_jogadores -
-                categoria.rebaixados
-            ):
-                status = 'REBAIXADO'
-
-        elif categoria.categoria == 'B':
-            if posicao <= categoria.promovidos:
-                status = 'ACESSO'
-            elif posicao <= categoria.classificados_finais:
-                status = 'CLASSIFICADO'
-            elif posicao > (
-                categoria.quantidade_jogadores -
-                categoria.rebaixados
-            ):
-                status = 'REBAIXADO'
-
-        elif categoria.categoria == 'C':
-            if posicao <= categoria.promovidos:
-                status = 'ACESSO'
-            elif posicao <= categoria.classificados_finais:
-                status = 'CLASSIFICADO'
-
-        r.posicao = posicao
-        r.status_ranking = status
-        r.save()
-
-        posicao += 1

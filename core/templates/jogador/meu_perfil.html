@@ -6,17 +6,17 @@
 
 <div style="
 max-width:1100px;
-margin:40px auto;
+margin:35px auto;
 background:white;
-padding:50px;
+padding:40px;
 border-radius:25px;
 box-shadow:0 5px 20px rgba(0,0,0,0.08);
 ">
 
     <h1 style="
     color:#0b4d91;
-    margin-bottom:40px;
-    font-size:48px;
+    margin-bottom:25px;
+    font-size:42px;
     ">
         Meu Perfil
     </h1>
@@ -25,14 +25,17 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
 
         {% csrf_token %}
 
-        <div style="text-align:center;margin-bottom:50px;">
+        <div style="
+        text-align:center;
+        margin-bottom:30px;
+        ">
 
             {% if jogador.foto %}
                 <img
                     src="{{ jogador.foto.url }}"
                     style="
-                    width:170px;
-                    height:170px;
+                    width:140px;
+                    height:140px;
                     border-radius:50%;
                     object-fit:cover;
                     border:5px solid #0b4d91;
@@ -40,8 +43,8 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                 >
             {% else %}
                 <div style="
-                width:170px;
-                height:170px;
+                width:140px;
+                height:140px;
                 border-radius:50%;
                 background:#ddd;
                 margin:auto;
@@ -49,12 +52,15 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                 </div>
             {% endif %}
 
-            <div style="margin-top:20px;">
+            <div style="
+            margin-top:15px;
+            font-size:16px;
+            ">
                 <input
                     type="file"
                     name="foto"
                     style="
-                    font-size:18px;
+                    font-size:16px;
                     "
                 >
             </div>
@@ -64,16 +70,15 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
         <div style="
         display:grid;
         grid-template-columns:1fr 1fr;
-        gap:35px;
+        gap:25px;
         ">
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Nome
@@ -85,49 +90,48 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     value="{{ jogador.nome }}"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     E-mail
                 </label>
 
                 <input
-                    type="email"
+                    type="text"
                     name="email"
                     value="{{ jogador.email }}"
+                    placeholder="Opcional"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Telefone
@@ -139,22 +143,21 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     value="{{ jogador.telefone }}"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Cidade
@@ -166,22 +169,21 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     value="{{ jogador.cidade }}"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Categoria
@@ -191,49 +193,33 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     name="categoria"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
-
-                    <option value="A"
-                        {% if jogador.categoria == 'A' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="A" {% if jogador.categoria == 'A' %}selected{% endif %}>
                         Categoria A
                     </option>
 
-                    <option value="B"
-                        {% if jogador.categoria == 'B' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="B" {% if jogador.categoria == 'B' %}selected{% endif %}>
                         Categoria B
                     </option>
 
-                    <option value="C"
-                        {% if jogador.categoria == 'C' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="C" {% if jogador.categoria == 'C' %}selected{% endif %}>
                         Categoria C
                     </option>
-
                 </select>
-
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Nível
@@ -243,49 +229,33 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     name="nivel"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
-
-                    <option value="INICIANTE"
-                        {% if jogador.nivel == 'INICIANTE' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="INICIANTE" {% if jogador.nivel == 'INICIANTE' %}selected{% endif %}>
                         Iniciante
                     </option>
 
-                    <option value="INTERMEDIARIO"
-                        {% if jogador.nivel == 'INTERMEDIARIO' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="INTERMEDIARIO" {% if jogador.nivel == 'INTERMEDIARIO' %}selected{% endif %}>
                         Intermediário
                     </option>
 
-                    <option value="AVANCADO"
-                        {% if jogador.nivel == 'AVANCADO' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="AVANCADO" {% if jogador.nivel == 'AVANCADO' %}selected{% endif %}>
                         Avançado
                     </option>
-
                 </select>
-
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Mão dominante
@@ -295,41 +265,29 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     name="mao_dominante"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
-
-                    <option value="DIREITA"
-                        {% if jogador.mao_dominante == 'DIREITA' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="DIREITA" {% if jogador.mao_dominante == 'DIREITA' %}selected{% endif %}>
                         Direita
                     </option>
 
-                    <option value="ESQUERDA"
-                        {% if jogador.mao_dominante == 'ESQUERDA' %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="ESQUERDA" {% if jogador.mao_dominante == 'ESQUERDA' %}selected{% endif %}>
                         Esquerda
                     </option>
-
                 </select>
-
             </div>
 
             <div>
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Raquete
@@ -341,22 +299,21 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     value="{{ jogador.raquete }}"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
             </div>
 
             <div style="grid-column:1/3;">
-
                 <label style="
-                font-size:20px;
+                font-size:18px;
                 font-weight:bold;
                 display:block;
-                margin-bottom:10px;
+                margin-bottom:8px;
                 color:#0b4d91;
                 ">
                     Instagram
@@ -368,10 +325,10 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                     value="{{ jogador.instagram }}"
                     style="
                     width:100%;
-                    padding:18px;
-                    border-radius:14px;
+                    padding:15px;
+                    border-radius:12px;
                     border:1px solid #ccc;
-                    font-size:18px;
+                    font-size:17px;
                     box-sizing:border-box;
                     "
                 >
@@ -382,14 +339,14 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
         <button
             type="submit"
             style="
-            margin-top:40px;
+            margin-top:35px;
             width:100%;
-            padding:20px;
+            padding:18px;
             background:#0b4d91;
             color:white;
             border:none;
             border-radius:14px;
-            font-size:22px;
+            font-size:20px;
             font-weight:bold;
             cursor:pointer;
             "
