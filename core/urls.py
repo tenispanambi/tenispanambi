@@ -130,8 +130,8 @@ urlpatterns = [
     ),
 
     path(
-    'mural-campeoes/',
-    views.mural_campeoes,
-    name='mural_campeoes'
+         'mural-campeoes/',
+         views.mural_campeoes,
+         name='mural_campeoes'
     ),
 ]
