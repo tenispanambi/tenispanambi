@@ -8,7 +8,16 @@ SECRET_KEY = 'django-insecure-tenispanambi'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+
+    '127.0.0.1',
+    'localhost',
+    'tenispanambi-production.up.railway.app',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://tenispanambi-production.up.railway.app',
+]
 
 
 INSTALLED_APPS = [
