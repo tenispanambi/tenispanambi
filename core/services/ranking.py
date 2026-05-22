@@ -4,6 +4,7 @@ from core.models import (
     RankingJogador,
     ParticipanteJogo,
     Jogo,
+    InscricaoTorneio,
 )
 
 
@@ -83,6 +84,22 @@ def recalcular_ranking(torneio, categoria):
                 'games_sofridos': games_sofridos,
             })
 
+    inscricoes = InscricaoTorneio.objects.filter(
+        torneio=torneio,
+        categoria=categoria,
+        ativo=True
+    )
+
+    for inscricao in inscricoes:
+
+        jogador = inscricao.jogador
+
+        if jogador.id not in resultados_por_jogador:
+            resultados_por_jogador[jogador.id] = {
+                'jogador': jogador,
+                'resultados': []
+            }
+
     ranking_lista = []
 
     for dados in resultados_por_jogador.values():
@@ -93,7 +110,10 @@ def recalcular_ranking(torneio, categoria):
             dados['resultados'],
             key=lambda r: r['pontos'],
             reverse=True
-        )[:categoria.melhores_resultados]
+        )
+
+        if categoria.melhores_resultados and categoria.melhores_resultados > 0:
+            melhores = melhores[:categoria.melhores_resultados]
 
         pontos = sum(r['pontos'] for r in melhores)
         vitorias = sum(r['vitoria'] for r in melhores)

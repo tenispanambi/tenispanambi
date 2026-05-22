@@ -42,8 +42,8 @@ def home(request):
     ).count()
 
     ultimos_jogos = Jogo.objects.filter(
-        status='CONFIRMADO'
-    ).order_by('-data_jogo')[:5]
+    status='CONFIRMADO'
+    ).order_by('-data_jogo','-id')[:10]
 
     ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
@@ -129,7 +129,6 @@ def cadastro(request):
     )
 
 
-@login_required
 def ranking(request):
     ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
@@ -223,7 +222,6 @@ def jogador(request, jogador_id):
     )
 
 
-@login_required
 def headtohead(request):
 
     jogadores = Jogador.objects.filter(
@@ -595,130 +593,74 @@ def meu_painel(request):
     if not jogador:
         return redirect('/meu-perfil/')
 
-    ranking = RankingJogador.objects.filter(
-        jogador=jogador
-    ).first()
-
-    jogos_query = ParticipanteJogo.objects.filter(
-        jogador=jogador
+    participacoes_confirmadas = ParticipanteJogo.objects.filter(
+        jogador=jogador,
+        jogo__status='CONFIRMADO'
     ).select_related(
-        'jogo',
-        'jogo__torneio',
-        'jogo__categoria'
-    ).order_by(
-        'jogo__rodada',
-        'jogo__id'
+        'jogo'
+    ).prefetch_related(
+        'jogo__participantes'
     )
 
-    controle_rodadas = {}
-    jogos_validos = []
+    jogos_sistema = participacoes_confirmadas.count()
+    vitorias_sistema = participacoes_confirmadas.filter(vencedor=True).count()
+    derrotas_sistema = participacoes_confirmadas.filter(vencedor=False).count()
 
-    for p in jogos_query:
-        jogo = p.jogo
-        categoria = jogo.categoria
-        rodada = jogo.rodada or 0
-
-        p.contabilizado = False
-        p.historico_valido = False
-        p.motivo_desconsiderado = ''
-        p.pontos_calculados = 0
-
-        if jogo.status != 'CONFIRMADO':
-            p.motivo_desconsiderado = 'Jogo ainda não confirmado.'
-
-        elif jogo.tipo_jogo != 'CHAMPIONSHIP_DUPLAS':
-            p.historico_valido = True
-            p.motivo_desconsiderado = 'Histórico / amistoso.'
-
-        elif categoria and rodada > categoria.rodadas_contabilizadas:
-            p.motivo_desconsiderado = 'Rodada fora do limite.'
-
-        else:
-            categoria_id = categoria.id if categoria else 0
-            chave = f'{jogador.id}_{categoria_id}_{rodada}'
-
-            if chave not in controle_rodadas:
-                controle_rodadas[chave] = 0
-
-            if categoria and controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
-                p.motivo_desconsiderado = 'Excedeu limite da rodada.'
-            else:
-                controle_rodadas[chave] += 1
-                p.historico_valido = True
-
-                if p.lado == 'A':
-                    games_feitos = jogo.total_games_lado_a()
-                else:
-                    games_feitos = jogo.total_games_lado_b()
-
-                if p.vencedor:
-                    p.pontos_calculados = 20 + games_feitos
-                else:
-                    p.pontos_calculados = 5 + games_feitos
-
-                jogos_validos.append(p)
-
-    jogos_validos_ordenados = sorted(
-        jogos_validos,
-        key=lambda p: p.pontos_calculados,
-        reverse=True
-    )
-
-    categorias_processadas = {}
-
-    for p in jogos_validos_ordenados:
-        categoria = p.jogo.categoria
-
-        if not categoria:
-            continue
-
-        if categoria.id not in categorias_processadas:
-            categorias_processadas[categoria.id] = 0
-
-        if categorias_processadas[categoria.id] < categoria.melhores_resultados:
-            p.contabilizado = True
-            categorias_processadas[categoria.id] += 1
-        else:
-            p.contabilizado = False
-            p.historico_valido = True
-            p.motivo_desconsiderado = 'Fora dos melhores resultados.'
-
-    jogos_ordenados = sorted(
-        jogos_query,
-        key=lambda p: (
-            -(p.jogo.data_jogo.toordinal() if p.jogo.data_jogo else 0),
-            -(p.jogo.id or 0)
-        )
-    )
-
-    total = jogos_query.count()
-    vitorias = jogos_query.filter(vencedor=True).count()
-    derrotas = total - vitorias
+    total_jogos = jogador.jogos_historicos + jogos_sistema
+    total_vitorias = jogador.vitorias_historicas + vitorias_sistema
+    total_derrotas = jogador.derrotas_historicas + derrotas_sistema
 
     aproveitamento = 0
-    if total > 0:
-        aproveitamento = round((vitorias / total) * 100, 1)
 
-    jogos = jogos_ordenados[:15]
-
-    parceiros = {}
-
-    for p in jogos_query:
-        jogo = p.jogo
-
-        if jogo.tipo_jogo == 'SIMPLES':
-            continue
-
-        parceiros_mesmo_lado = ParticipanteJogo.objects.filter(
-            jogo=jogo,
-            lado=p.lado
-        ).exclude(
-            jogador=jogador
+    if total_jogos > 0:
+        aproveitamento = round(
+            (total_vitorias / total_jogos) * 100,
+            1
         )
 
-        for parceiro in parceiros_mesmo_lado:
-            nome = parceiro.jogador.nome
-            parceiros[nome] = parceiros.get(nome, 0) + 1
+    ranking = RankingJogador.objects.filter(
+        jogador=jogador
+    ).order_by(
+        'posicao'
+    ).first()
+
+    jogos = ParticipanteJogo.objects.filter(
+        jogador=jogador
+    ).select_related(
+        'jogo'
+    ).prefetch_related(
+        'jogo__participantes'
+    ).order_by(
+        '-jogo__data_jogo',
+        '-jogo__id'
+    )[:10]
+
+    parceiros = {}
+    fregueses = {}
+    rivais = {}
+
+    for p in participacoes_confirmadas:
+
+        participantes = p.jogo.participantes.all()
+
+        for outro in participantes:
+
+            if outro.jogador == jogador:
+                continue
+
+            nome = outro.jogador.nome
+
+            # PARCEIRO = joga do mesmo lado
+            if outro.lado == p.lado:
+                parceiros[nome] = parceiros.get(nome, 0) + 1
+
+            # ADVERSÁRIO = lado diferente
+            if outro.lado != p.lado:
+
+                if p.vencedor:
+                    fregueses[nome] = fregueses.get(nome, 0) + 1
+                else:
+                    rivais[nome] = rivais.get(nome, 0) + 1
 
     parceiros_ordenados = sorted(
         parceiros.items(),
@@ -726,31 +668,20 @@ def meu_painel(request):
         reverse=True
     )[:5]
 
-    vitorias_contra = {}
-    total_confrontos = {}
+    maior_fregues = None
+    maior_rival = None
 
-    for p in jogos_query:
-        adversarios = ParticipanteJogo.objects.filter(
-            jogo=p.jogo
-        ).exclude(
-            lado=p.lado
+    if fregueses:
+        maior_fregues = max(
+            fregueses,
+            key=fregueses.get
         )
 
-        for adv in adversarios:
-            nome = adv.jogador.nome
-
-            total_confrontos[nome] = total_confrontos.get(nome, 0) + 1
-
-            if p.vencedor:
-                vitorias_contra[nome] = vitorias_contra.get(nome, 0) + 1
-
-    maior_fregues = None
-    if vitorias_contra:
-        maior_fregues = max(vitorias_contra, key=vitorias_contra.get)
-
-    maior_rival = None
-    if total_confrontos:
-        maior_rival = max(total_confrontos, key=total_confrontos.get)
+    if rivais:
+        maior_rival = max(
+            rivais,
+            key=rivais.get
+        )
 
     return render(
         request,
@@ -758,11 +689,13 @@ def meu_painel(request):
         {
             'jogador': jogador,
             'ranking': ranking,
-            'total': total,
-            'vitorias': vitorias,
-            'derrotas': derrotas,
-            'aproveitamento': aproveitamento,
             'jogos': jogos,
+
+            'total_jogos': total_jogos,
+            'total_vitorias': total_vitorias,
+            'total_derrotas': total_derrotas,
+            'aproveitamento': aproveitamento,
+
             'parceiros_ordenados': parceiros_ordenados,
             'maior_fregues': maior_fregues,
             'maior_rival': maior_rival,

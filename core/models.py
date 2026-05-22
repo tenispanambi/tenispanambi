@@ -87,6 +87,11 @@ class Jogador(models.Model):
     jogos_historicos = models.IntegerField(default=0)
     vitorias_historicas = models.IntegerField(default=0)
     derrotas_historicas = models.IntegerField(default=0)
+    titulos_cd = models.IntegerField(default=0)
+    vice_cd = models.IntegerField(default=0)
+    semifinal_cd = models.IntegerField(default=0)
+    
+    
 
     ativo = models.BooleanField(default=False)
 

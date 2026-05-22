@@ -129,6 +129,15 @@ class InscricaoTorneioAdmin(admin.ModelAdmin):
         'jogador__nome',
     )
 
+    def save_model(self, request, obj, form, change):
+
+        super().save_model(request, obj, form, change)
+
+        recalcular_ranking(
+    obj.torneio,
+    obj.categoria
+)
+
 
 # =========================
 # JOGOS
@@ -183,9 +192,9 @@ class JogoAdmin(admin.ModelAdmin):
         ):
 
             recalcular_ranking(
-                obj.torneio,
-                obj.categoria
-            )
+    obj.torneio,
+    obj.categoria
+)
 
 
 # =========================

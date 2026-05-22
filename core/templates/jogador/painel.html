@@ -2,78 +2,27 @@
 
 {% block content %}
 
-<div style="
-max-width:1350px;
-margin:40px auto;
-">
+<div style="max-width:1350px;margin:40px auto;">
 
-    <!-- PERFIL -->
-
-    <div style="
-    background:white;
-    border-radius:30px;
-    padding:35px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
-    display:flex;
-    gap:35px;
-    align-items:center;
-    ">
+    <div style="background:white;border-radius:30px;padding:35px;box-shadow:0 5px 20px rgba(0,0,0,0.08);display:flex;gap:35px;align-items:center;">
 
         <div>
-
             {% if jogador.foto %}
-
-                <img
-                    src="{{ jogador.foto.url }}"
-                    style="
-                    width:190px;
-                    height:190px;
-                    border-radius:50%;
-                    object-fit:cover;
-                    border:6px solid #0b4d91;
-                    "
-                >
-
+                <img src="{{ jogador.foto.url }}" style="width:190px;height:190px;border-radius:50%;object-fit:cover;border:6px solid #0b4d91;">
             {% else %}
-
-                <div style="
-                width:190px;
-                height:190px;
-                border-radius:50%;
-                background:#ddd;
-                border:6px solid #0b4d91;
-                ">
-                </div>
-
+                <div style="width:190px;height:190px;border-radius:50%;background:#ddd;border:6px solid #0b4d91;"></div>
             {% endif %}
-
         </div>
 
         <div style="flex:1;">
 
-            <h1 style="
-            margin:0;
-            color:#0b4d91;
-            font-size:54px;
-            ">
+            <h1 style="margin:0;color:#0b4d91;font-size:54px;">
                 {{ jogador.nome }}
             </h1>
 
-            <div style="
-            margin-top:20px;
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:16px;
-            font-size:21px;
-            color:#475569;
-            ">
+            <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:21px;color:#475569;">
 
-                <div>
-                    🎾 Categoria:
-                    <strong style="color:#0b4d91;">
-                        {{ jogador.categoria }}
-                    </strong>
-                </div>
+                <div>🎾 Categoria: <strong style="color:#0b4d91;">{{ jogador.categoria|default:"Sem categoria" }}</strong></div>
 
                 <div>
                     🏆 Ranking:
@@ -86,207 +35,70 @@ margin:40px auto;
                     </strong>
                 </div>
 
-                <div>
-                    📈 Nível:
-                    <strong>
-                        {{ jogador.nivel }}
-                    </strong>
-                </div>
-
-                <div>
-                    📍 Cidade:
-                    <strong>
-                        {{ jogador.cidade }}
-                    </strong>
-                </div>
-
-                <div>
-                    🎾 Raquete:
-                    <strong>
-                        {{ jogador.raquete }}
-                    </strong>
-                </div>
-
-                <div>
-                    📸 Instagram:
-                    <strong>
-                        {{ jogador.instagram }}
-                    </strong>
-                </div>
+                <div>📈 Nível: <strong>{{ jogador.nivel }}</strong></div>
+                <div>📍 Cidade: <strong>{{ jogador.cidade }}</strong></div>
+                <div>🎾 Raquete: <strong>{{ jogador.raquete }}</strong></div>
+                <div>📸 Instagram: <strong>{{ jogador.instagram }}</strong></div>
 
             </div>
 
             <div style="margin-top:28px;">
-
-                <a
-                    href="/meu-perfil/"
-                    style="
-                    background:#0b4d91;
-                    color:white;
-                    padding:14px 22px;
-                    border-radius:14px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:bold;
-                    "
-                >
+                <a href="/meu-perfil/" style="background:#0b4d91;color:white;padding:14px 22px;border-radius:14px;text-decoration:none;font-size:18px;font-weight:bold;">
                     Editar Perfil
                 </a>
-
             </div>
 
         </div>
 
     </div>
 
-    <!-- CARDS TOPO -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:25px;margin-top:35px;">
 
-    <div style="
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:25px;
-    margin-top:35px;
-    ">
-
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:35px;
-        text-align:center;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        ">
-            <div style="
-            font-size:70px;
-            font-weight:bold;
-            color:#0b4d91;
-            ">
-                {{ total }}
+        <div style="background:white;border-radius:25px;padding:35px;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
+            <div style="font-size:70px;font-weight:bold;color:#0b4d91;">
+                {{ total_jogos }}
             </div>
-
-            <div style="
-            font-size:22px;
-            color:#444;
-            margin-top:10px;
-            ">
-                Jogos
-            </div>
+            <div style="font-size:22px;color:#444;margin-top:10px;">Jogos</div>
         </div>
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:35px;
-        text-align:center;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        ">
-            <div style="
-            font-size:70px;
-            font-weight:bold;
-            color:#1e8e3e;
-            ">
-                {{ vitorias }}
+        <div style="background:white;border-radius:25px;padding:35px;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
+            <div style="font-size:70px;font-weight:bold;color:#1e8e3e;">
+                {{ total_vitorias }}
             </div>
-
-            <div style="
-            font-size:22px;
-            color:#444;
-            margin-top:10px;
-            ">
-                Vitórias
-            </div>
+            <div style="font-size:22px;color:#444;margin-top:10px;">Vitórias</div>
         </div>
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:35px;
-        text-align:center;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        ">
-            <div style="
-            font-size:70px;
-            font-weight:bold;
-            color:#d93025;
-            ">
-                {{ derrotas }}
+        <div style="background:white;border-radius:25px;padding:35px;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
+            <div style="font-size:70px;font-weight:bold;color:#d93025;">
+                {{ total_derrotas }}
             </div>
-
-            <div style="
-            font-size:22px;
-            color:#444;
-            margin-top:10px;
-            ">
-                Derrotas
-            </div>
+            <div style="font-size:22px;color:#444;margin-top:10px;">Derrotas</div>
         </div>
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:35px;
-        text-align:center;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        ">
-            <div style="
-            font-size:70px;
-            font-weight:bold;
-            color:#f4a300;
-            ">
+        <div style="background:white;border-radius:25px;padding:35px;text-align:center;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
+            <div style="font-size:70px;font-weight:bold;color:#f4a300;">
                 {{ aproveitamento }}%
             </div>
-
-            <div style="
-            font-size:22px;
-            color:#444;
-            margin-top:10px;
-            ">
-                Aproveitamento
-            </div>
+            <div style="font-size:22px;color:#444;margin-top:10px;">Aproveitamento</div>
         </div>
 
     </div>
 
-    <!-- PARCEIROS / RIVAL -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:25px;margin-top:40px;">
 
-    <div style="
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:25px;
-    margin-top:40px;
-    ">
+        <div style="background:white;border-radius:25px;padding:30px;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:30px;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        ">
-
-            <h2 style="
-            margin-top:0;
-            color:#0b4d91;
-            ">
+            <h2 style="margin-top:0;color:#0b4d91;">
                 🤝 Parceiros Frequentes
             </h2>
 
             {% for parceiro, total_parceiro in parceiros_ordenados %}
 
-                <div style="
-                display:flex;
-                justify-content:space-between;
-                padding:12px 0;
-                border-bottom:1px solid #eee;
-                ">
-
+                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;">
                     <strong>{{ parceiro }}</strong>
-
-                    <span style="
-                    color:#0b4d91;
-                    font-weight:bold;
-                    ">
+                    <span style="color:#0b4d91;font-weight:bold;">
                         {{ total_parceiro }} jogos
                     </span>
-
                 </div>
 
             {% empty %}
@@ -297,103 +109,49 @@ margin:40px auto;
 
         </div>
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:30px;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        text-align:center;
-        ">
+        <div style="background:white;border-radius:25px;padding:30px;box-shadow:0 5px 18px rgba(0,0,0,0.08);text-align:center;">
 
-            <h2 style="
-            margin-top:0;
-            color:#1e8e3e;
-            ">
+            <h2 style="margin-top:0;color:#1e8e3e;">
                 🔥 Maior Freguês
             </h2>
 
             {% if maior_fregues %}
-
-                <div style="
-                font-size:34px;
-                font-weight:bold;
-                color:#1e8e3e;
-                margin-top:40px;
-                ">
+                <div style="font-size:34px;font-weight:bold;color:#1e8e3e;margin-top:40px;">
                     {{ maior_fregues }}
                 </div>
-
             {% else %}
-
                 <p>Nenhum confronto.</p>
-
             {% endif %}
 
         </div>
 
-        <div style="
-        background:white;
-        border-radius:25px;
-        padding:30px;
-        box-shadow:0 5px 18px rgba(0,0,0,0.08);
-        text-align:center;
-        ">
+        <div style="background:white;border-radius:25px;padding:30px;box-shadow:0 5px 18px rgba(0,0,0,0.08);text-align:center;">
 
-            <h2 style="
-            margin-top:0;
-            color:#d93025;
-            ">
+            <h2 style="margin-top:0;color:#d93025;">
                 ⚔️ Maior Rival
             </h2>
 
             {% if maior_rival %}
-
-                <div style="
-                font-size:34px;
-                font-weight:bold;
-                color:#d93025;
-                margin-top:40px;
-                ">
+                <div style="font-size:34px;font-weight:bold;color:#d93025;margin-top:40px;">
                     {{ maior_rival }}
                 </div>
-
             {% else %}
-
                 <p>Nenhum rival encontrado.</p>
-
             {% endif %}
 
         </div>
 
     </div>
 
-    <!-- ÚLTIMOS JOGOS -->
+    <div style="background:white;margin-top:40px;border-radius:25px;padding:40px;box-shadow:0 5px 18px rgba(0,0,0,0.08);">
 
-    <div style="
-    background:white;
-    margin-top:40px;
-    border-radius:25px;
-    padding:40px;
-    box-shadow:0 5px 18px rgba(0,0,0,0.08);
-    ">
-
-        <h2 style="
-        margin-top:0;
-        color:#0b4d91;
-        font-size:36px;
-        ">
+        <h2 style="margin-top:0;color:#0b4d91;font-size:36px;">
             Últimos Jogos
         </h2>
 
-        <table style="
-        width:100%;
-        border-collapse:collapse;
-        margin-top:30px;
-        ">
+        <table style="width:100%;border-collapse:collapse;margin-top:30px;">
 
-            <tr style="
-            background:#eef2f7;
-            ">
+            <tr style="background:#eef2f7;">
                 <th style="padding:18px;text-align:left;">Data</th>
                 <th style="padding:18px;text-align:left;">Confronto</th>
                 <th style="padding:18px;text-align:center;">Resultado</th>
@@ -403,108 +161,68 @@ margin:40px auto;
 
             {% for p in jogos %}
 
-            <tr style="
-            border-bottom:1px solid #eee;
-            ">
+            <tr style="border-bottom:1px solid #eee;">
 
                 <td style="padding:18px;">
                     {{ p.jogo.data_jogo }}
                 </td>
 
                 <td style="padding:18px;">
-                    <strong>
-                        {{ p.jogo.descricao_confronto }}
-                    </strong>
+                    <strong>{{ p.jogo.descricao_confronto }}</strong>
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
-
+                <td style="padding:18px;text-align:center;">
                     {% if p.vencedor %}
-
-                        <span style="
-                        color:#1e8e3e;
-                        font-weight:bold;
-                        ">
-                            Vitória
-                        </span>
-
+                        <span style="color:#1e8e3e;font-weight:bold;">Vitória</span>
                     {% else %}
-
-                        <span style="
-                        color:#d93025;
-                        font-weight:bold;
-                        ">
-                            Derrota
-                        </span>
-
+                        <span style="color:#d93025;font-weight:bold;">Derrota</span>
                     {% endif %}
-
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                color:#0b4d91;
-                font-weight:bold;
-                ">
+                <td style="padding:18px;text-align:center;color:#0b4d91;font-weight:bold;">
                     {{ p.jogo.placar_resumido }}
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
+                <td style="padding:18px;text-align:center;">
 
-                    {% if p.jogo.torneio and p.jogo.torneio.tipo == 'AMISTOSO' %}
+                    {% if p.jogo.tipo_jogo == 'SIMPLES' %}
 
-                        <span style="
-                        color:#f4a300;
-                        font-weight:bold;
-                        ">
-                            Histórico
+                        <span style="color:#0b4d91;font-weight:bold;">
+                            Simples / Histórico
                         </span>
 
-                    {% elif p.contabilizado %}
+                    {% elif p.jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS' %}
 
-                        {% if p.jogo.tipo_jogo == 'SIMPLES' %}
+                        {% if p.jogo.fase == 'SEMI' %}
 
-                            <span style="
-                            color:#0b4d91;
-                            font-weight:bold;
-                            ">
-                                Ranking Simples
+                            <span style="color:#9333ea;font-weight:bold;">
+                                Semifinal CD
+                            </span>
+
+                        {% elif p.jogo.fase == 'FINAL' %}
+
+                            <span style="color:#d97706;font-weight:bold;">
+                                Final CD
                             </span>
 
                         {% else %}
 
-                            <span style="
-                            color:#1e8e3e;
-                            font-weight:bold;
-                            ">
+                            <span style="color:#1e8e3e;font-weight:bold;">
                                 Ranking Duplas
                             </span>
 
                         {% endif %}
 
-                    {% elif p.historico_valido %}
+                    {% elif p.jogo.tipo_jogo == 'AMISTOSO_DUPLAS' %}
 
-                        <span style="
-                        color:#f4a300;
-                        font-weight:bold;
-                        ">
-                            Histórico
+                        <span style="color:#f4a300;font-weight:bold;">
+                            Duplas / Histórico
                         </span>
 
                     {% else %}
 
-                        <span style="
-                        color:#d93025;
-                        font-weight:bold;
-                        ">
-                            Descartado
+                        <span style="color:#64748b;font-weight:bold;">
+                            Histórico
                         </span>
 
                     {% endif %}
@@ -516,11 +234,7 @@ margin:40px auto;
             {% empty %}
 
             <tr>
-                <td colspan="5" style="
-                padding:30px;
-                text-align:center;
-                color:#64748b;
-                ">
+                <td colspan="5" style="padding:30px;text-align:center;color:#64748b;">
                     Nenhum jogo registrado.
                 </td>
             </tr>

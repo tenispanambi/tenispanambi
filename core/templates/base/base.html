@@ -1,15 +1,14 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Tênis Panambi</title>
-
-    {% load static %}
 
     <style>
 
@@ -25,159 +24,111 @@
         }
 
         .topo{
-
-            width:100%;
-            background:#0b4d91;
-
+    background:linear-gradient(
+        90deg,
+        #0004ff 0%,
+        #120949 70%
+    );
             padding:18px 35px;
-
             display:flex;
             align-items:center;
             justify-content:space-between;
-
-            box-shadow:0 2px 10px rgba(0,0,0,0.12);
+            box-shadow:0 3px 10px rgba(0,0,0,0.15);
         }
 
         .logo-area{
-
             display:flex;
             align-items:center;
-            gap:15px;
+            gap:22px;
         }
 
         .logo-area img{
-            height:60px;
+            height:95px;
+            width:auto;
+            object-fit:contain;
         }
 
-        .logo-texto{
-
+        .titulo-site{
             color:white;
-            font-size:26px;
-            font-weight:bold;
+            font-size:52px;
+            font-weight:800;
+            line-height:1;
+        }
+
+        .subtitulo-site{
+            color:#dbeafe;
+            font-size:18px;
+            margin-top:6px;
         }
 
         .menu{
-
             display:flex;
             align-items:center;
             gap:24px;
-            flex-wrap:wrap;
         }
 
         .menu a{
-
             color:white;
             text-decoration:none;
-            font-size:17px;
             font-weight:bold;
-
+            font-size:16px;
+            white-space:nowrap;
             transition:0.2s;
         }
 
         .menu a:hover{
-            opacity:0.8;
-        }
-
-        .btn-login{
-
-            background:white;
-            color:#0b4d91 !important;
-
-            padding:12px 22px;
-            border-radius:12px;
-        }
-
-        .btn-criar{
-
-            background:#d7ff00;
-            color:#111 !important;
-
-            padding:12px 22px;
-            border-radius:12px;
-        }
-
-        .usuario-logado{
-
             color:#d7ff00;
+        }
+
+        .usuario{
+            color:#d7ff00 !important;
             font-weight:bold;
-            font-size:17px;
-            white-space:nowrap;
-            cursor:pointer;
-
-            padding:8px 0;
-        }
-
-        .dropdown-usuario{
-            position:relative;
-        }
-
-        .dropdown-conteudo{
-
-            display:none;
-
-            position:absolute;
-
-            right:0;
-            top:25px;
-
-            padding-top:14px;
-
-            background:transparent;
-
-            min-width:240px;
-
-            z-index:999;
-        }
-
-        .dropdown-box{
-
-            background:white;
-
-            border-radius:16px;
-
-            overflow:hidden;
-
-            box-shadow:0 6px 20px rgba(0,0,0,0.18);
-        }
-
-        .dropdown-box a{
-
-            display:block;
-
-            padding:16px 20px;
-
-            color:#0b4d91 !important;
-
-            font-weight:bold;
-
-            border-bottom:1px solid #eee;
-
-            background:white;
-        }
-
-        .dropdown-box a:hover{
-            background:#f4f7fb;
-        }
-
-        .dropdown-usuario:hover .dropdown-conteudo{
-            display:block;
+            text-decoration:none;
+            display:flex;
+            align-items:center;
+            gap:8px;
         }
 
         .conteudo{
             padding:35px;
         }
 
-        @media(max-width:1100px){
+        .usuario-dropdown{
+            position:relative;
+            display:inline-block;
+            padding:12px 0;
+        }
 
-            .topo{
-                flex-direction:column;
-                gap:20px;
-                padding:20px;
-            }
+        .dropdown-menu{
+            position:absolute;
+            top:42px;
+            right:0;
+            background:white;
+            min-width:210px;
+            border-radius:14px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.25);
+            overflow:hidden;
+            display:none;
+            z-index:9999;
+        }
 
-            .menu{
-                justify-content:center;
-            }
+        .usuario-dropdown:hover .dropdown-menu{
+            display:block;
+        }
+
+        .dropdown-menu a{
+            display:block;
+            padding:14px 18px;
+            color:#0b4d91 !important;
+            text-decoration:none;
+            font-weight:bold;
+            font-size:15px;
+            border-bottom:1px solid #e5e7eb;
+            background:white;
+        }
+
+        .dropdown-menu a:hover{
+            background:#eef2ff;
         }
 
     </style>
@@ -186,113 +137,106 @@
 
 <body>
 
-    <div class="topo">
+<header class="topo">
 
-        <div class="logo-area">
+    <div class="logo-area">
 
-            <img src="{% static 'img/logo.png' %}">
+        <img src="{% static 'img/logo-tenis.png' %}">
 
-            <div class="logo-texto">
+        <div>
+
+            <div class="titulo-site">
                 Tênis Panambi
+            </div>
+
+            <div class="subtitulo-site">
+                Ranking • Jogos • Torneios
             </div>
 
         </div>
 
-        <div class="menu">
+    </div>
 
-            <a href="/">
-                Início
+    <nav class="menu">
+
+        <a href="/">Início</a>
+
+        <a href="/ranking/">
+            Ranking
+        </a>
+
+        <a href="/mural-campeoes/">
+            Mural dos Campeões
+        </a>
+
+        <a href="/head-to-head/">
+            Head to Head
+        </a>
+
+        {% if user.is_authenticated %}
+
+            <a href="/meu-painel/">
+                Meu Painel
             </a>
 
-            <a href="/ranking/">
-                Ranking
+            <a href="/meu-perfil/">
+                Meu Perfil
             </a>
 
-            <a href="/mural-campeoes/">
-                Mural dos Campeões
+            <a href="/meus-jogos/">
+                Meus Jogos
             </a>
 
-            <a href="/torneios/">
-                Torneios
+            <a href="/lancar-jogo/">
+                Lançar Jogo
             </a>
 
-            <a href="/head-to-head/">
-                Head to Head
-            </a>
+            <div class="usuario-dropdown">
 
-            {% if user.is_authenticated %}
-
-                <a href="/meu-painel/">
-                    Meu Painel
+                <a href="#" class="usuario">
+                    👤 {{ user.username }}
                 </a>
 
-                <a href="/meu-perfil/">
-                    Meu Perfil
-                </a>
+                <div class="dropdown-menu">
 
-                <a href="/meus-jogos/">
-                    Meus Jogos
-                </a>
+                    <a href="/meu-perfil/">
+                        Meu Perfil
+                    </a>
 
-                <a href="/lancar-jogo/">
-                    Lançar Jogo
-                </a>
+                    <a href="/password_change/">
+    Trocar Senha
+</a>
 
-                <div class="dropdown-usuario">
-
-                    <div class="usuario-logado">
-                        👤 {{ user.username }}
-                    </div>
-
-                    <div class="dropdown-conteudo">
-
-                        <div class="dropdown-box">
-
-                            <a href="/meu-painel/">
-                                Meu Painel
-                            </a>
-
-                            <a href="/meu-perfil/">
-                                Meu Perfil
-                            </a>
-
-                            <a href="/password_change/">
-                                Trocar Senha
-                            </a>
-
-                            <a href="/logout/">
-                                Sair
-                            </a>
-
-                        </div>
-
-                    </div>
+                    <a href="/logout/">
+                        Sair
+                    </a>
 
                 </div>
 
-            {% else %}
+            </div>
 
-                <a href="/login/" class="btn-login">
-                    Login
-                </a>
+        {% else %}
 
-                <a href="/cadastro/" class="btn-criar">
-                    Criar conta
-                </a>
+            <a href="/login/">
+                Login
+            </a>
 
-            {% endif %}
+            <a href="/cadastro/">
+                Criar conta
+            </a>
 
-        </div>
+        {% endif %}
 
-    </div>
+    </nav>
 
-    <div class="conteudo">
+</header>
 
-        {% block content %}
-        {% endblock %}
+<div class="conteudo">
 
-    </div>
+    {% block content %}
+    {% endblock %}
+
+</div>
 
 </body>
-
 </html>
