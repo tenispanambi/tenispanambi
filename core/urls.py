@@ -134,4 +134,10 @@ urlpatterns = [
          views.mural_campeoes,
          name='mural_campeoes'
     ),
+
+    path(
+    'confirmar-resultado-usuario/<int:jogo_id>/',
+    views.confirmar_resultado_usuario,
+    name='confirmar_resultado_usuario'
+),
 ]

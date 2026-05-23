@@ -289,6 +289,18 @@ class JogoAdmin(admin.ModelAdmin):
                 obj.categoria
             )
 
+    def delete_model(self, request, obj):
+
+        torneio = obj.torneio
+        categoria = obj.categoria
+
+        super().delete_model(request, obj)
+
+        recalcular_ranking(
+            torneio,
+            categoria
+        )        
+
 
 # =========================
 # RANKING

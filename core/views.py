@@ -1409,3 +1409,59 @@ def mural_campeoes(request):
             'campeoes_c': campeoes_c,
         }
     )
+@login_required
+def confirmar_resultado_usuario(request, jogo_id):
+
+    jogador_logado = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador_logado:
+        return redirect('/meu-perfil/')
+
+    jogo = get_object_or_404(
+        Jogo,
+        id=jogo_id
+    )
+
+    participacao = ParticipanteJogo.objects.filter(
+        jogo=jogo,
+        jogador=jogador_logado
+    ).first()
+
+    if not participacao:
+        messages.error(
+            request,
+            'Você não participa deste jogo.'
+        )
+        return redirect('/meus-jogos/')
+
+    if jogo.status != 'PENDENTE':
+        messages.error(
+            request,
+            'Este jogo já foi confirmado ou contestado.'
+        )
+        return redirect('/meus-jogos/')
+
+    if participacao.lado != 'B':
+        messages.error(
+            request,
+            'A confirmação deve ser feita pelo adversário.'
+        )
+        return redirect('/meus-jogos/')
+
+    jogo.status = 'CONFIRMADO'
+    jogo.save()
+
+    if jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS':
+        recalcular_ranking(
+            jogo.torneio,
+            jogo.categoria
+        )
+
+    messages.success(
+        request,
+        'Resultado confirmado com sucesso.'
+    )
+
+    return redirect('/meus-jogos/')
