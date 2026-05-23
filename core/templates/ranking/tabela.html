@@ -29,10 +29,12 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
         border-bottom:1px solid #eee;
         font-size:18px;
 
-        {% if r.status_ranking == 'ACESSO' %}
+        {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
             background:#e8f1ff;
-        {% elif r.status_ranking == 'CLASSIFICADO' %}
+
+        {% elif r.posicao <= 8 %}
             background:#edfdf1;
+
         {% elif r.status_ranking == 'REBAIXADO' %}
             background:#fff1f1;
         {% endif %}
@@ -45,6 +47,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
             font-weight:bold;
             color:#0b4d91;
             ">
+
                 {% if r.posicao == 1 %}
                     🥇
                 {% elif r.posicao == 2 %}
@@ -54,6 +57,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                 {% else %}
                     {{ r.posicao }}
                 {% endif %}
+
             </td>
 
             <td style="padding:18px;">
@@ -99,9 +103,10 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                         color:#777;
                         font-size:15px;
                         ">
+
                             Categoria {{ r.categoria.categoria }}
 
-                            {% if r.status_ranking == 'ACESSO' %}
+                            {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
 
                                 {% if r.categoria.categoria == 'B' %}
                                     · 🔵 Acesso Cat. A
@@ -109,7 +114,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                                     · 🔵 Acesso Cat. B
                                 {% endif %}
 
-                            {% elif r.status_ranking == 'CLASSIFICADO' %}
+                            {% elif r.posicao <= 8 %}
 
                                 · 🟢 Classificado Finais
 
@@ -118,6 +123,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                                 · 🔴 Rebaixamento
 
                             {% endif %}
+
                         </div>
 
                     </div>

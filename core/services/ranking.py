@@ -31,6 +31,7 @@ def recalcular_ranking(torneio, categoria):
     )
 
     controle_rodadas = {}
+    controle_jogos = set()
     resultados_por_jogador = {}
 
     for jogo in jogos:
@@ -42,17 +43,34 @@ def recalcular_ranking(torneio, categoria):
         for p in participantes:
 
             jogador = p.jogador
-            rodada = jogo.rodada or 0
 
-            chave = f'{jogador.id}_{rodada}'
+            chave_jogo = f'{jogo.id}_{jogador.id}'
 
-            if chave not in controle_rodadas:
-                controle_rodadas[chave] = 0
-
-            if controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+            if chave_jogo in controle_jogos:
                 continue
 
-            controle_rodadas[chave] += 1
+            controle_jogos.add(chave_jogo)
+
+            inscrito = InscricaoTorneio.objects.filter(
+                torneio=torneio,
+                categoria=categoria,
+                jogador=jogador,
+                ativo=True
+            ).exists()
+
+            if not inscrito:
+                continue
+
+            rodada = jogo.rodada or 0
+            chave_rodada = f'{jogador.id}_{rodada}'
+
+            if chave_rodada not in controle_rodadas:
+                controle_rodadas[chave_rodada] = 0
+
+            if controle_rodadas[chave_rodada] >= categoria.max_jogos_por_rodada:
+                continue
+
+            controle_rodadas[chave_rodada] += 1
 
             if p.lado == 'A':
                 games_feitos = jogo.total_games_lado_a()
@@ -158,9 +176,15 @@ def recalcular_ranking(torneio, categoria):
 
         status_ranking = ''
 
+        # CLASSIFICADOS / PROMOVIDOS
         if categoria.classificados_finais and indice <= categoria.classificados_finais:
-            status_ranking = 'CLASSIFICADO'
 
+            if categoria.categoria in ['B', 'C']:
+                status_ranking = 'PROMOVIDO'
+            else:
+                status_ranking = 'CLASSIFICADO'
+
+        # REBAIXADOS
         if categoria.rebaixados and indice > total_jogadores - categoria.rebaixados:
             status_ranking = 'REBAIXADO'
 

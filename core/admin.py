@@ -105,6 +105,47 @@ class CategoriaTorneioAdmin(admin.ModelAdmin):
         'torneio',
     )
 
+    actions = [
+        'importar_jogadores_ativos',
+    ]
+
+    def importar_jogadores_ativos(self, request, queryset):
+
+        total_criados = 0
+
+        for categoria_torneio in queryset:
+
+            jogadores = Jogador.objects.filter(
+                ativo=True,
+                categoria=categoria_torneio.categoria
+            )
+
+            for jogador in jogadores:
+
+                inscricao, criado = InscricaoTorneio.objects.get_or_create(
+                    jogador=jogador,
+                    torneio=categoria_torneio.torneio,
+                    categoria=categoria_torneio,
+                    defaults={
+                        'ativo': True
+                    }
+                )
+
+                if criado:
+                    total_criados += 1
+
+            recalcular_ranking(
+                categoria_torneio.torneio,
+                categoria_torneio
+            )
+
+        self.message_user(
+            request,
+            f'{total_criados} jogadores ativos foram inscritos automaticamente.'
+        )
+
+    importar_jogadores_ativos.short_description = 'Importar jogadores ativos desta categoria'
+
 
 # =========================
 # INSCRIÇÃO
@@ -155,15 +196,15 @@ class JogoAdmin(admin.ModelAdmin):
         'data_jogo',
         'rodada',
         'status',
+        'status_ranking',
     )
 
     list_filter = (
         'tipo_jogo',
         'status',
-        'fase',
-        'rodada',
         'torneio',
         'categoria',
+        'rodada',
     )
 
     search_fields = (
@@ -175,26 +216,78 @@ class JogoAdmin(admin.ModelAdmin):
         SetInline,
     ]
 
-    def save_model(self, request, obj, form, change):
+    def status_ranking(self, obj):
 
-        super().save_model(
-            request,
-            obj,
-            form,
-            change
+        if obj.status != 'CONFIRMADO':
+            return 'Não confirmado'
+
+        if obj.fase:
+            return 'Fase final'
+
+        if not obj.torneio or not obj.categoria:
+            return 'Histórico'
+
+        participantes = ParticipanteJogo.objects.filter(
+            jogo=obj
         )
 
-        if (
-            obj.status == 'CONFIRMADO'
-            and obj.tipo_jogo == 'CHAMPIONSHIP_DUPLAS'
-            and obj.torneio
-            and obj.categoria
-        ):
+        jogadores_contabilizados = []
 
+        for p in participantes:
+
+            inscrito = InscricaoTorneio.objects.filter(
+                torneio=obj.torneio,
+                categoria=obj.categoria,
+                jogador=p.jogador,
+                ativo=True
+            ).exists()
+
+            if not inscrito:
+                continue
+
+            jogos_rodada = ParticipanteJogo.objects.filter(
+                jogo__torneio=obj.torneio,
+                jogo__categoria=obj.categoria,
+                jogo__rodada=obj.rodada,
+                jogo__status='CONFIRMADO',
+                jogador=p.jogador
+            ).order_by(
+                'jogo__id'
+            )
+
+            posicao = 0
+
+            for item in jogos_rodada:
+
+                posicao += 1
+
+                if item.jogo.id == obj.id:
+                    break
+
+            if posicao <= obj.categoria.max_jogos_por_rodada:
+                jogadores_contabilizados.append(p.jogador.id)
+
+        if len(jogadores_contabilizados) == 0:
+            return 'Não computado'
+
+        total_participantes = participantes.count()
+
+        if len(jogadores_contabilizados) < total_participantes:
+            return 'Parcial'
+
+        return 'Computado'
+
+    status_ranking.short_description = 'Ranking'
+
+    def save_model(self, request, obj, form, change):
+
+        super().save_model(request, obj, form, change)
+
+        if obj.status == 'CONFIRMADO':
             recalcular_ranking(
-    obj.torneio,
-    obj.categoria
-)
+                obj.torneio,
+                obj.categoria
+            )
 
 
 # =========================

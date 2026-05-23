@@ -27,9 +27,7 @@ from .models import (
 
 
 def home(request):
-    total_jogadores = Jogador.objects.filter(
-        ativo=True
-    ).count()
+    total_jogadores = Jogador.objects.count()
 
     total_jogos = Jogo.objects.filter(
         status='CONFIRMADO'
@@ -224,9 +222,13 @@ def jogador(request, jogador_id):
 
 def headtohead(request):
 
-    jogadores = Jogador.objects.filter(
-        ativo=True
-    ).order_by('categoria', 'nome')
+    jogadores = Jogador.objects.all().exclude(
+    usuario__is_staff=True
+).exclude(
+    usuario__is_superuser=True
+).order_by(
+    'nome'
+)
 
     jogador1_id = request.GET.get('j1')
     jogador2_id = request.GET.get('j2')
