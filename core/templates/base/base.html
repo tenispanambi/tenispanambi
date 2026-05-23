@@ -24,15 +24,19 @@
         }
 
         .topo{
-    background:linear-gradient(
-        90deg,
-        #0004ff 0%,
-        #120949 70%
-    );
+            background:linear-gradient(
+                90deg,
+                #082f6b 0%,
+                #0b4d91 60%,
+                #facc15 120%
+            );
+
             padding:18px 35px;
+
             display:flex;
             align-items:center;
             justify-content:space-between;
+
             box-shadow:0 3px 10px rgba(0,0,0,0.15);
         }
 
@@ -65,6 +69,7 @@
             display:flex;
             align-items:center;
             gap:24px;
+            flex-wrap:wrap;
         }
 
         .menu a{
@@ -131,6 +136,124 @@
             background:#eef2ff;
         }
 
+        table{
+            width:100%;
+        }
+
+        img{
+            max-width:100%;
+        }
+
+        /* =========================
+           RESPONSIVO
+        ========================= */
+
+        @media(max-width:900px){
+
+            .topo{
+                flex-direction:column;
+                align-items:center;
+                justify-content:center;
+                padding:18px;
+                gap:18px;
+                text-align:center;
+            }
+
+            .logo-area{
+                flex-direction:column;
+                text-align:center;
+                gap:10px;
+            }
+
+            .logo-area img{
+                height:80px;
+            }
+
+            .titulo-site{
+                font-size:34px;
+            }
+
+            .subtitulo-site{
+                font-size:14px;
+            }
+
+            .menu{
+                justify-content:center;
+                gap:10px;
+            }
+
+            .menu a{
+                font-size:13px;
+                background:rgba(255,255,255,0.12);
+                padding:9px 12px;
+                border-radius:10px;
+            }
+
+            .conteudo{
+                padding:15px;
+            }
+
+            table{
+                font-size:13px;
+            }
+
+            th,
+            td{
+                padding:10px !important;
+            }
+
+        }
+
+        /* =========================
+   AJUSTES MOBILE GERAIS
+========================= */
+
+@media(max-width:900px){
+
+    body{
+        overflow-x:hidden;
+    }
+
+    .conteudo > div{
+        max-width:100% !important;
+    }
+
+    div[style*="grid-template-columns:repeat(4"]{
+        grid-template-columns:1fr 1fr !important;
+    }
+
+    div[style*="grid-template-columns:1fr 1fr 1fr"]{
+        grid-template-columns:1fr !important;
+    }
+
+    div[style*="grid-template-columns:340px"]{
+        grid-template-columns:1fr !important;
+    }
+
+    div[style*="display:flex"]{
+        max-width:100%;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    h1{
+        font-size:34px !important;
+    }
+
+    h2{
+        font-size:28px !important;
+    }
+
+    .titulo-site{
+        font-size:32px !important;
+    }
+
+}
+
     </style>
 
 </head>
@@ -141,7 +264,7 @@
 
     <div class="logo-area">
 
-        <img src="{% static 'img/logo-tenis.png' %}">
+        <img src="{% static 'img/logo.png' %}">
 
         <div>
 
@@ -166,7 +289,7 @@
         </a>
 
         <a href="/mural-campeoes/">
-            Mural dos Campeões
+            Campeões
         </a>
 
         <a href="/head-to-head/">
@@ -177,10 +300,6 @@
 
             <a href="/meu-painel/">
                 Meu Painel
-            </a>
-
-            <a href="/meu-perfil/">
-                Meu Perfil
             </a>
 
             <a href="/meus-jogos/">
@@ -204,8 +323,8 @@
                     </a>
 
                     <a href="/password_change/">
-    Trocar Senha
-</a>
+                        Trocar Senha
+                    </a>
 
                     <a href="/logout/">
                         Sair
@@ -222,7 +341,7 @@
             </a>
 
             <a href="/cadastro/">
-                Criar conta
+                Criar Conta
             </a>
 
         {% endif %}
