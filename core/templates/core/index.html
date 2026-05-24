@@ -446,7 +446,7 @@ body{
 
     <div class="grade-principal">
 
-        <!-- RANKING -->
+        <!-- RANKING A -->
         <div class="card">
 
             <div class="card-header">
@@ -504,6 +504,70 @@ body{
             </div>
 
         </div>
+
+        <!-- RANKING B -->
+
+<div id="rankingB" style="display:none;">
+
+    {% for r in ranking_b %}
+
+    <div class="ranking-item">
+
+        <div class="posicao">
+            {{ r.posicao }}
+        </div>
+
+        {% if r.jogador.foto %}
+            <img class="avatar" src="{{ r.jogador.foto.url }}">
+        {% else %}
+            <div class="avatar"></div>
+        {% endif %}
+
+        <div class="ranking-nome">
+            {{ r.jogador.nome }}
+        </div>
+
+        <div class="ranking-pontos">
+            {{ r.pontos }} pts
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- RANKING C -->
+
+<div id="rankingC" style="display:none;">
+
+    {% for r in ranking_c %}
+
+    <div class="ranking-item">
+
+        <div class="posicao">
+            {{ r.posicao }}
+        </div>
+
+        {% if r.jogador.foto %}
+            <img class="avatar" src="{{ r.jogador.foto.url }}">
+        {% else %}
+            <div class="avatar"></div>
+        {% endif %}
+
+        <div class="ranking-nome">
+            {{ r.jogador.nome }}
+        </div>
+
+        <div class="ranking-pontos">
+            {{ r.pontos }} pts
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
 
         <!-- TORNEIOS -->
         <div class="card">
