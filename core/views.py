@@ -601,7 +601,8 @@ def meu_painel(request):
     ).select_related(
         'jogo'
     ).prefetch_related(
-        'jogo__participantes'
+        'jogo__participantes',
+        'jogo__participantes__jogador'
     )
 
     jogos_sistema = participacoes_confirmadas.count()
@@ -631,15 +632,22 @@ def meu_painel(request):
     ).select_related(
         'jogo'
     ).prefetch_related(
-        'jogo__participantes'
+        'jogo__participantes',
+        'jogo__participantes__jogador'
     ).order_by(
         '-jogo__data_jogo',
         '-jogo__id'
     )[:10]
 
     parceiros = {}
-    fregueses = {}
-    rivais = {}
+    adversarios = {}
+
+    def criar_registro():
+        return {
+            'jogos': 0,
+            'vitorias': 0,
+            'derrotas': 0,
+        }
 
     for p in participacoes_confirmadas:
 
@@ -652,38 +660,92 @@ def meu_painel(request):
 
             nome = outro.jogador.nome
 
-            # PARCEIRO = joga do mesmo lado
+            # PARCEIRO = mesmo lado
             if outro.lado == p.lado:
-                parceiros[nome] = parceiros.get(nome, 0) + 1
 
-            # ADVERSÁRIO = lado diferente
-            if outro.lado != p.lado:
+                if nome not in parceiros:
+                    parceiros[nome] = criar_registro()
+
+                parceiros[nome]['jogos'] += 1
 
                 if p.vencedor:
-                    fregueses[nome] = fregueses.get(nome, 0) + 1
+                    parceiros[nome]['vitorias'] += 1
                 else:
-                    rivais[nome] = rivais.get(nome, 0) + 1
+                    parceiros[nome]['derrotas'] += 1
+
+            # ADVERSÁRIO = lado diferente
+            else:
+
+                if nome not in adversarios:
+                    adversarios[nome] = criar_registro()
+
+                adversarios[nome]['jogos'] += 1
+
+                if p.vencedor:
+                    adversarios[nome]['vitorias'] += 1
+                else:
+                    adversarios[nome]['derrotas'] += 1
 
     parceiros_ordenados = sorted(
         parceiros.items(),
-        key=lambda x: x[1],
+        key=lambda x: x[1]['jogos'],
         reverse=True
     )[:5]
 
-    maior_fregues = None
-    maior_rival = None
+    maior_fregues_detalhe = None
+    maior_rival_detalhe = None
+    melhor_parceiro_detalhe = None
+    pior_parceiro_detalhe = None
 
-    if fregueses:
-        maior_fregues = max(
-            fregueses,
-            key=fregueses.get
+    if adversarios:
+        nome_fregues, dados_fregues = max(
+            adversarios.items(),
+            key=lambda x: x[1]['vitorias']
         )
 
-    if rivais:
-        maior_rival = max(
-            rivais,
-            key=rivais.get
+        maior_fregues_detalhe = {
+            'nome': nome_fregues,
+            'jogos': dados_fregues['jogos'],
+            'vitorias': dados_fregues['vitorias'],
+            'derrotas': dados_fregues['derrotas'],
+        }
+
+        nome_rival, dados_rival = max(
+            adversarios.items(),
+            key=lambda x: x[1]['derrotas']
         )
+
+        maior_rival_detalhe = {
+            'nome': nome_rival,
+            'jogos': dados_rival['jogos'],
+            'vitorias': dados_rival['vitorias'],
+            'derrotas': dados_rival['derrotas'],
+        }
+
+    if parceiros:
+        nome_melhor, dados_melhor = max(
+            parceiros.items(),
+            key=lambda x: x[1]['vitorias']
+        )
+
+        melhor_parceiro_detalhe = {
+            'nome': nome_melhor,
+            'jogos': dados_melhor['jogos'],
+            'vitorias': dados_melhor['vitorias'],
+            'derrotas': dados_melhor['derrotas'],
+        }
+
+        nome_pior, dados_pior = max(
+            parceiros.items(),
+            key=lambda x: x[1]['derrotas']
+        )
+
+        pior_parceiro_detalhe = {
+            'nome': nome_pior,
+            'jogos': dados_pior['jogos'],
+            'vitorias': dados_pior['vitorias'],
+            'derrotas': dados_pior['derrotas'],
+        }
 
     return render(
         request,
@@ -699,8 +761,15 @@ def meu_painel(request):
             'aproveitamento': aproveitamento,
 
             'parceiros_ordenados': parceiros_ordenados,
-            'maior_fregues': maior_fregues,
-            'maior_rival': maior_rival,
+
+            'maior_fregues_detalhe': maior_fregues_detalhe,
+            'maior_rival_detalhe': maior_rival_detalhe,
+            'melhor_parceiro_detalhe': melhor_parceiro_detalhe,
+            'pior_parceiro_detalhe': pior_parceiro_detalhe,
+
+            # mantém compatibilidade caso ainda use em algum ponto
+            'maior_fregues': maior_fregues_detalhe['nome'] if maior_fregues_detalhe else None,
+            'maior_rival': maior_rival_detalhe['nome'] if maior_rival_detalhe else None,
         }
     )
 

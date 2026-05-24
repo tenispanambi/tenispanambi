@@ -336,62 +336,130 @@
 
     <div class="info-grid-3">
 
-        <div class="info-card">
+    <div class="info-card">
 
-            <h2 style="color:#0b4d91;">
-                🤝 Parceiros Frequentes
-            </h2>
+        <h2 style="color:#0b4d91;">
+            🤝 Parceiros Frequentes
+        </h2>
 
-            {% for parceiro, total_parceiro in parceiros_ordenados %}
+        {% for parceiro, dados in parceiros_ordenados %}
 
-                <div class="lista-linha">
-                    <strong>{{ parceiro }}</strong>
-                    <span style="color:#0b4d91;font-weight:bold;">
-                        {{ total_parceiro }} jogos
-                    </span>
-                </div>
+            <div class="lista-linha">
+                <strong>{{ parceiro }}</strong>
+                <span style="color:#0b4d91;font-weight:bold;">
+                    {{ dados.jogos }} jogos
+                </span>
+            </div>
 
-            {% empty %}
+        {% empty %}
 
-                <p>Nenhum parceiro encontrado.</p>
+            <p>Nenhum parceiro encontrado.</p>
 
-            {% endfor %}
-
-        </div>
-
-        <div class="info-card" style="text-align:center;">
-
-            <h2 style="color:#1e8e3e;">
-                🔥 Maior Freguês
-            </h2>
-
-            {% if maior_fregues %}
-                <div style="font-size:clamp(26px,6vw,34px);font-weight:bold;color:#1e8e3e;margin-top:30px;">
-                    {{ maior_fregues }}
-                </div>
-            {% else %}
-                <p>Nenhum confronto.</p>
-            {% endif %}
-
-        </div>
-
-        <div class="info-card" style="text-align:center;">
-
-            <h2 style="color:#d93025;">
-                ⚔️ Maior Rival
-            </h2>
-
-            {% if maior_rival %}
-                <div style="font-size:clamp(26px,6vw,34px);font-weight:bold;color:#d93025;margin-top:30px;">
-                    {{ maior_rival }}
-                </div>
-            {% else %}
-                <p>Nenhum rival encontrado.</p>
-            {% endif %}
-
-        </div>
+        {% endfor %}
 
     </div>
+
+    <div class="info-card" style="text-align:center;">
+
+        <h2 style="color:#1e8e3e;">
+            🔥 Maior Freguês
+        </h2>
+
+        {% if maior_fregues_detalhe %}
+
+            <div style="font-size:clamp(24px,5vw,32px);font-weight:bold;color:#1e8e3e;margin-top:25px;">
+                {{ maior_fregues_detalhe.nome }}
+            </div>
+
+            <div style="margin-top:18px;font-size:17px;line-height:1.8;">
+                🎾 Jogos: <strong>{{ maior_fregues_detalhe.jogos }}</strong><br>
+                ✅ Vitórias: <strong style="color:#1e8e3e;">{{ maior_fregues_detalhe.vitorias }}</strong><br>
+                ❌ Derrotas: <strong style="color:#d93025;">{{ maior_fregues_detalhe.derrotas }}</strong>
+            </div>
+
+        {% else %}
+            <p>Nenhum confronto.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="info-card" style="text-align:center;">
+
+        <h2 style="color:#d93025;">
+            ⚔️ Maior Rival
+        </h2>
+
+        {% if maior_rival_detalhe %}
+
+            <div style="font-size:clamp(24px,5vw,32px);font-weight:bold;color:#d93025;margin-top:25px;">
+                {{ maior_rival_detalhe.nome }}
+            </div>
+
+            <div style="margin-top:18px;font-size:17px;line-height:1.8;">
+                🎾 Jogos: <strong>{{ maior_rival_detalhe.jogos }}</strong><br>
+                ✅ Vitórias: <strong style="color:#1e8e3e;">{{ maior_rival_detalhe.vitorias }}</strong><br>
+                ❌ Derrotas: <strong style="color:#d93025;">{{ maior_rival_detalhe.derrotas }}</strong>
+            </div>
+
+        {% else %}
+            <p>Nenhum rival encontrado.</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="info-grid-3">
+
+    <div class="info-card" style="text-align:center;">
+
+        <h2 style="color:#0b4d91;">
+            🏆 Melhor Parceiro
+        </h2>
+
+        {% if melhor_parceiro_detalhe %}
+
+            <div style="font-size:clamp(24px,5vw,32px);font-weight:bold;color:#0b4d91;margin-top:25px;">
+                {{ melhor_parceiro_detalhe.nome }}
+            </div>
+
+            <div style="margin-top:18px;font-size:17px;line-height:1.8;">
+                🤝 Juntos: <strong>{{ melhor_parceiro_detalhe.jogos }}</strong><br>
+                ✅ Vitórias: <strong style="color:#1e8e3e;">{{ melhor_parceiro_detalhe.vitorias }}</strong><br>
+                ❌ Derrotas: <strong style="color:#d93025;">{{ melhor_parceiro_detalhe.derrotas }}</strong>
+            </div>
+
+        {% else %}
+            <p>Nenhum parceiro encontrado.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="info-card" style="text-align:center;">
+
+        <h2 style="color:#d97706;">
+            💀 Pior Parceiro
+        </h2>
+
+        {% if pior_parceiro_detalhe %}
+
+            <div style="font-size:clamp(24px,5vw,32px);font-weight:bold;color:#d97706;margin-top:25px;">
+                {{ pior_parceiro_detalhe.nome }}
+            </div>
+
+            <div style="margin-top:18px;font-size:17px;line-height:1.8;">
+                🤝 Juntos: <strong>{{ pior_parceiro_detalhe.jogos }}</strong><br>
+                ✅ Vitórias: <strong style="color:#1e8e3e;">{{ pior_parceiro_detalhe.vitorias }}</strong><br>
+                ❌ Derrotas: <strong style="color:#d93025;">{{ pior_parceiro_detalhe.derrotas }}</strong>
+            </div>
+
+        {% else %}
+            <p>Nenhum parceiro encontrado.</p>
+        {% endif %}
+
+    </div>
+
+</div>
 
     <div class="jogos-card">
 
