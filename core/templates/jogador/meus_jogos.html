@@ -2,181 +2,275 @@
 
 {% block content %}
 
-<div style="
-max-width:1400px;
-margin:auto;
-">
+<style>
 
-    <div style="
+.meus-jogos{
+    max-width:1400px;
+    margin:auto;
+}
+
+.topo-jogos{
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:30px;
     flex-wrap:wrap;
     gap:20px;
-    ">
+}
+
+.titulo-jogos{
+    font-size:48px;
+    font-weight:900;
+    color:#0b4d91;
+}
+
+.subtitulo-jogos{
+    color:#64748b;
+    font-size:20px;
+    margin-top:5px;
+}
+
+.btn-lancar{
+    background:#0b4d91;
+    color:white;
+    padding:16px 26px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.box-jogos{
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.tabela-jogos{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabela-jogos tr.header{
+    background:#0b4d91;
+    color:white;
+    font-size:17px;
+}
+
+.tabela-jogos th{
+    padding:18px;
+}
+
+.tabela-jogos td{
+    padding:18px;
+    border-bottom:1px solid #eee;
+}
+
+.data-jogo{
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.nome-confronto{
+    font-size:20px;
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.torneio-jogo{
+    margin-top:6px;
+    color:#64748b;
+    font-size:15px;
+}
+
+.placar{
+    font-size:24px;
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.mobile-jogos{
+    display:none;
+}
+
+.mobile-card{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    border-radius:22px;
+    padding:18px;
+    margin:16px;
+}
+
+.mobile-data{
+    color:#64748b;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.mobile-confronto{
+    font-size:18px;
+    font-weight:900;
+    color:#0b4d91;
+    line-height:1.3;
+    margin-bottom:10px;
+}
+
+.mobile-torneio{
+    color:#64748b;
+    font-size:14px;
+    margin-bottom:16px;
+}
+
+.mobile-info{
+    display:grid;
+    gap:10px;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.mobile-btn{
+    display:block;
+    margin-top:16px;
+    background:#16a34a;
+    color:white;
+    text-align:center;
+    padding:14px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+@media(max-width:768px){
+
+    .meus-jogos{
+        margin-top:10px;
+    }
+
+    .topo-jogos{
+        flex-direction:column;
+        align-items:stretch;
+        gap:14px;
+        margin-bottom:18px;
+    }
+
+    .titulo-jogos{
+        font-size:32px;
+        text-align:center;
+    }
+
+    .subtitulo-jogos{
+        font-size:16px;
+        text-align:center;
+    }
+
+    .btn-lancar{
+        width:100%;
+        text-align:center;
+        padding:15px;
+        font-size:16px;
+    }
+
+    .box-jogos{
+        border-radius:22px;
+    }
+
+    .tabela-jogos{
+        display:none;
+    }
+
+    .mobile-jogos{
+        display:block;
+        padding:4px 0;
+    }
+
+}
+
+</style>
+
+<div class="meus-jogos">
+
+    <div class="topo-jogos">
 
         <div>
 
-            <div style="
-            font-size:48px;
-            font-weight:900;
-            color:#0b4d91;
-            ">
+            <div class="titulo-jogos">
                 Meus Jogos
             </div>
 
-            <div style="
-            color:#64748b;
-            font-size:20px;
-            margin-top:5px;
-            ">
+            <div class="subtitulo-jogos">
                 Histórico dos jogos lançados e participações
             </div>
 
         </div>
 
-        <a href="/lancar-jogo/" style="
-        background:#0b4d91;
-        color:white;
-        padding:16px 26px;
-        border-radius:16px;
-        text-decoration:none;
-        font-weight:bold;
-        font-size:18px;
-        ">
+        <a href="/lancar-jogo/" class="btn-lancar">
             + Lançar Jogo
         </a>
 
     </div>
 
-    <div style="
-    background:white;
-    border-radius:30px;
-    overflow:hidden;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
-    ">
+    <div class="box-jogos">
 
-        <table style="
-        width:100%;
-        border-collapse:collapse;
-        ">
+        <!-- DESKTOP -->
 
-            <tr style="
-            background:#0b4d91;
-            color:white;
-            font-size:17px;
-            ">
+        <table class="tabela-jogos">
 
-                <th style="padding:18px;text-align:left;">
-                    Data
-                </th>
+            <tr class="header">
 
-                <th style="padding:18px;text-align:left;">
-                    Confronto
-                </th>
-
-                <th style="padding:18px;text-align:center;">
-                    Placar
-                </th>
-
-                <th style="padding:18px;text-align:center;">
-                    Status
-                </th>
-
-                <th style="padding:18px;text-align:center;">
-                    Ranking
-                </th>
-
-                <th style="padding:18px;text-align:center;">
-                    Ações
-                </th>
+                <th style="text-align:left;">Data</th>
+                <th style="text-align:left;">Confronto</th>
+                <th style="text-align:center;">Placar</th>
+                <th style="text-align:center;">Status</th>
+                <th style="text-align:center;">Ranking</th>
+                <th style="text-align:center;">Ações</th>
 
             </tr>
 
             {% for p in participacoes %}
 
-            <tr style="
-            border-bottom:1px solid #eee;
-            ">
+            <tr>
 
-                <td style="
-                padding:18px;
-                font-weight:bold;
-                color:#0b4d91;
-                ">
+                <td class="data-jogo">
                     {{ p.jogo.data_jogo }}
                 </td>
 
-                <td style="
-                padding:18px;
-                ">
+                <td>
 
-                    <div style="
-                    font-size:20px;
-                    font-weight:bold;
-                    color:#0b4d91;
-                    ">
+                    <div class="nome-confronto">
                         {{ p.jogo.descricao_confronto }}
                     </div>
 
-                    <div style="
-                    margin-top:6px;
-                    color:#64748b;
-                    font-size:15px;
-                    ">
+                    <div class="torneio-jogo">
                         {{ p.jogo.torneio.nome }}
                     </div>
 
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
-
-                    <div style="
-                    font-size:24px;
-                    font-weight:bold;
-                    color:#0b4d91;
-                    ">
+                <td style="text-align:center;">
+                    <div class="placar">
                         {{ p.jogo.placar_resumido }}
                     </div>
-
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
+                <td style="text-align:center;">
 
                     {% if p.jogo.status == 'CONFIRMADO' %}
 
-                        <div style="
-                        color:#16a34a;
-                        font-weight:bold;
-                        font-size:16px;
-                        ">
+                        <div style="color:#16a34a;font-weight:bold;">
                             ✅ Confirmado
                         </div>
 
                     {% elif p.jogo.status == 'PENDENTE' %}
 
-                        <div style="
-                        color:#f4a300;
-                        font-weight:bold;
-                        font-size:16px;
-                        ">
+                        <div style="color:#f4a300;font-weight:bold;">
                             ⏳ Pendente
                         </div>
 
                     {% else %}
 
-                        <div style="
-                        color:#dc2626;
-                        font-weight:bold;
-                        font-size:16px;
-                        ">
+                        <div style="color:#dc2626;font-weight:bold;">
                             ❌ Cancelado
                         </div>
 
@@ -184,44 +278,29 @@ margin:auto;
 
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
+                <td style="text-align:center;">
 
                     {% if p.jogo.status_ranking == 'Computado' %}
 
-                        <div style="
-                        color:#16a34a;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#16a34a;font-weight:bold;">
                             ✅ Computado
                         </div>
 
                     {% elif p.jogo.status_ranking == 'Parcial' %}
 
-                        <div style="
-                        color:#f59e0b;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#f59e0b;font-weight:bold;">
                             ⚠️ Parcial
                         </div>
 
                     {% elif p.jogo.status_ranking == 'Não computado' %}
 
-                        <div style="
-                        color:#dc2626;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#dc2626;font-weight:bold;">
                             ❌ Não computado
                         </div>
 
                     {% else %}
 
-                        <div style="
-                        color:#64748b;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#64748b;font-weight:bold;">
                             —
                         </div>
 
@@ -229,10 +308,7 @@ margin:auto;
 
                 </td>
 
-                <td style="
-                padding:18px;
-                text-align:center;
-                ">
+                <td style="text-align:center;">
 
                     {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
 
@@ -253,19 +329,13 @@ margin:auto;
 
                     {% elif p.jogo.status == 'PENDENTE' %}
 
-                        <div style="
-                        color:#f59e0b;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#f59e0b;font-weight:bold;">
                             Aguardando confirmação
                         </div>
 
                     {% else %}
 
-                        <div style="
-                        color:#16a34a;
-                        font-weight:bold;
-                        ">
+                        <div style="color:#16a34a;font-weight:bold;">
                             Finalizado
                         </div>
 
@@ -295,6 +365,109 @@ margin:auto;
             {% endfor %}
 
         </table>
+
+        <!-- MOBILE -->
+
+        <div class="mobile-jogos">
+
+            {% for p in participacoes %}
+
+            <div class="mobile-card">
+
+                <div class="mobile-data">
+                    📅 {{ p.jogo.data_jogo }}
+                </div>
+
+                <div class="mobile-confronto">
+                    🎾 {{ p.jogo.descricao_confronto }}
+                </div>
+
+                <div class="mobile-torneio">
+                    🏆 {{ p.jogo.torneio.nome }}
+                </div>
+
+                <div class="mobile-info">
+
+                    <div style="color:#0b4d91;">
+                        📊 {{ p.jogo.placar_resumido }}
+                    </div>
+
+                    <div>
+
+                        {% if p.jogo.status == 'CONFIRMADO' %}
+                            <span style="color:#16a34a;">✅ Confirmado</span>
+                        {% elif p.jogo.status == 'PENDENTE' %}
+                            <span style="color:#f4a300;">⏳ Pendente</span>
+                        {% else %}
+                            <span style="color:#dc2626;">❌ Cancelado</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        {% if p.jogo.status_ranking == 'Computado' %}
+                            <span style="color:#16a34a;">✅ Computado</span>
+                        {% elif p.jogo.status_ranking == 'Parcial' %}
+                            <span style="color:#f59e0b;">⚠️ Parcial</span>
+                        {% elif p.jogo.status_ranking == 'Não computado' %}
+                            <span style="color:#dc2626;">❌ Não computado</span>
+                        {% else %}
+                            <span style="color:#64748b;">—</span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
+
+                    <a
+                        href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
+                        class="mobile-btn"
+                    >
+                        Confirmar Resultado
+                    </a>
+
+                {% elif p.jogo.status == 'PENDENTE' %}
+
+                    <div style="
+                    margin-top:14px;
+                    color:#f59e0b;
+                    font-weight:bold;
+                    text-align:center;
+                    ">
+                        Aguardando confirmação
+                    </div>
+
+                {% else %}
+
+                    <div style="
+                    margin-top:14px;
+                    color:#16a34a;
+                    font-weight:bold;
+                    text-align:center;
+                    ">
+                        Finalizado
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            {% empty %}
+
+            <div style="
+            padding:30px;
+            text-align:center;
+            color:#64748b;
+            ">
+                Nenhum jogo encontrado.
+            </div>
+
+            {% endfor %}
+
+        </div>
 
     </div>
 
