@@ -1,53 +1,230 @@
-<div style="
-background:white;
-border-radius:25px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,0.08);
-">
+<style>
+.ranking-box{
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
 
-    <table style="
+.ranking-table{
     width:100%;
     border-collapse:collapse;
-    ">
+}
 
-        <tr style="
-        background:#0b4d91;
-        color:white;
-        font-size:18px;
-        ">
-            <th style="padding:18px;text-align:center;">Pos</th>
-            <th style="padding:18px;text-align:left;">Jogador</th>
-            <th style="padding:18px;text-align:center;">Pts</th>
-            <th style="padding:18px;text-align:center;">Vit</th>
-            <th style="padding:18px;text-align:center;">Der</th>
-            <th style="padding:18px;text-align:center;">Aproveitamento</th>
+.ranking-table tr.header{
+    background:#0b4d91;
+    color:white;
+    font-size:18px;
+}
+
+.ranking-table th{
+    padding:18px;
+}
+
+.ranking-table td{
+    padding:18px;
+    border-bottom:1px solid #eee;
+}
+
+.ranking-player{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.ranking-photo{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #0b4d91;
+    background:#ddd;
+}
+
+.ranking-name{
+    font-size:22px;
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.ranking-sub{
+    color:#777;
+    font-size:15px;
+}
+
+.pos-cell{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.center{
+    text-align:center;
+    font-weight:bold;
+}
+
+.green{
+    color:#1e8e3e;
+}
+
+.red{
+    color:#d93025;
+}
+
+.progress{
+    width:100%;
+    background:#e5e7eb;
+    border-radius:20px;
+    overflow:hidden;
+    height:16px;
+}
+
+.progress-bar{
+    background:#0b4d91;
+    height:16px;
+}
+
+.aproveitamento-text{
+    margin-top:8px;
+    font-weight:bold;
+    color:#0b4d91;
+}
+
+.ranking-mobile{
+    display:none;
+}
+
+.mobile-ranking-card{
+    margin:14px;
+    padding:18px;
+    border-radius:20px;
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    box-shadow:0 6px 15px rgba(0,0,0,0.06);
+}
+
+.mobile-top{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:14px;
+}
+
+.mobile-pos{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#0b4d91;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    flex-shrink:0;
+}
+
+.mobile-info{
+    flex:1;
+}
+
+.mobile-name{
+    font-size:18px;
+    font-weight:900;
+    color:#0b4d91;
+    line-height:1.2;
+}
+
+.mobile-status{
+    font-size:13px;
+    color:#64748b;
+    margin-top:4px;
+}
+
+.mobile-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+}
+
+.mobile-stat{
+    background:white;
+    border-radius:14px;
+    padding:10px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+}
+
+.mobile-stat strong{
+    display:block;
+    color:#0b4d91;
+    font-size:18px;
+}
+
+.mobile-stat span{
+    font-size:12px;
+    color:#64748b;
+    font-weight:bold;
+}
+
+.mobile-aprov{
+    margin-top:14px;
+}
+
+.empty-ranking{
+    padding:30px;
+    text-align:center;
+    color:#777;
+    font-size:20px;
+}
+
+@media(max-width:768px){
+    .ranking-box{
+        border-radius:22px;
+    }
+
+    .ranking-table{
+        display:none;
+    }
+
+    .ranking-mobile{
+        display:block;
+        padding:4px 0;
+    }
+
+    .empty-ranking{
+        font-size:16px;
+    }
+}
+</style>
+
+<div class="ranking-box">
+
+    <table class="ranking-table">
+
+        <tr class="header">
+            <th style="text-align:center;">Pos</th>
+            <th style="text-align:left;">Jogador</th>
+            <th style="text-align:center;">Pts</th>
+            <th style="text-align:center;">Vit</th>
+            <th style="text-align:center;">Der</th>
+            <th style="text-align:center;">Aproveitamento</th>
         </tr>
 
         {% for r in ranking %}
 
-        <tr style="
-        border-bottom:1px solid #eee;
-        font-size:18px;
-
+        <tr
         {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
-            background:#e8f1ff;
-
+            style="background:#e8f1ff;"
         {% elif r.posicao <= 8 %}
-            background:#edfdf1;
-
+            style="background:#edfdf1;"
         {% elif r.status_ranking == 'REBAIXADO' %}
-            background:#fff1f1;
+            style="background:#fff1f1;"
         {% endif %}
-        ">
+        >
 
-            <td style="
-            padding:18px;
-            text-align:center;
-            font-size:28px;
-            font-weight:bold;
-            color:#0b4d91;
-            ">
-
+            <td class="pos-cell">
                 {% if r.posicao == 1 %}
                     🥇
                 {% elif r.posicao == 2 %}
@@ -57,53 +234,23 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                 {% else %}
                     {{ r.posicao }}
                 {% endif %}
-
             </td>
 
-            <td style="padding:18px;">
-
-                <div style="
-                display:flex;
-                align-items:center;
-                gap:16px;
-                ">
+            <td>
+                <div class="ranking-player">
 
                     {% if r.jogador.foto %}
-                        <img
-                            src="{{ r.jogador.foto.url }}"
-                            style="
-                            width:65px;
-                            height:65px;
-                            border-radius:50%;
-                            object-fit:cover;
-                            border:3px solid #0b4d91;
-                            "
-                        >
+                        <img src="{{ r.jogador.foto.url }}" class="ranking-photo">
                     {% else %}
-                        <div style="
-                        width:65px;
-                        height:65px;
-                        border-radius:50%;
-                        background:#ddd;
-                        ">
-                        </div>
+                        <div class="ranking-photo"></div>
                     {% endif %}
 
                     <div>
-
-                        <div style="
-                        font-size:22px;
-                        font-weight:bold;
-                        color:#0b4d91;
-                        ">
+                        <div class="ranking-name">
                             {{ r.jogador.nome }}
                         </div>
 
-                        <div style="
-                        color:#777;
-                        font-size:15px;
-                        ">
-
+                        <div class="ranking-sub">
                             Categoria {{ r.categoria.categoria }}
 
                             {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
@@ -123,69 +270,24 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
                                 · 🔴 Rebaixamento
 
                             {% endif %}
-
                         </div>
-
                     </div>
 
                 </div>
-
             </td>
 
-            <td style="
-            padding:18px;
-            text-align:center;
-            font-weight:bold;
-            ">
-                {{ r.pontos }}
-            </td>
+            <td class="center">{{ r.pontos }}</td>
+            <td class="center green">{{ r.vitorias }}</td>
+            <td class="center red">{{ r.derrotas }}</td>
 
-            <td style="
-            padding:18px;
-            text-align:center;
-            color:#1e8e3e;
-            font-weight:bold;
-            ">
-                {{ r.vitorias }}
-            </td>
-
-            <td style="
-            padding:18px;
-            text-align:center;
-            color:#d93025;
-            font-weight:bold;
-            ">
-                {{ r.derrotas }}
-            </td>
-
-            <td style="
-            padding:18px;
-            text-align:center;
-            ">
-
-                <div style="
-                width:100%;
-                background:#e5e7eb;
-                border-radius:20px;
-                overflow:hidden;
-                height:16px;
-                ">
-                    <div style="
-                    width:{{ r.aproveitamento }}%;
-                    background:#0b4d91;
-                    height:16px;
-                    ">
-                    </div>
+            <td style="text-align:center;">
+                <div class="progress">
+                    <div class="progress-bar" style="width:{{ r.aproveitamento }}%;"></div>
                 </div>
 
-                <div style="
-                margin-top:8px;
-                font-weight:bold;
-                color:#0b4d91;
-                ">
+                <div class="aproveitamento-text">
                     {{ r.aproveitamento }}%
                 </div>
-
             </td>
 
         </tr>
@@ -193,12 +295,7 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
         {% empty %}
 
         <tr>
-            <td colspan="6" style="
-            padding:30px;
-            text-align:center;
-            color:#777;
-            font-size:20px;
-            ">
+            <td colspan="6" class="empty-ranking">
                 Nenhum jogador no ranking desta categoria.
             </td>
         </tr>
@@ -206,5 +303,115 @@ box-shadow:0 5px 20px rgba(0,0,0,0.08);
         {% endfor %}
 
     </table>
+
+    <div class="ranking-mobile">
+
+        {% for r in ranking %}
+
+        <div
+        class="mobile-ranking-card"
+        {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
+            style="background:#e8f1ff;"
+        {% elif r.posicao <= 8 %}
+            style="background:#edfdf1;"
+        {% elif r.status_ranking == 'REBAIXADO' %}
+            style="background:#fff1f1;"
+        {% endif %}
+        >
+
+            <div class="mobile-top">
+
+                <div class="mobile-pos">
+                    {% if r.posicao == 1 %}
+                        🥇
+                    {% elif r.posicao == 2 %}
+                        🥈
+                    {% elif r.posicao == 3 %}
+                        🥉
+                    {% else %}
+                        {{ r.posicao }}
+                    {% endif %}
+                </div>
+
+                {% if r.jogador.foto %}
+                    <img src="{{ r.jogador.foto.url }}" class="ranking-photo">
+                {% else %}
+                    <div class="ranking-photo"></div>
+                {% endif %}
+
+                <div class="mobile-info">
+
+                    <div class="mobile-name">
+                        {{ r.jogador.nome }}
+                    </div>
+
+                    <div class="mobile-status">
+                        Categoria {{ r.categoria.categoria }}
+
+                        {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
+
+                            {% if r.categoria.categoria == 'B' %}
+                                · 🔵 Acesso Cat. A
+                            {% elif r.categoria.categoria == 'C' %}
+                                · 🔵 Acesso Cat. B
+                            {% endif %}
+
+                        {% elif r.posicao <= 8 %}
+
+                            · 🟢 Classificado Finais
+
+                        {% elif r.status_ranking == 'REBAIXADO' %}
+
+                            · 🔴 Rebaixamento
+
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mobile-stats">
+
+                <div class="mobile-stat">
+                    <strong>{{ r.pontos }}</strong>
+                    <span>Pontos</span>
+                </div>
+
+                <div class="mobile-stat">
+                    <strong>{{ r.vitorias }}</strong>
+                    <span>Vitórias</span>
+                </div>
+
+                <div class="mobile-stat">
+                    <strong>{{ r.derrotas }}</strong>
+                    <span>Derrotas</span>
+                </div>
+
+            </div>
+
+            <div class="mobile-aprov">
+
+                <div class="progress">
+                    <div class="progress-bar" style="width:{{ r.aproveitamento }}%;"></div>
+                </div>
+
+                <div class="aproveitamento-text">
+                    Aproveitamento: {{ r.aproveitamento }}%
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <div class="empty-ranking">
+                Nenhum jogador no ranking desta categoria.
+            </div>
+
+        {% endfor %}
+
+    </div>
 
 </div>

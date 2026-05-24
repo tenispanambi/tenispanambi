@@ -2,100 +2,103 @@
 
 {% block content %}
 
-<div style="
-max-width:1300px;
-margin:40px auto;
-">
+<style>
+.ranking-page{
+    max-width:1300px;
+    margin:40px auto;
+}
 
-    <h1 style="
+.ranking-title{
     font-size:52px;
     color:#0b4d91;
     margin-bottom:30px;
-    ">
-        Ranking Oficial
-    </h1>
+}
 
-    <div style="
+.ranking-tabs{
     display:flex;
     gap:15px;
     margin-bottom:35px;
-    ">
+}
 
-        <button
-            onclick="mostrarCategoria('A')"
-            id="btnA"
-            style="
-            padding:16px 28px;
-            border:none;
-            border-radius:14px;
-            background:#0b4d91;
-            color:white;
-            font-size:20px;
-            font-weight:bold;
-            cursor:pointer;
-            "
-        >
+.ranking-tabs button{
+    padding:16px 28px;
+    border:none;
+    border-radius:14px;
+    background:#d9e3f0;
+    color:#0b4d91;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#btnA{
+    background:#0b4d91;
+    color:white;
+}
+
+@media(max-width:768px){
+    .ranking-page{
+        margin:15px auto;
+    }
+
+    .ranking-title{
+        font-size:32px !important;
+        text-align:center;
+        margin-bottom:20px;
+    }
+
+    .ranking-tabs{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:10px;
+        margin-bottom:20px;
+    }
+
+    .ranking-tabs button{
+        width:100%;
+        font-size:16px;
+        padding:14px;
+    }
+}
+</style>
+
+<div class="ranking-page">
+
+    <h1 class="ranking-title">
+        Ranking Oficial
+    </h1>
+
+    <div class="ranking-tabs">
+
+        <button onclick="mostrarCategoria('A')" id="btnA">
             Categoria A
         </button>
 
-        <button
-            onclick="mostrarCategoria('B')"
-            id="btnB"
-            style="
-            padding:16px 28px;
-            border:none;
-            border-radius:14px;
-            background:#d9e3f0;
-            color:#0b4d91;
-            font-size:20px;
-            font-weight:bold;
-            cursor:pointer;
-            "
-        >
+        <button onclick="mostrarCategoria('B')" id="btnB">
             Categoria B
         </button>
 
-        <button
-            onclick="mostrarCategoria('C')"
-            id="btnC"
-            style="
-            padding:16px 28px;
-            border:none;
-            border-radius:14px;
-            background:#d9e3f0;
-            color:#0b4d91;
-            font-size:20px;
-            font-weight:bold;
-            cursor:pointer;
-            "
-        >
+        <button onclick="mostrarCategoria('C')" id="btnC">
             Categoria C
         </button>
 
     </div>
 
     <div id="rankingA">
-
         {% include 'ranking/tabela.html' with ranking=ranking_a %}
-
     </div>
 
     <div id="rankingB" style="display:none;">
-
         {% include 'ranking/tabela.html' with ranking=ranking_b %}
-
     </div>
 
     <div id="rankingC" style="display:none;">
-
         {% include 'ranking/tabela.html' with ranking=ranking_c %}
-
     </div>
 
 </div>
 
 <script>
-
 function mostrarCategoria(cat){
 
     document.getElementById('rankingA').style.display = 'none';
@@ -115,7 +118,6 @@ function mostrarCategoria(cat){
     document.getElementById('btn'+cat).style.background = '#0b4d91';
     document.getElementById('btn'+cat).style.color = 'white';
 }
-
 </script>
 
 {% endblock %}
