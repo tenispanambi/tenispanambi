@@ -393,6 +393,106 @@
 
 }
 
+.history-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:25px;
+}
+
+.history-table tr:first-child{
+    background:#e5e7eb;
+}
+
+.history-table th{
+    padding:16px;
+    text-align:left;
+}
+
+.history-table th:nth-child(3),
+.history-table th:nth-child(4){
+    text-align:center;
+}
+
+.history-table td{
+    padding:16px;
+    border-bottom:1px solid #eee;
+}
+
+.history-table .placar{
+    text-align:center;
+    color:#0b4d91;
+    font-weight:bold;
+}
+
+.history-table .vencedor{
+    text-align:center;
+    color:#16a34a;
+    font-weight:bold;
+}
+
+.vazio{
+    padding:30px;
+    text-align:center;
+    color:#777;
+}
+
+.history-mobile{
+    display:none;
+}
+
+@media(max-width:768px){
+
+    .history-table{
+        display:none;
+    }
+
+    .history-mobile{
+        display:block;
+        margin-top:22px;
+    }
+
+    .history-mobile-card{
+        background:#f8fafc;
+        border-radius:20px;
+        padding:18px;
+        margin-bottom:16px;
+        border:1px solid #e5e7eb;
+        box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    }
+
+    .history-date{
+        color:#64748b;
+        font-size:15px;
+        font-weight:bold;
+        margin-bottom:10px;
+    }
+
+    .history-confronto{
+        color:#0b4d91;
+        font-size:18px;
+        font-weight:900;
+        line-height:1.3;
+        margin-bottom:14px;
+    }
+
+    .history-info{
+        display:grid;
+        grid-template-columns:1fr;
+        gap:8px;
+        font-size:15px;
+        font-weight:bold;
+        color:#111827;
+    }
+
+    .history-empty{
+        padding:25px;
+        text-align:center;
+        color:#777;
+        background:#f8fafc;
+        border-radius:18px;
+    }
+}
+
 </style>
 
 <div class="h2h-box">
@@ -681,47 +781,34 @@
 
 </div>
 
-<div class="history-card">
+<<div class="history-card">
 
     <h2>
         Histórico de Jogos
     </h2>
 
-    <table style="width:100%;border-collapse:collapse;margin-top:25px;">
+    <table class="history-table">
 
-        <tr style="background:#e5e7eb;">
-            <th style="padding:16px;text-align:left;">Data</th>
-            <th style="padding:16px;text-align:left;">Confronto</th>
-            <th style="padding:16px;text-align:center;">Placar</th>
-            <th style="padding:16px;text-align:center;">Vencedor</th>
+        <tr>
+            <th>Data</th>
+            <th>Confronto</th>
+            <th>Placar</th>
+            <th>Vencedor</th>
         </tr>
 
         {% for jogo in confrontos %}
 
-        <tr style="border-bottom:1px solid #eee;">
-
-            <td style="padding:16px;">
-                {{ jogo.data_jogo }}
-            </td>
-
-            <td style="padding:16px;font-weight:bold;">
-                {{ jogo.jogadores_partida }}
-            </td>
-
-            <td style="padding:16px;text-align:center;color:#0b4d91;font-weight:bold;">
-                {{ jogo.placar_resumido }}
-            </td>
-
-            <td style="padding:16px;text-align:center;color:#16a34a;font-weight:bold;">
-                {{ jogo.vencedor_nome }}
-            </td>
-
+        <tr>
+            <td>{{ jogo.data_jogo }}</td>
+            <td><strong>{{ jogo.jogadores_partida }}</strong></td>
+            <td class="placar">{{ jogo.placar_resumido }}</td>
+            <td class="vencedor">{{ jogo.vencedor_nome }}</td>
         </tr>
 
         {% empty %}
 
         <tr>
-            <td colspan="4" style="padding:30px;text-align:center;color:#777;">
+            <td colspan="4" class="vazio">
                 Nenhum confronto encontrado.
             </td>
         </tr>
@@ -729,6 +816,37 @@
         {% endfor %}
 
     </table>
+
+    <div class="history-mobile">
+
+        {% for jogo in confrontos %}
+
+            <div class="history-mobile-card">
+
+                <div class="history-date">
+                    📅 {{ jogo.data_jogo }}
+                </div>
+
+                <div class="history-confronto">
+                    🎾 {{ jogo.jogadores_partida }}
+                </div>
+
+                <div class="history-info">
+                    <span>📊 {{ jogo.placar_resumido }}</span>
+                    <span>🏆 {{ jogo.vencedor_nome }}</span>
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="history-empty">
+                Nenhum confronto encontrado.
+            </div>
+
+        {% endfor %}
+
+    </div>
 
 </div>
 
