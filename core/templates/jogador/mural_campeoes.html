@@ -4,28 +4,30 @@
 
 <div style="
 max-width:1400px;
-margin:40px auto;
-padding:20px;
+margin:20px auto;
+padding:14px;
 ">
 
     <!-- TOPO -->
 
     <div style="
     text-align:center;
-    margin-bottom:50px;
+    margin-bottom:30px;
     ">
 
         <h1 style="
-        font-size:60px;
-        margin-bottom:10px;
+        font-size:clamp(32px,6vw,60px);
+        margin-bottom:8px;
         color:#0b1f44;
+        line-height:1.1;
         ">
             🏆 Mural dos Campeões
         </h1>
 
         <p style="
-        font-size:26px;
+        font-size:clamp(16px,3.8vw,26px);
         color:#64748b;
+        margin:0;
         ">
             História dos campeões do Championship Duplas
         </p>
@@ -35,19 +37,19 @@ padding:20px;
 
     <!-- CATEGORIA A -->
 
-    <div style="margin-bottom:60px;">
+    <div style="margin-bottom:40px;">
 
         <div style="
         background:linear-gradient(90deg,#d4af37,#f7e08b);
         color:#111;
-        padding:18px 30px;
+        padding:14px 20px;
         border-radius:18px;
-        margin-bottom:25px;
+        margin-bottom:20px;
         ">
 
             <h2 style="
             margin:0;
-            font-size:34px;
+            font-size:clamp(24px,5vw,34px);
             ">
                 🥇 Categoria A
             </h2>
@@ -56,16 +58,16 @@ padding:20px;
 
         <div style="
         display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
-        gap:25px;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        gap:18px;
         ">
 
             {% for item in campeoes_a %}
 
             <div style="
             background:white;
-            border-radius:25px;
-            padding:30px;
+            border-radius:24px;
+            padding:22px;
             box-shadow:0 5px 20px rgba(0,0,0,0.08);
             ">
 
@@ -73,11 +75,13 @@ padding:20px;
                 display:flex;
                 justify-content:space-between;
                 align-items:center;
-                margin-bottom:20px;
+                gap:10px;
+                margin-bottom:18px;
+                flex-wrap:wrap;
                 ">
 
                     <div style="
-                    font-size:26px;
+                    font-size:clamp(22px,5vw,30px);
                     font-weight:bold;
                     color:#0b1f44;
                     ">
@@ -87,417 +91,100 @@ padding:20px;
                     <div style="
                     background:#0b1f44;
                     color:white;
-                    padding:8px 16px;
+                    padding:8px 14px;
                     border-radius:999px;
-                    font-size:14px;
+                    font-size:13px;
                     ">
                         {{ item.data_final }}
                     </div>
 
                 </div>
 
+                <!-- CAMPEÕES -->
+
                 <div style="
                 background:#f8fafc;
                 border-radius:18px;
-                padding:20px;
-                margin-bottom:20px;
+                padding:18px;
+                margin-bottom:18px;
                 ">
 
                     <div style="
-                    font-size:15px;
-                    color:#64748b;
-                    margin-bottom:10px;
-                    ">
-                        Campeões
-                    </div>
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#16a34a;
-                    ">
-                        {{ item.campeao_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:24px;
-                    font-weight:bold;
-                    color:#16a34a;
-                    ">
-                        {{ item.campeao_2 }}
-                    </div>
-
-                </div>
-
-                <div style="
-                text-align:center;
-                margin:25px 0;
-                ">
-
-                    <div style="
-                    font-size:42px;
-                    font-weight:bold;
-                    color:#0b1f44;
-                    ">
-                        {{ item.placar }}
-                    </div>
-
-                </div>
-
-                <div style="
-                background:#fff7ed;
-                border-radius:18px;
-                padding:20px;
-                ">
-
-                    <div style="
-                    font-size:15px;
-                    color:#64748b;
-                    margin-bottom:10px;
-                    ">
-                        Vice-campeões
-                    </div>
-
-                    <div style="
-                    font-size:24px;
-                    font-weight:bold;
-                    color:#ea580c;
-                    ">
-                        {{ item.finalista_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#ea580c;
-                    ">
-                        {{ item.finalista_2 }}
-                    </div>
-
-                </div>
-
-            </div>
-
-            {% empty %}
-
-            <div style="
-            background:white;
-            border-radius:20px;
-            padding:40px;
-            text-align:center;
-            color:#64748b;
-            ">
-                Nenhum campeão registrado ainda.
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-    </div>
-
-
-    <!-- CATEGORIA B -->
-
-    <div style="margin-bottom:60px;">
-
-        <div style="
-        background:linear-gradient(90deg,#94a3b8,#e2e8f0);
-        color:#111;
-        padding:18px 30px;
-        border-radius:18px;
-        margin-bottom:25px;
-        ">
-
-            <h2 style="
-            margin:0;
-            font-size:34px;
-            ">
-                🥈 Categoria B
-            </h2>
-
-        </div>
-
-        <div style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
-        gap:25px;
-        ">
-
-            {% for item in campeoes_b %}
-
-            <div style="
-            background:white;
-            border-radius:25px;
-            padding:30px;
-            box-shadow:0 5px 20px rgba(0,0,0,0.08);
-            ">
-
-                <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:20px;
-                ">
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#0b1f44;
-                    ">
-                        {{ item.edicao }}ª edição
-                    </div>
-
-                    <div style="
-                    background:#0b1f44;
-                    color:white;
-                    padding:8px 16px;
-                    border-radius:999px;
                     font-size:14px;
-                    ">
-                        {{ item.data_final }}
-                    </div>
-
-                </div>
-
-                <div style="
-                background:#f8fafc;
-                border-radius:18px;
-                padding:20px;
-                margin-bottom:20px;
-                ">
-
-                    <div style="
-                    font-size:15px;
                     color:#64748b;
-                    margin-bottom:10px;
+                    margin-bottom:8px;
                     ">
                         Campeões
                     </div>
 
                     <div style="
-                    font-size:26px;
+                    font-size:clamp(24px,5vw,34px);
                     font-weight:bold;
                     color:#16a34a;
+                    line-height:1.15;
                     ">
                         {{ item.campeao_1 }}
                     </div>
 
                     <div style="
-                    font-size:24px;
+                    font-size:clamp(22px,4.5vw,30px);
                     font-weight:bold;
                     color:#16a34a;
+                    line-height:1.15;
                     ">
                         {{ item.campeao_2 }}
                     </div>
 
                 </div>
 
+                <!-- PLACAR -->
+
                 <div style="
                 text-align:center;
-                margin:25px 0;
+                margin:20px 0;
                 ">
 
                     <div style="
-                    font-size:42px;
-                    font-weight:bold;
+                    font-size:clamp(44px,10vw,70px);
+                    font-weight:900;
                     color:#0b1f44;
+                    line-height:1;
                     ">
                         {{ item.placar }}
                     </div>
 
                 </div>
 
+                <!-- FINALISTAS -->
+
                 <div style="
                 background:#fff7ed;
                 border-radius:18px;
-                padding:20px;
+                padding:18px;
                 ">
 
                     <div style="
-                    font-size:15px;
-                    color:#64748b;
-                    margin-bottom:10px;
-                    ">
-                        Vice-campeões
-                    </div>
-
-                    <div style="
-                    font-size:24px;
-                    font-weight:bold;
-                    color:#ea580c;
-                    ">
-                        {{ item.finalista_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#ea580c;
-                    ">
-                        {{ item.finalista_2 }}
-                    </div>
-
-                </div>
-
-            </div>
-
-            {% empty %}
-
-            <div style="
-            background:white;
-            border-radius:20px;
-            padding:40px;
-            text-align:center;
-            color:#64748b;
-            ">
-                Nenhum campeão registrado ainda.
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-    </div>
-
-
-    <!-- CATEGORIA C -->
-
-    <div style="margin-bottom:60px;">
-
-        <div style="
-        background:linear-gradient(90deg,#cd7f32,#f5c58d);
-        color:#111;
-        padding:18px 30px;
-        border-radius:18px;
-        margin-bottom:25px;
-        ">
-
-            <h2 style="
-            margin:0;
-            font-size:34px;
-            ">
-                🥉 Categoria C
-            </h2>
-
-        </div>
-
-        <div style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
-        gap:25px;
-        ">
-
-            {% for item in campeoes_c %}
-
-            <div style="
-            background:white;
-            border-radius:25px;
-            padding:30px;
-            box-shadow:0 5px 20px rgba(0,0,0,0.08);
-            ">
-
-                <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:20px;
-                ">
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#0b1f44;
-                    ">
-                        {{ item.edicao }}ª edição
-                    </div>
-
-                    <div style="
-                    background:#0b1f44;
-                    color:white;
-                    padding:8px 16px;
-                    border-radius:999px;
                     font-size:14px;
-                    ">
-                        {{ item.data_final }}
-                    </div>
-
-                </div>
-
-                <div style="
-                background:#f8fafc;
-                border-radius:18px;
-                padding:20px;
-                margin-bottom:20px;
-                ">
-
-                    <div style="
-                    font-size:15px;
                     color:#64748b;
-                    margin-bottom:10px;
-                    ">
-                        Campeões
-                    </div>
-
-                    <div style="
-                    font-size:26px;
-                    font-weight:bold;
-                    color:#16a34a;
-                    ">
-                        {{ item.campeao_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:24px;
-                    font-weight:bold;
-                    color:#16a34a;
-                    ">
-                        {{ item.campeao_2 }}
-                    </div>
-
-                </div>
-
-                <div style="
-                text-align:center;
-                margin:25px 0;
-                ">
-
-                    <div style="
-                    font-size:42px;
-                    font-weight:bold;
-                    color:#0b1f44;
-                    ">
-                        {{ item.placar }}
-                    </div>
-
-                </div>
-
-                <div style="
-                background:#fff7ed;
-                border-radius:18px;
-                padding:20px;
-                ">
-
-                    <div style="
-                    font-size:15px;
-                    color:#64748b;
-                    margin-bottom:10px;
+                    margin-bottom:8px;
                     ">
                         Vice-campeões
                     </div>
 
                     <div style="
-                    font-size:24px;
+                    font-size:clamp(22px,4.8vw,30px);
                     font-weight:bold;
                     color:#ea580c;
+                    line-height:1.15;
                     ">
                         {{ item.finalista_1 }}
                     </div>
 
                     <div style="
-                    font-size:26px;
+                    font-size:clamp(20px,4.5vw,28px);
                     font-weight:bold;
                     color:#ea580c;
+                    line-height:1.15;
                     ">
                         {{ item.finalista_2 }}
                     </div>
