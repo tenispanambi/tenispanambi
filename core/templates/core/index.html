@@ -3,30 +3,13 @@
 
 {% block content %}
 
-
-<meta charset="UTF-8">
-<title>TenisPanambi</title>
-
 <style>
+
 body{
     margin:0;
     font-family:Arial, sans-serif;
     background:#eef2f7;
     color:#0f172a;
-}
-
-.botao{
-    background:white;
-    color:#0b4d91!important;
-    padding:13px 20px;
-    border-radius:12px;
-}
-
-.botao-verde{
-    background:#d7ff00!important;
-    color:#062b55!important;
-    padding:13px 20px;
-    border-radius:12px;
 }
 
 .container{
@@ -61,7 +44,7 @@ body{
 
 .status-card{
     background:white;
-    border-radius:18px;
+    border-radius:22px;
     padding:28px;
     display:flex;
     align-items:center;
@@ -116,7 +99,7 @@ body{
 
 .card{
     background:white;
-    border-radius:20px;
+    border-radius:22px;
     box-shadow:0 5px 18px rgba(0,0,0,0.07);
     overflow:hidden;
 }
@@ -141,17 +124,33 @@ body{
     font-weight:bold;
 }
 
+.ranking-buttons{
+    padding:20px 25px 0 25px;
+    display:flex;
+    gap:12px;
+}
+
+.ranking-buttons button{
+    flex:1;
+    border:none;
+    border-radius:14px;
+    padding:13px;
+    font-weight:bold;
+    cursor:pointer;
+    font-size:15px;
+}
+
 .ranking-item{
     display:flex;
     align-items:center;
-    padding:16px 30px;
+    padding:16px 22px;
     border-bottom:1px solid #edf0f4;
-    gap:16px;
+    gap:14px;
 }
 
 .posicao{
-    width:34px;
-    height:34px;
+    width:38px;
+    height:38px;
     border-radius:50%;
     background:#0b4d91;
     color:white;
@@ -159,14 +158,16 @@ body{
     align-items:center;
     justify-content:center;
     font-weight:bold;
+    flex-shrink:0;
 }
 
 .avatar{
-    width:48px;
-    height:48px;
+    width:52px;
+    height:52px;
     border-radius:50%;
     object-fit:cover;
     background:#ddd;
+    flex-shrink:0;
 }
 
 .ranking-nome{
@@ -177,30 +178,32 @@ body{
 }
 
 .ranking-pontos{
-    font-size:17px;
+    font-size:18px;
     font-weight:bold;
     color:#005cc8;
+    text-align:right;
 }
 
 .torneio-item{
     display:flex;
     align-items:center;
-    padding:20px 30px;
+    padding:20px 25px;
     border-bottom:1px solid #edf0f4;
-    gap:20px;
+    gap:18px;
 }
 
 .data-box{
     width:72px;
     height:72px;
     background:#f1f4f8;
-    border-radius:12px;
+    border-radius:14px;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     color:#062b55;
     font-weight:bold;
+    flex-shrink:0;
 }
 
 .data-box .dia{
@@ -216,12 +219,12 @@ body{
 }
 
 .torneio-info strong{
-    font-size:19px;
+    font-size:18px;
     color:#062b55;
 }
 
 .torneio-info div{
-    margin-top:6px;
+    margin-top:5px;
     color:#44546a;
 }
 
@@ -231,12 +234,12 @@ body{
     padding:7px 12px;
     border-radius:14px;
     font-weight:bold;
-    font-size:14px;
+    font-size:13px;
 }
 
 .ultimos-jogos{
     background:white;
-    border-radius:20px;
+    border-radius:22px;
     box-shadow:0 5px 18px rgba(0,0,0,0.07);
     overflow:hidden;
 }
@@ -270,15 +273,57 @@ body{
     color:#64748b;
 }
 
-@media(max-width:1000px){
-    .topo{
-        flex-direction:column;
-        gap:15px;
-    }
+/* MOBILE CARDS */
 
-    .menu{
-        flex-wrap:wrap;
-        justify-content:center;
+.mobile-jogos{
+    display:none;
+}
+
+.mobile-jogo-card{
+    background:#f8fafc;
+    margin:16px;
+    padding:18px;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+}
+
+.mobile-jogo-data{
+    color:#64748b;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.mobile-jogo-confronto{
+    color:#062b55;
+    font-size:18px;
+    font-weight:900;
+    line-height:1.3;
+    margin-bottom:12px;
+}
+
+.mobile-jogo-info{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    font-size:15px;
+    font-weight:bold;
+}
+
+.mobile-jogo-placar{
+    color:#0b4d91;
+}
+
+.mobile-jogo-torneio{
+    color:#16a34a;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1000px){
+
+    .container{
+        padding:15px;
     }
 
     .cards-status,
@@ -286,14 +331,75 @@ body{
         grid-template-columns:1fr;
     }
 
-    .titulo-home h1{
-        font-size:36px;
+    .titulo-home{
+        margin-top:0;
     }
-}
-</style>
-</head>
 
-<body>
+    .titulo-home h1{
+        font-size:28px;
+        line-height:1.2;
+    }
+
+    .titulo-home p{
+        font-size:18px;
+        line-height:1.4;
+    }
+
+    .status-card{
+        padding:22px;
+    }
+
+    .status-card h2{
+        font-size:28px;
+    }
+
+    .ranking-buttons{
+        flex-direction:column;
+    }
+
+    .ranking-buttons button{
+        width:100%;
+    }
+
+    .ranking-item{
+        padding:16px;
+        gap:12px;
+    }
+
+    .ranking-nome{
+        font-size:16px;
+    }
+
+    .ranking-pontos{
+        font-size:16px;
+    }
+
+    .card-header{
+        padding:22px 18px;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .card-header h2{
+        font-size:24px;
+    }
+
+    .torneio-item{
+        padding:18px;
+    }
+
+    .tabela-jogos{
+        display:none;
+    }
+
+    .mobile-jogos{
+        display:block;
+    }
+
+}
+
+</style>
 
 <div class="container">
 
@@ -329,17 +435,18 @@ body{
         </div>
 
         <div class="status-card">
-    <div class="icone roxo">🎾</div>
-    <div>
-        <h2>{{ jogos_semana }}</h2>
-        <p>Jogos na Semana</p>
-    </div>
-</div>
+            <div class="icone roxo">🎾</div>
+            <div>
+                <h2>{{ jogos_semana }}</h2>
+                <p>Jogos na Semana</p>
+            </div>
+        </div>
 
     </div>
 
     <div class="grade-principal">
 
+        <!-- RANKING -->
         <div class="card">
 
             <div class="card-header">
@@ -347,151 +454,58 @@ body{
                 <a href="/ranking/">Ver ranking completo →</a>
             </div>
 
-           <div style="
-padding:20px 25px 0 25px;
-display:flex;
-gap:12px;
-">
+            <div class="ranking-buttons">
 
-    <button
-        onclick="mostrarRanking('A')"
-        id="btnA"
-        style="
-        background:#0b4d91;
-        color:white;
-        border:none;
-        border-radius:12px;
-        padding:12px 18px;
-        font-weight:bold;
-        cursor:pointer;
-        ">
-        Categoria A
-    </button>
+                <button onclick="mostrarRanking('A')" id="btnA"
+                style="background:#0b4d91;color:white;">
+                    Categoria A
+                </button>
 
-    <button
-        onclick="mostrarRanking('B')"
-        id="btnB"
-        style="
-        background:#d9e3f0;
-        color:#0b4d91;
-        border:none;
-        border-radius:12px;
-        padding:12px 18px;
-        font-weight:bold;
-        cursor:pointer;
-        ">
-        Categoria B
-    </button>
+                <button onclick="mostrarRanking('B')" id="btnB"
+                style="background:#d9e3f0;color:#0b4d91;">
+                    Categoria B
+                </button>
 
-    <button
-        onclick="mostrarRanking('C')"
-        id="btnC"
-        style="
-        background:#d9e3f0;
-        color:#0b4d91;
-        border:none;
-        border-radius:12px;
-        padding:12px 18px;
-        font-weight:bold;
-        cursor:pointer;
-        ">
-        Categoria C
-    </button>
+                <button onclick="mostrarRanking('C')" id="btnC"
+                style="background:#d9e3f0;color:#0b4d91;">
+                    Categoria C
+                </button>
 
-</div>
-
-<div id="rankingA">
-
-    {% for r in ranking_a %}
-
-        <div class="ranking-item">
-
-            <div class="posicao">
-                {{ r.posicao }}
             </div>
 
-            {% if r.jogador.foto %}
-                <img class="avatar" src="{{ r.jogador.foto.url }}">
-            {% else %}
-                <div class="avatar"></div>
-            {% endif %}
+            <div id="rankingA">
 
-            <div class="ranking-nome">
-                {{ r.jogador.nome }}
-            </div>
+                {% for r in ranking_a %}
 
-            <div class="ranking-pontos">
-                {{ r.pontos }} pts
+                <div class="ranking-item">
+
+                    <div class="posicao">
+                        {{ r.posicao }}
+                    </div>
+
+                    {% if r.jogador.foto %}
+                        <img class="avatar" src="{{ r.jogador.foto.url }}">
+                    {% else %}
+                        <div class="avatar"></div>
+                    {% endif %}
+
+                    <div class="ranking-nome">
+                        {{ r.jogador.nome }}
+                    </div>
+
+                    <div class="ranking-pontos">
+                        {{ r.pontos }} pts
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
             </div>
 
         </div>
 
-    {% endfor %}
-
-</div>
-
-<div id="rankingB" style="display:none;">
-
-    {% for r in ranking_b %}
-
-        <div class="ranking-item">
-
-            <div class="posicao">
-                {{ r.posicao }}
-            </div>
-
-            {% if r.jogador.foto %}
-                <img class="avatar" src="{{ r.jogador.foto.url }}">
-            {% else %}
-                <div class="avatar"></div>
-            {% endif %}
-
-            <div class="ranking-nome">
-                {{ r.jogador.nome }}
-            </div>
-
-            <div class="ranking-pontos">
-                {{ r.pontos }} pts
-            </div>
-
-        </div>
-
-    {% endfor %}
-
-</div>
-
-<div id="rankingC" style="display:none;">
-
-    {% for r in ranking_c %}
-
-        <div class="ranking-item">
-
-            <div class="posicao">
-                {{ r.posicao }}
-            </div>
-
-            {% if r.jogador.foto %}
-                <img class="avatar" src="{{ r.jogador.foto.url }}">
-            {% else %}
-                <div class="avatar"></div>
-            {% endif %}
-
-            <div class="ranking-nome">
-                {{ r.jogador.nome }}
-            </div>
-
-            <div class="ranking-pontos">
-                {{ r.pontos }} pts
-            </div>
-
-        </div>
-
-    {% endfor %}
-
-</div>
-
-        </div>
-
+        <!-- TORNEIOS -->
         <div class="card">
 
             <div class="card-header">
@@ -501,35 +515,37 @@ gap:12px;
 
             {% for torneio in proximos_torneios %}
 
-                <div class="torneio-item">
+            <div class="torneio-item">
 
-                    <div class="data-box">
-                        <div class="dia">{{ torneio.data_inicio|date:"d" }}</div>
-                        <div class="mes">{{ torneio.data_inicio|date:"M" }}</div>
-                    </div>
-
-                    <div class="torneio-info">
-                        <strong>{{ torneio.nome }}</strong>
-                        <div>Panambi/RS</div>
-                    </div>
-
-                    <div class="status-torneio">
-                        {{ torneio.get_status_display }}
-                    </div>
-
+                <div class="data-box">
+                    <div class="dia">{{ torneio.data_inicio|date:"d" }}</div>
+                    <div class="mes">{{ torneio.data_inicio|date:"M" }}</div>
                 </div>
+
+                <div class="torneio-info">
+                    <strong>{{ torneio.nome }}</strong>
+                    <div>Panambi/RS</div>
+                </div>
+
+                <div class="status-torneio">
+                    {{ torneio.get_status_display }}
+                </div>
+
+            </div>
 
             {% empty %}
 
-                <div style="padding:25px;color:#64748b;">
-                    Nenhum torneio futuro cadastrado.
-                </div>
+            <div style="padding:25px;color:#64748b;">
+                Nenhum torneio futuro cadastrado.
+            </div>
 
             {% endfor %}
 
         </div>
 
     </div>
+
+    <!-- ÚLTIMOS JOGOS -->
 
     <div class="ultimos-jogos">
 
@@ -561,17 +577,47 @@ gap:12px;
                 </td>
             </tr>
 
-            {% empty %}
-
-            <tr>
-                <td colspan="4" style="text-align:center;color:#64748b;">
-                    Nenhum jogo confirmado ainda.
-                </td>
-            </tr>
-
             {% endfor %}
 
         </table>
+
+        <div class="mobile-jogos">
+
+            {% for jogo in ultimos_jogos %}
+
+            <div class="mobile-jogo-card">
+
+                <div class="mobile-jogo-data">
+                    📅 {{ jogo.data_jogo|date:"d/m/Y" }}
+                </div>
+
+                <div class="mobile-jogo-confronto">
+                    🎾 {{ jogo.descricao_confronto }}
+                </div>
+
+                <div class="mobile-jogo-info">
+
+                    <div class="mobile-jogo-placar">
+                        📊 {{ jogo.placar_resumido }}
+                    </div>
+
+                    <div class="mobile-jogo-torneio">
+
+                        {% if jogo.torneio %}
+                            🏆 {{ jogo.torneio.nome }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
 
     </div>
 
@@ -580,13 +626,20 @@ gap:12px;
 <div class="footer">
     TenisPanambi © 2026
 </div>
+
 <script>
 
 function mostrarRanking(cat){
 
     document.getElementById('rankingA').style.display = 'none';
-    document.getElementById('rankingB').style.display = 'none';
-    document.getElementById('rankingC').style.display = 'none';
+
+    if(document.getElementById('rankingB')){
+        document.getElementById('rankingB').style.display = 'none';
+    }
+
+    if(document.getElementById('rankingC')){
+        document.getElementById('rankingC').style.display = 'none';
+    }
 
     document.getElementById('btnA').style.background = '#d9e3f0';
     document.getElementById('btnB').style.background = '#d9e3f0';
