@@ -91,15 +91,27 @@ def home(request):
         ).prefetch_related(
             'participantes',
             'participantes__jogador'
+        ).order_by(
+            'data_jogo',
+            'id'
         )
 
         dados = {}
+        controle_jogos_jogador = {}
 
         for jogo in jogos_rodada:
 
             for p in jogo.participantes.all():
 
                 jogador = p.jogador
+
+                if jogador.id not in controle_jogos_jogador:
+                    controle_jogos_jogador[jogador.id] = 0
+
+                if controle_jogos_jogador[jogador.id] >= 2:
+                    continue
+
+                controle_jogos_jogador[jogador.id] += 1
 
                 if jogador.id not in dados:
                     dados[jogador.id] = {
@@ -149,7 +161,6 @@ def home(request):
             'ranking_b': ranking_b,
             'ranking_c': ranking_c,
             'proximos_torneios': proximos_torneios,
-
             'destaques_a': destaques_a,
             'destaques_b': destaques_b,
             'destaques_c': destaques_c,
