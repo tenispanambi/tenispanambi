@@ -220,6 +220,7 @@ def cadastro(request):
 
 
 def ranking(request):
+
     ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
     ).order_by('posicao')
@@ -231,6 +232,29 @@ def ranking(request):
     ranking_c = RankingJogador.objects.filter(
         categoria__categoria='C'
     ).order_by('posicao')
+
+    def aplicar_variacao(lista):
+
+        for r in lista:
+
+            r.variacao_posicao = 0
+            r.direcao_posicao = 'igual'
+
+            if r.posicao_anterior and r.posicao_anterior > 0:
+
+                if r.posicao < r.posicao_anterior:
+                    r.variacao_posicao = r.posicao_anterior - r.posicao
+                    r.direcao_posicao = 'subiu'
+
+                elif r.posicao > r.posicao_anterior:
+                    r.variacao_posicao = r.posicao - r.posicao_anterior
+                    r.direcao_posicao = 'desceu'
+
+        return lista
+
+    ranking_a = aplicar_variacao(list(ranking_a))
+    ranking_b = aplicar_variacao(list(ranking_b))
+    ranking_c = aplicar_variacao(list(ranking_c))
 
     return render(
         request,

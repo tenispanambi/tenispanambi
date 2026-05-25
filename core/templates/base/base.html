@@ -10,6 +10,9 @@
 
     <title>Tênis Panambi</title>
 
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
 
         *{
@@ -68,7 +71,7 @@
         .menu{
             display:flex;
             align-items:center;
-            gap:24px;
+            gap:18px;
             flex-wrap:wrap;
         }
 
@@ -145,6 +148,44 @@
             max-width:100%;
         }
 
+        .social-topo{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            margin-left:10px;
+        }
+
+        .social-link{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:white !important;
+            font-size:20px;
+            text-decoration:none;
+            transition:0.25s;
+        }
+
+        .social-link:hover{
+            transform:scale(1.1);
+        }
+
+        .instagram{
+            background:linear-gradient(
+                45deg,
+                #f09433,
+                #dc2743,
+                #cc2366,
+                #bc1888
+            );
+        }
+
+        .youtube{
+            background:#ff0000;
+        }
+
         /* =========================================
            MOBILE
         ========================================= */
@@ -202,6 +243,18 @@
                 background:rgba(255,255,255,0.14);
                 font-size:13px;
                 text-align:center;
+            }
+
+            .social-topo{
+                grid-column:1 / -1;
+                justify-content:center;
+                margin-top:6px;
+            }
+
+            .social-link{
+                width:38px;
+                height:38px;
+                font-size:18px;
             }
 
             .usuario-dropdown{
@@ -309,35 +362,21 @@
 
     <nav class="menu">
 
-        <a href="/">
-            Início
-        </a>
+        <a href="/">Início</a>
 
-        <a href="/ranking/">
-            Ranking
-        </a>
+        <a href="/ranking/">Ranking</a>
 
-        <a href="/mural-campeoes/">
-            Campeões
-        </a>
+        <a href="/mural-campeoes/">Campeões</a>
 
-        <a href="/head-to-head/">
-            Head to Head
-        </a>
+        <a href="/head-to-head/">Head to Head</a>
 
         {% if user.is_authenticated %}
 
-            <a href="/meu-painel/">
-                Meu Painel
-            </a>
+            <a href="/meu-painel/">Meu Painel</a>
 
-            <a href="/meus-jogos/">
-                Meus Jogos
-            </a>
+            <a href="/meus-jogos/">Meus Jogos</a>
 
-            <a href="/lancar-jogo/">
-                Lançar Jogo
-            </a>
+            <a href="/lancar-jogo/">Lançar Jogo</a>
 
             <div class="usuario-dropdown">
 
@@ -365,15 +404,31 @@
 
         {% else %}
 
-            <a href="/login/">
-                Login
-            </a>
+            <a href="/login/">Login</a>
 
-            <a href="/cadastro/">
-                Criar Conta
-            </a>
+            <a href="/cadastro/">Criar Conta</a>
 
         {% endif %}
+
+        <div class="social-topo">
+
+            <a
+                href="https://instagram.com/tenispanambi"
+                target="_blank"
+                class="social-link instagram"
+            >
+                <i class="fab fa-instagram"></i>
+            </a>
+
+            <a
+                href="https://youtube.com/@tenispanambi"
+                target="_blank"
+                class="social-link youtube"
+            >
+                <i class="fab fa-youtube"></i>
+            </a>
+
+        </div>
 
     </nav>
 

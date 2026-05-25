@@ -17,13 +17,17 @@
     font-size:18px;
 }
 
-.ranking-table th{
-    padding:18px;
-}
-
+.ranking-table th,
 .ranking-table td{
     padding:18px;
     border-bottom:1px solid #eee;
+}
+
+.pos-cell{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    color:#0b4d91;
 }
 
 .ranking-player{
@@ -50,13 +54,6 @@
 .ranking-sub{
     color:#777;
     font-size:15px;
-}
-
-.pos-cell{
-    text-align:center;
-    font-size:28px;
-    font-weight:bold;
-    color:#0b4d91;
 }
 
 .center{
@@ -111,6 +108,13 @@
     margin-bottom:14px;
 }
 
+.mobile-pos-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+}
+
 .mobile-pos{
     width:42px;
     height:42px;
@@ -122,6 +126,11 @@
     justify-content:center;
     font-weight:900;
     flex-shrink:0;
+}
+
+.mobile-variacao{
+    font-size:13px;
+    font-weight:900;
 }
 
 .mobile-info{
@@ -225,15 +234,58 @@
         >
 
             <td class="pos-cell">
-                {% if r.posicao == 1 %}
-                    🥇
-                {% elif r.posicao == 2 %}
-                    🥈
-                {% elif r.posicao == 3 %}
-                    🥉
-                {% else %}
-                    {{ r.posicao }}
-                {% endif %}
+
+                <div style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                gap:10px;
+                ">
+
+                    <div style="width:42px;text-align:right;">
+
+                        {% if r.posicao_anterior > 0 %}
+
+                            {% if r.direcao_posicao == 'subiu' %}
+                                <span style="color:#16a34a;font-size:15px;font-weight:900;">
+                                    ▲ {{ r.variacao_posicao }}
+                                </span>
+                            {% elif r.direcao_posicao == 'desceu' %}
+                                <span style="color:#dc2626;font-size:15px;font-weight:900;">
+                                    ▼ {{ r.variacao_posicao }}
+                                </span>
+                            {% else %}
+                                <span style="color:#64748b;font-size:15px;font-weight:900;">
+                                    — 0
+                                </span>
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                    <div style="
+                    min-width:42px;
+                    text-align:center;
+                    font-size:28px;
+                    font-weight:900;
+                    color:#0b4d91;
+                    ">
+
+                        {% if r.posicao == 1 %}
+                            🥇
+                        {% elif r.posicao == 2 %}
+                            🥈
+                        {% elif r.posicao == 3 %}
+                            🥉
+                        {% else %}
+                            {{ r.posicao }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
             </td>
 
             <td>
@@ -321,16 +373,38 @@
 
             <div class="mobile-top">
 
-                <div class="mobile-pos">
-                    {% if r.posicao == 1 %}
-                        🥇
-                    {% elif r.posicao == 2 %}
-                        🥈
-                    {% elif r.posicao == 3 %}
-                        🥉
-                    {% else %}
-                        {{ r.posicao }}
+                <div class="mobile-pos-area">
+
+                    <div class="mobile-pos">
+                        {% if r.posicao == 1 %}
+                            🥇
+                        {% elif r.posicao == 2 %}
+                            🥈
+                        {% elif r.posicao == 3 %}
+                            🥉
+                        {% else %}
+                            {{ r.posicao }}
+                        {% endif %}
+                    </div>
+
+                    {% if r.posicao_anterior > 0 %}
+
+                        {% if r.direcao_posicao == 'subiu' %}
+                            <div class="mobile-variacao" style="color:#16a34a;">
+                                ▲ {{ r.variacao_posicao }}
+                            </div>
+                        {% elif r.direcao_posicao == 'desceu' %}
+                            <div class="mobile-variacao" style="color:#dc2626;">
+                                ▼ {{ r.variacao_posicao }}
+                            </div>
+                        {% else %}
+                            <div class="mobile-variacao" style="color:#64748b;">
+                                — 0
+                            </div>
+                        {% endif %}
+
                     {% endif %}
+
                 </div>
 
                 {% if r.jogador.foto %}

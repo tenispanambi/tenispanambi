@@ -482,6 +482,12 @@ class RankingJogador(models.Model):
         on_delete=models.CASCADE
     )
 
+    posicao = models.IntegerField(default=0)
+
+    posicao_anterior = models.IntegerField(default=0)
+
+    pontos = models.IntegerField(default=0)
+
     pontos = models.IntegerField(default=0)
     vitorias = models.IntegerField(default=0)
     derrotas = models.IntegerField(default=0)

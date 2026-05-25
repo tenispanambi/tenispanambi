@@ -13,11 +13,6 @@ def recalcular_ranking(torneio, categoria):
     if not torneio or not categoria:
         return
 
-    RankingJogador.objects.filter(
-        torneio=torneio,
-        categoria=categoria
-    ).delete()
-
     jogos = Jogo.objects.filter(
         torneio=torneio,
         categoria=categoria,
@@ -171,12 +166,12 @@ def recalcular_ranking(torneio, categoria):
     )
 
     total_jogadores = len(ranking_lista)
+    jogadores_processados = []
 
     for indice, item in enumerate(ranking_lista, start=1):
 
         status_ranking = ''
 
-        # CLASSIFICADOS / PROMOVIDOS
         if categoria.classificados_finais and indice <= categoria.classificados_finais:
 
             if categoria.categoria in ['B', 'C']:
@@ -184,20 +179,42 @@ def recalcular_ranking(torneio, categoria):
             else:
                 status_ranking = 'CLASSIFICADO'
 
-        # REBAIXADOS
         if categoria.rebaixados and indice > total_jogadores - categoria.rebaixados:
             status_ranking = 'REBAIXADO'
 
-        RankingJogador.objects.create(
+        ranking_antigo = RankingJogador.objects.filter(
+            torneio=torneio,
+            categoria=categoria,
+            jogador=item['jogador']
+        ).first()
+
+        posicao_anterior = 0
+
+        if ranking_antigo:
+            posicao_anterior = ranking_antigo.posicao
+
+        RankingJogador.objects.update_or_create(
             torneio=torneio,
             categoria=categoria,
             jogador=item['jogador'],
-            pontos=item['pontos'],
-            vitorias=item['vitorias'],
-            derrotas=item['derrotas'],
-            games_feitos=item['games_feitos'],
-            games_sofridos=item['games_sofridos'],
-            aproveitamento=item['aproveitamento'],
-            posicao=indice,
-            status_ranking=status_ranking
+            defaults={
+                'pontos': item['pontos'],
+                'vitorias': item['vitorias'],
+                'derrotas': item['derrotas'],
+                'games_feitos': item['games_feitos'],
+                'games_sofridos': item['games_sofridos'],
+                'aproveitamento': item['aproveitamento'],
+                'posicao': indice,
+                'posicao_anterior': posicao_anterior,
+                'status_ranking': status_ranking,
+            }
         )
+
+        jogadores_processados.append(item['jogador'].id)
+
+    RankingJogador.objects.filter(
+        torneio=torneio,
+        categoria=categoria
+    ).exclude(
+        jogador_id__in=jogadores_processados
+    ).delete()
