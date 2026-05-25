@@ -465,352 +465,144 @@ body{
 
     </div>
 
-    <div class="grade-principal">
+   <div class="grade-principal">
 
-        <!-- RANKING A -->
-        <div class="card">
+    <!-- RANKING -->
+    <div class="card">
 
-            <div class="card-header">
-                <h2>Ranking Atual</h2>
-                <a href="/ranking/">Ver ranking completo →</a>
+        <div class="card-header">
+            <h2>Ranking Atual</h2>
+            <a href="/ranking/">Ver ranking completo →</a>
+        </div>
+
+        <div class="ranking-buttons">
+            <button onclick="mostrarRanking('A')" id="btnA" style="background:#0b4d91;color:white;">Categoria A</button>
+            <button onclick="mostrarRanking('B')" id="btnB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
+            <button onclick="mostrarRanking('C')" id="btnC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
+        </div>
+
+        <div id="rankingA">
+            {% for r in ranking_a %}
+            <div class="ranking-item">
+                <div class="posicao">{{ r.posicao }}</div>
+                {% if r.jogador.foto %}
+                    <img class="avatar" src="{{ r.jogador.foto.url }}">
+                {% else %}
+                    <div class="avatar"></div>
+                {% endif %}
+                <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                <div class="ranking-pontos">{{ r.pontos }} pts</div>
             </div>
+            {% endfor %}
+        </div>
 
-            <div class="ranking-buttons">
-
-                <button onclick="mostrarRanking('A')" id="btnA"
-                style="background:#0b4d91;color:white;">
-                    Categoria A
-                </button>
-
-                <button onclick="mostrarRanking('B')" id="btnB"
-                style="background:#d9e3f0;color:#0b4d91;">
-                    Categoria B
-                </button>
-
-                <button onclick="mostrarRanking('C')" id="btnC"
-                style="background:#d9e3f0;color:#0b4d91;">
-                    Categoria C
-                </button>
-
+        <div id="rankingB" style="display:none;">
+            {% for r in ranking_b %}
+            <div class="ranking-item">
+                <div class="posicao">{{ r.posicao }}</div>
+                {% if r.jogador.foto %}
+                    <img class="avatar" src="{{ r.jogador.foto.url }}">
+                {% else %}
+                    <div class="avatar"></div>
+                {% endif %}
+                <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                <div class="ranking-pontos">{{ r.pontos }} pts</div>
             </div>
+            {% endfor %}
+        </div>
 
-            <div id="rankingA">
+        <div id="rankingC" style="display:none;">
+            {% for r in ranking_c %}
+            <div class="ranking-item">
+                <div class="posicao">{{ r.posicao }}</div>
+                {% if r.jogador.foto %}
+                    <img class="avatar" src="{{ r.jogador.foto.url }}">
+                {% else %}
+                    <div class="avatar"></div>
+                {% endif %}
+                <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                <div class="ranking-pontos">{{ r.pontos }} pts</div>
+            </div>
+            {% endfor %}
+        </div>
 
-                {% for r in ranking_a %}
+    </div>
 
-                <div class="ranking-item">
+    <!-- ÚLTIMA RODADA -->
+    <div class="card">
 
-                    <div class="posicao">
-                        {{ r.posicao }}
+        <div class="card-header">
+            <h2>🔥 Última Rodada</h2>
+        </div>
+
+        <div class="ranking-buttons">
+            <button onclick="mostrarDestaque('A')" id="btnDestaqueA" style="background:#0b4d91;color:white;">Categoria A</button>
+            <button onclick="mostrarDestaque('B')" id="btnDestaqueB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
+            <button onclick="mostrarDestaque('C')" id="btnDestaqueC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
+        </div>
+
+        <div id="destaqueA" style="padding:22px 25px 25px 25px;">
+            <h3 style="color:#0b4d91;font-size:22px;">Categoria A • {{ destaques_a.rodada }}ª Rodada</h3>
+
+            {% for j in destaques_a.jogadores %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                <div>
+                    <strong style="font-size:18px;color:#062b55;">
+                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                        {{ j.nome }}
+                    </strong>
+                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                        {{ j.vitorias }}V / {{ j.derrotas }}D
                     </div>
+                </div>
+                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
+            </div>
+            {% empty %}
+            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+            {% endfor %}
+        </div>
 
-                    {% if r.jogador.foto %}
-                        <img class="avatar" src="{{ r.jogador.foto.url }}">
-                    {% else %}
-                        <div class="avatar"></div>
-                    {% endif %}
+        <div id="destaqueB" style="display:none;padding:22px 25px 25px 25px;">
+            <h3 style="color:#0b4d91;font-size:22px;">Categoria B • {{ destaques_b.rodada }}ª Rodada</h3>
 
-                    <div class="ranking-nome">
-                        {{ r.jogador.nome }}
+            {% for j in destaques_b.jogadores %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                <div>
+                    <strong style="font-size:18px;color:#062b55;">
+                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                        {{ j.nome }}
+                    </strong>
+                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                        {{ j.vitorias }}V / {{ j.derrotas }}D
                     </div>
+                </div>
+                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
+            </div>
+            {% empty %}
+            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+            {% endfor %}
+        </div>
 
-                    <div class="ranking-pontos">
-                        {{ r.pontos }} pts
+        <div id="destaqueC" style="display:none;padding:22px 25px 25px 25px;">
+            <h3 style="color:#0b4d91;font-size:22px;">Categoria C • {{ destaques_c.rodada }}ª Rodada</h3>
+
+            {% for j in destaques_c.jogadores %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                <div>
+                    <strong style="font-size:18px;color:#062b55;">
+                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                        {{ j.nome }}
+                    </strong>
+                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                        {{ j.vitorias }}V / {{ j.derrotas }}D
                     </div>
-
                 </div>
-
-                {% endfor %}
-
+                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
             </div>
-
-        
-        <!-- RANKING B -->
-
-<div id="rankingB" style="display:none;">
-
-    {% for r in ranking_b %}
-
-    <div class="ranking-item">
-
-        <div class="posicao">
-            {{ r.posicao }}
+            {% empty %}
+            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+            {% endfor %}
         </div>
-
-        {% if r.jogador.foto %}
-            <img class="avatar" src="{{ r.jogador.foto.url }}">
-        {% else %}
-            <div class="avatar"></div>
-        {% endif %}
-
-        <div class="ranking-nome">
-            {{ r.jogador.nome }}
-        </div>
-
-        <div class="ranking-pontos">
-            {{ r.pontos }} pts
-        </div>
-
-    </div>
-
-    {% endfor %}
-
-</div>
-
-<!-- RANKING C -->
-
-<div id="rankingC" style="display:none;">
-
-    {% for r in ranking_c %}
-
-    <div class="ranking-item">
-
-        <div class="posicao">
-            {{ r.posicao }}
-        </div>
-
-        {% if r.jogador.foto %}
-            <img class="avatar" src="{{ r.jogador.foto.url }}">
-        {% else %}
-            <div class="avatar"></div>
-        {% endif %}
-
-        <div class="ranking-nome">
-            {{ r.jogador.nome }}
-        </div>
-
-        <div class="ranking-pontos">
-            {{ r.pontos }} pts
-        </div>
-
-    </div>
-
-    {% endfor %}
-
-</div>
-
-</div>
-
-        <!-- ÚLTIMA RODADA -->
-<div class="card">
-
-    <div class="card-header">
-        <h2>🔥 Última Rodada</h2>
-    </div>
-
-    <!-- CATEGORIA A -->
-
-    <div style="padding:22px 25px 10px 25px;">
-
-        <div style="
-        font-size:22px;
-        font-weight:bold;
-        color:#0b4d91;
-        margin-bottom:16px;
-        ">
-            Categoria A • {{ destaques_a.rodada }}ª Rodada
-        </div>
-
-        {% for j in destaques_a.jogadores %}
-
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding:14px 0;
-        border-bottom:1px solid #edf0f4;
-        gap:15px;
-        ">
-
-            <div>
-
-                <div style="
-                font-size:18px;
-                font-weight:bold;
-                color:#062b55;
-                ">
-                    {% if forloop.counter == 1 %}
-                        🥇
-                    {% elif forloop.counter == 2 %}
-                        🥈
-                    {% elif forloop.counter == 3 %}
-                        🥉
-                    {% endif %}
-
-                    {{ j.nome }}
-                </div>
-
-                <div style="
-                margin-top:4px;
-                color:#64748b;
-                font-size:14px;
-                ">
-                    {{ j.vitorias }}V / {{ j.derrotas }}D
-                </div>
-
-            </div>
-
-            <div style="
-            font-size:22px;
-            font-weight:900;
-            color:#16a34a;
-            ">
-                {{ j.pontos }} pts
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div style="color:#64748b;">
-            Nenhuma rodada encontrada.
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <!-- CATEGORIA B -->
-
-    <div style="padding:10px 25px;">
-
-        <div style="
-        font-size:22px;
-        font-weight:bold;
-        color:#0b4d91;
-        margin-bottom:16px;
-        ">
-            Categoria B • {{ destaques_b.rodada }}ª Rodada
-        </div>
-
-        {% for j in destaques_b.jogadores %}
-
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding:14px 0;
-        border-bottom:1px solid #edf0f4;
-        gap:15px;
-        ">
-
-            <div>
-
-                <div style="
-                font-size:18px;
-                font-weight:bold;
-                color:#062b55;
-                ">
-                    {% if forloop.counter == 1 %}
-                        🥇
-                    {% elif forloop.counter == 2 %}
-                        🥈
-                    {% elif forloop.counter == 3 %}
-                        🥉
-                    {% endif %}
-
-                    {{ j.nome }}
-                </div>
-
-                <div style="
-                margin-top:4px;
-                color:#64748b;
-                font-size:14px;
-                ">
-                    {{ j.vitorias }}V / {{ j.derrotas }}D
-                </div>
-
-            </div>
-
-            <div style="
-            font-size:22px;
-            font-weight:900;
-            color:#16a34a;
-            ">
-                {{ j.pontos }} pts
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div style="color:#64748b;">
-            Nenhuma rodada encontrada.
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <!-- CATEGORIA C -->
-
-    <div style="padding:10px 25px 25px 25px;">
-
-        <div style="
-        font-size:22px;
-        font-weight:bold;
-        color:#0b4d91;
-        margin-bottom:16px;
-        ">
-            Categoria C • {{ destaques_c.rodada }}ª Rodada
-        </div>
-
-        {% for j in destaques_c.jogadores %}
-
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding:14px 0;
-        border-bottom:1px solid #edf0f4;
-        gap:15px;
-        ">
-
-            <div>
-
-                <div style="
-                font-size:18px;
-                font-weight:bold;
-                color:#062b55;
-                ">
-                    {% if forloop.counter == 1 %}
-                        🥇
-                    {% elif forloop.counter == 2 %}
-                        🥈
-                    {% elif forloop.counter == 3 %}
-                        🥉
-                    {% endif %}
-
-                    {{ j.nome }}
-                </div>
-
-                <div style="
-                margin-top:4px;
-                color:#64748b;
-                font-size:14px;
-                ">
-                    {{ j.vitorias }}V / {{ j.derrotas }}D
-                </div>
-
-            </div>
-
-            <div style="
-            font-size:22px;
-            font-weight:900;
-            color:#16a34a;
-            ">
-                {{ j.pontos }} pts
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div style="color:#64748b;">
-            Nenhuma rodada encontrada.
-        </div>
-
-        {% endfor %}
 
     </div>
 
@@ -924,6 +716,26 @@ function mostrarRanking(cat){
 
     document.getElementById('btn'+cat).style.background = '#0b4d91';
     document.getElementById('btn'+cat).style.color = 'white';
+}
+
+function mostrarDestaque(cat){
+
+    document.getElementById('destaqueA').style.display = 'none';
+    document.getElementById('destaqueB').style.display = 'none';
+    document.getElementById('destaqueC').style.display = 'none';
+
+    document.getElementById('btnDestaqueA').style.background = '#d9e3f0';
+    document.getElementById('btnDestaqueB').style.background = '#d9e3f0';
+    document.getElementById('btnDestaqueC').style.background = '#d9e3f0';
+
+    document.getElementById('btnDestaqueA').style.color = '#0b4d91';
+    document.getElementById('btnDestaqueB').style.color = '#0b4d91';
+    document.getElementById('btnDestaqueC').style.color = '#0b4d91';
+
+    document.getElementById('destaque'+cat).style.display = 'block';
+
+    document.getElementById('btnDestaque'+cat).style.background = '#0b4d91';
+    document.getElementById('btnDestaque'+cat).style.color = 'white';
 }
 
 </script>
