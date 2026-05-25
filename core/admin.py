@@ -209,7 +209,11 @@ class JogoAdmin(admin.ModelAdmin):
 
     search_fields = (
         'participantes__jogador__nome',
+        'torneio__nome',
     )
+
+    list_per_page = 20
+    ordering = ('-data_jogo', '-id')
 
     inlines = [
         ParticipanteInline,
