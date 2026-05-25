@@ -591,45 +591,230 @@ body{
 
 </div>
 
-        <!-- TORNEIOS -->
-        <div class="card">
+        <!-- ÚLTIMA RODADA -->
+<div class="card">
 
-            <div class="card-header">
-                <h2>Próximos Torneios</h2>
-                <a href="/torneios/">Ver todos →</a>
-            </div>
+    <div class="card-header">
+        <h2>🔥 Última Rodada</h2>
+    </div>
 
-            {% for torneio in proximos_torneios %}
+    <!-- CATEGORIA A -->
 
-            <div class="torneio-item">
+    <div style="padding:22px 25px 10px 25px;">
 
-                <div class="data-box">
-                    <div class="dia">{{ torneio.data_inicio|date:"d" }}</div>
-                    <div class="mes">{{ torneio.data_inicio|date:"M" }}</div>
+        <div style="
+        font-size:22px;
+        font-weight:bold;
+        color:#0b4d91;
+        margin-bottom:16px;
+        ">
+            Categoria A • {{ destaques_a.rodada }}ª Rodada
+        </div>
+
+        {% for j in destaques_a.jogadores %}
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:14px 0;
+        border-bottom:1px solid #edf0f4;
+        gap:15px;
+        ">
+
+            <div>
+
+                <div style="
+                font-size:18px;
+                font-weight:bold;
+                color:#062b55;
+                ">
+                    {% if forloop.counter == 1 %}
+                        🥇
+                    {% elif forloop.counter == 2 %}
+                        🥈
+                    {% elif forloop.counter == 3 %}
+                        🥉
+                    {% endif %}
+
+                    {{ j.nome }}
                 </div>
 
-                <div class="torneio-info">
-                    <strong>{{ torneio.nome }}</strong>
-                    <div>Panambi/RS</div>
-                </div>
-
-                <div class="status-torneio">
-                    {{ torneio.get_status_display }}
+                <div style="
+                margin-top:4px;
+                color:#64748b;
+                font-size:14px;
+                ">
+                    {{ j.vitorias }}V / {{ j.derrotas }}D
                 </div>
 
             </div>
 
-            {% empty %}
-
-            <div style="padding:25px;color:#64748b;">
-                Nenhum torneio futuro cadastrado.
+            <div style="
+            font-size:22px;
+            font-weight:900;
+            color:#16a34a;
+            ">
+                {{ j.pontos }} pts
             </div>
-
-            {% endfor %}
 
         </div>
 
+        {% empty %}
+
+        <div style="color:#64748b;">
+            Nenhuma rodada encontrada.
+        </div>
+
+        {% endfor %}
+
     </div>
+
+    <!-- CATEGORIA B -->
+
+    <div style="padding:10px 25px;">
+
+        <div style="
+        font-size:22px;
+        font-weight:bold;
+        color:#0b4d91;
+        margin-bottom:16px;
+        ">
+            Categoria B • {{ destaques_b.rodada }}ª Rodada
+        </div>
+
+        {% for j in destaques_b.jogadores %}
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:14px 0;
+        border-bottom:1px solid #edf0f4;
+        gap:15px;
+        ">
+
+            <div>
+
+                <div style="
+                font-size:18px;
+                font-weight:bold;
+                color:#062b55;
+                ">
+                    {% if forloop.counter == 1 %}
+                        🥇
+                    {% elif forloop.counter == 2 %}
+                        🥈
+                    {% elif forloop.counter == 3 %}
+                        🥉
+                    {% endif %}
+
+                    {{ j.nome }}
+                </div>
+
+                <div style="
+                margin-top:4px;
+                color:#64748b;
+                font-size:14px;
+                ">
+                    {{ j.vitorias }}V / {{ j.derrotas }}D
+                </div>
+
+            </div>
+
+            <div style="
+            font-size:22px;
+            font-weight:900;
+            color:#16a34a;
+            ">
+                {{ j.pontos }} pts
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div style="color:#64748b;">
+            Nenhuma rodada encontrada.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- CATEGORIA C -->
+
+    <div style="padding:10px 25px 25px 25px;">
+
+        <div style="
+        font-size:22px;
+        font-weight:bold;
+        color:#0b4d91;
+        margin-bottom:16px;
+        ">
+            Categoria C • {{ destaques_c.rodada }}ª Rodada
+        </div>
+
+        {% for j in destaques_c.jogadores %}
+
+        <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:14px 0;
+        border-bottom:1px solid #edf0f4;
+        gap:15px;
+        ">
+
+            <div>
+
+                <div style="
+                font-size:18px;
+                font-weight:bold;
+                color:#062b55;
+                ">
+                    {% if forloop.counter == 1 %}
+                        🥇
+                    {% elif forloop.counter == 2 %}
+                        🥈
+                    {% elif forloop.counter == 3 %}
+                        🥉
+                    {% endif %}
+
+                    {{ j.nome }}
+                </div>
+
+                <div style="
+                margin-top:4px;
+                color:#64748b;
+                font-size:14px;
+                ">
+                    {{ j.vitorias }}V / {{ j.derrotas }}D
+                </div>
+
+            </div>
+
+            <div style="
+            font-size:22px;
+            font-weight:900;
+            color:#16a34a;
+            ">
+                {{ j.pontos }} pts
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div style="color:#64748b;">
+            Nenhuma rodada encontrada.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
 
     <!-- ÚLTIMOS JOGOS -->
 

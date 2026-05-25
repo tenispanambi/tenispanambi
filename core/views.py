@@ -27,6 +27,7 @@ from .models import (
 
 
 def home(request):
+
     total_jogadores = Jogador.objects.count()
 
     total_jogos = Jogo.objects.filter(
@@ -40,8 +41,11 @@ def home(request):
     ).count()
 
     ultimos_jogos = Jogo.objects.filter(
-    status='CONFIRMADO'
-    ).order_by('-data_jogo','-id')[:10]
+        status='CONFIRMADO'
+    ).order_by(
+        '-data_jogo',
+        '-id'
+    )[:10]
 
     ranking_a = RankingJogador.objects.filter(
         categoria__categoria='A'
@@ -59,6 +63,79 @@ def home(request):
         data_inicio__gte=date.today()
     ).order_by('data_inicio')[:3]
 
+    def destaques_ultima_rodada(categoria_letra):
+
+        ultima_rodada = Jogo.objects.filter(
+            status='CONFIRMADO',
+            tipo_jogo='CHAMPIONSHIP_DUPLAS',
+            categoria__categoria=categoria_letra,
+            rodada__isnull=False
+        ).order_by(
+            '-rodada'
+        ).values_list(
+            'rodada',
+            flat=True
+        ).first()
+
+        if not ultima_rodada:
+            return {
+                'rodada': None,
+                'jogadores': []
+            }
+
+        jogos_rodada = Jogo.objects.filter(
+            status='CONFIRMADO',
+            tipo_jogo='CHAMPIONSHIP_DUPLAS',
+            categoria__categoria=categoria_letra,
+            rodada=ultima_rodada
+        ).prefetch_related(
+            'participantes',
+            'participantes__jogador'
+        )
+
+        dados = {}
+
+        for jogo in jogos_rodada:
+
+            for p in jogo.participantes.all():
+
+                jogador = p.jogador
+
+                if jogador.id not in dados:
+                    dados[jogador.id] = {
+                        'nome': jogador.nome,
+                        'vitorias': 0,
+                        'derrotas': 0,
+                        'pontos': 0,
+                    }
+
+                if p.lado == 'A':
+                    games = jogo.total_games_lado_a()
+                else:
+                    games = jogo.total_games_lado_b()
+
+                if p.vencedor:
+                    dados[jogador.id]['vitorias'] += 1
+                    dados[jogador.id]['pontos'] += 20 + games
+                else:
+                    dados[jogador.id]['derrotas'] += 1
+                    dados[jogador.id]['pontos'] += 5 + games
+
+        jogadores = sorted(
+            dados.values(),
+            key=lambda x: x['pontos'],
+            reverse=True
+        )[:5]
+
+        return {
+            'rodada': ultima_rodada,
+            'jogadores': jogadores
+        }
+
+    destaques_a = destaques_ultima_rodada('A')
+    destaques_b = destaques_ultima_rodada('B')
+    destaques_c = destaques_ultima_rodada('C')
+
     return render(
         request,
         'core/index.html',
@@ -72,6 +149,10 @@ def home(request):
             'ranking_b': ranking_b,
             'ranking_c': ranking_c,
             'proximos_torneios': proximos_torneios,
+
+            'destaques_a': destaques_a,
+            'destaques_b': destaques_b,
+            'destaques_c': destaques_c,
         }
     )
 
