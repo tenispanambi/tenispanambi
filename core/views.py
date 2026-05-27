@@ -12,6 +12,7 @@ from .services.ranking import recalcular_ranking
 from .services.avanco import avancar_vencedor
 from .services.chaveamento import gerar_chaveamento
 from datetime import date
+from collections import Counter
 
 from .models import (
     RankingJogador,
@@ -25,7 +26,6 @@ from .models import (
     CampeaoTorneio,
 )
 
-
 def home(request):
 
     total_jogadores = Jogador.objects.count()
@@ -36,9 +36,51 @@ def home(request):
 
     total_torneios = Torneio.objects.count()
 
-    jogos_semana = Jogo.objects.filter(
-        status='CONFIRMADO'
-    ).count()
+    # PLACAR MAIS COMUM
+
+    placares = []
+
+    jogos_duplas = Jogo.objects.filter(
+        status='CONFIRMADO',
+        tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    )
+
+    for jogo in jogos_duplas:
+
+        placar = jogo.placar_resumido()
+
+        if placar:
+            placares.append(placar)
+
+    placar_mais_comum = '-'
+    placar_mais_comum_qtd = 0
+
+    if placares:
+        contador = Counter(placares)
+        placar_mais_comum, placar_mais_comum_qtd = contador.most_common(1)[0]
+
+    # JOGOS DA ÚLTIMA RODADA
+
+    ultima_rodada_geral = Jogo.objects.filter(
+        status='CONFIRMADO',
+        tipo_jogo='CHAMPIONSHIP_DUPLAS',
+        rodada__isnull=False
+    ).order_by(
+        '-rodada'
+    ).values_list(
+        'rodada',
+        flat=True
+    ).first()
+
+    jogos_ultima_rodada = 0
+
+    if ultima_rodada_geral:
+
+        jogos_ultima_rodada = Jogo.objects.filter(
+            status='CONFIRMADO',
+            tipo_jogo='CHAMPIONSHIP_DUPLAS',
+            rodada=ultima_rodada_geral
+        ).count()
 
     ultimos_jogos = Jogo.objects.filter(
         status='CONFIRMADO'
@@ -155,7 +197,8 @@ def home(request):
             'total_jogadores': total_jogadores,
             'total_jogos': total_jogos,
             'total_torneios': total_torneios,
-            'jogos_semana': jogos_semana,
+            'jogos_ultima_rodada': jogos_ultima_rodada,
+            'ultima_rodada_geral': ultima_rodada_geral,
             'ultimos_jogos': ultimos_jogos,
             'ranking_a': ranking_a,
             'ranking_b': ranking_b,
@@ -164,6 +207,8 @@ def home(request):
             'destaques_a': destaques_a,
             'destaques_b': destaques_b,
             'destaques_c': destaques_c,
+            'placar_mais_comum': placar_mais_comum,
+            'placar_mais_comum_qtd': placar_mais_comum_qtd,
         }
     )
 
