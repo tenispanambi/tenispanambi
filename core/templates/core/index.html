@@ -448,20 +448,57 @@ body{
         </div>
 
         <div class="status-card">
-    <div class="icone laranja">🎯</div>
-    <div>
-        <h2>{{ placar_mais_comum }}</h2>
-        <p>Placar mais comum</p>
 
-        <div style="
-        margin-top:8px;
-        font-size:15px;
-        color:#64748b;
-        font-weight:bold;
-        ">
-            {{ placar_mais_comum_qtd }} vezes nas duplas
-        </div>
+    <div class="icone laranja">
+        🎯
     </div>
+
+    <div style="width:100%;">
+
+        <p style="
+        margin:0 0 8px 0;
+        font-size:18px;
+        color:#44546a;
+        font-weight:700;
+        ">
+            Placar mais comum
+        </p>
+
+        <div id="placarSlider">
+
+            {% for placar, qtd in placares_mais_comuns %}
+
+                <div
+                    class="placar-slide"
+                    style="{% if not forloop.first %}display:none;{% endif %}"
+                >
+
+                    <h2 style="
+                    margin:0;
+                    font-size:52px;
+                    color:#062b55;
+                    line-height:1;
+                    ">
+                        {{ placar }}
+                    </h2>
+
+                    <div style="
+                    margin-top:8px;
+                    font-size:16px;
+                    color:#64748b;
+                    font-weight:bold;
+                    ">
+                        {{ qtd }} vezes nas duplas
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
 </div>
 
         <div class="status-card">
@@ -758,6 +795,29 @@ function mostrarDestaque(cat){
     document.getElementById('btnDestaque'+cat).style.background = '#0b4d91';
     document.getElementById('btnDestaque'+cat).style.color = 'white';
 }
+
+let placarAtual = 0;
+
+function trocarPlacar(){
+
+    const slides = document.querySelectorAll('.placar-slide');
+
+    if(slides.length <= 1){
+        return;
+    }
+
+    slides[placarAtual].style.display = 'none';
+
+    placarAtual = placarAtual + 1;
+
+    if(placarAtual >= slides.length){
+        placarAtual = 0;
+    }
+
+    slides[placarAtual].style.display = 'block';
+}
+
+setInterval(trocarPlacar, 3500);
 
 </script>
 

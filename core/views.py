@@ -36,9 +36,24 @@ def home(request):
 
     total_torneios = Torneio.objects.count()
 
-    # PLACAR MAIS COMUM
+    # =========================================
+    # PLACARES MAIS COMUNS
+    # =========================================
 
-    placares = []
+    resultados_validos = [
+        '7x6',
+        '7x5',
+        '6x4',
+        '6x3',
+        '6x2',
+        '6x1',
+        '6x0',
+    ]
+
+    contador_placares = {
+        placar: 0
+        for placar in resultados_validos
+    }
 
     jogos_duplas = Jogo.objects.filter(
         status='CONFIRMADO',
@@ -49,15 +64,16 @@ def home(request):
 
         placar = jogo.placar_resumido()
 
-        if placar:
-            placares.append(placar)
+        if placar in contador_placares:
+            contador_placares[placar] += 1
 
-    placar_mais_comum = '-'
-    placar_mais_comum_qtd = 0
+    placares_mais_comuns = sorted(
+        contador_placares.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
 
-    if placares:
-        contador = Counter(placares)
-        placar_mais_comum, placar_mais_comum_qtd = contador.most_common(1)[0]
+    # =========================================
 
     # JOGOS DA ÚLTIMA RODADA
 
@@ -207,8 +223,7 @@ def home(request):
             'destaques_a': destaques_a,
             'destaques_b': destaques_b,
             'destaques_c': destaques_c,
-            'placar_mais_comum': placar_mais_comum,
-            'placar_mais_comum_qtd': placar_mais_comum_qtd,
+            'placares_mais_comuns': placares_mais_comuns,
         }
     )
 
