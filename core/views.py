@@ -399,12 +399,10 @@ def jogador(request, jogador_id):
 def headtohead(request):
 
     jogadores = Jogador.objects.all().exclude(
-    usuario__is_staff=True
-).exclude(
-    usuario__is_superuser=True
-).order_by(
-    'nome'
-)
+        usuario__is_staff=True
+    ).exclude(
+        usuario__is_superuser=True
+    ).order_by('nome')
 
     jogador1_id = request.GET.get('j1')
     jogador2_id = request.GET.get('j2')
@@ -429,6 +427,11 @@ def headtohead(request):
     ranking1 = '-'
     ranking2 = '-'
 
+    titulos1 = 0
+    titulos2 = 0
+    vices1 = 0
+    vices2 = 0
+
     stats1 = {
         'simples_jogos': 0,
         'simples_vitorias': 0,
@@ -452,20 +455,26 @@ def headtohead(request):
 
         r1 = RankingJogador.objects.filter(
             jogador=jogador1
-        ).first()
+        ).order_by('posicao').first()
 
         if r1:
             ranking1 = f'{r1.posicao}º'
+
+        titulos1 = jogador1.titulos_cd
+        vices1 = jogador1.vice_cd
 
     if jogador2_id:
         jogador2 = get_object_or_404(Jogador, id=jogador2_id)
 
         r2 = RankingJogador.objects.filter(
             jogador=jogador2
-        ).first()
+        ).order_by('posicao').first()
 
         if r2:
             ranking2 = f'{r2.posicao}º'
+
+        titulos2 = jogador2.titulos_cd
+        vices2 = jogador2.vice_cd
 
     def calcular_stats(jogador):
 
@@ -486,7 +495,6 @@ def headtohead(request):
             'simples_jogos': simples.count(),
             'simples_vitorias': simples.filter(vencedor=True).count(),
             'simples_derrotas': simples.filter(vencedor=False).count(),
-
             'duplas_jogos': duplas.count(),
             'duplas_vitorias': duplas.filter(vencedor=True).count(),
             'duplas_derrotas': duplas.filter(vencedor=False).count(),
@@ -513,7 +521,7 @@ def headtohead(request):
         ).prefetch_related(
             'participantes',
             'sets'
-        ).order_by('-data_jogo')
+        ).order_by('-data_jogo', '-id')
 
         if modalidade == 'SIMPLES':
             jogos = jogos.filter(tipo_jogo='SIMPLES')
@@ -612,155 +620,17 @@ def headtohead(request):
             'ranking1': ranking1,
             'ranking2': ranking2,
 
-            'stats1': stats1,
-            'stats2': stats2,
-        }
-    )
-
-    def calcular_stats(jogador):
-        simples = ParticipanteJogo.objects.filter(
-            jogador=jogador,
-            jogo__status='CONFIRMADO',
-            jogo__tipo_jogo='SIMPLES'
-        )
-
-        duplas = ParticipanteJogo.objects.filter(
-            jogador=jogador,
-            jogo__status='CONFIRMADO'
-        ).exclude(
-            jogo__tipo_jogo='SIMPLES'
-        )
-
-        return {
-            'simples_jogos': simples.count(),
-            'simples_vitorias': simples.filter(vencedor=True).count(),
-            'simples_derrotas': simples.filter(vencedor=False).count(),
-
-            'duplas_jogos': duplas.count(),
-            'duplas_vitorias': duplas.filter(vencedor=True).count(),
-            'duplas_derrotas': duplas.filter(vencedor=False).count(),
-        }
-
-    if jogador1:
-        stats1 = calcular_stats(jogador1)
-
-        stats1['duplas_jogos'] += jogador1.jogos_historicos
-        stats1['duplas_vitorias'] += jogador1.vitorias_historicas
-        stats1['duplas_derrotas'] += jogador1.derrotas_historicas
-
-    if jogador2:
-        stats2 = calcular_stats(jogador2)
-
-        stats2['duplas_jogos'] += jogador2.jogos_historicos
-        stats2['duplas_vitorias'] += jogador2.vitorias_historicas
-        stats2['duplas_derrotas'] += jogador2.derrotas_historicas
-
-    if jogador1 and jogador2:
-
-        jogos = Jogo.objects.filter(
-            status='CONFIRMADO'
-        ).order_by('-data_jogo')
-
-        if modalidade == 'SIMPLES':
-            jogos = jogos.filter(tipo_jogo='SIMPLES')
-
-        elif modalidade == 'DUPLAS':
-            jogos = jogos.exclude(tipo_jogo='SIMPLES')
-
-        for jogo in jogos:
-
-            participantes = jogo.participantes.all()
-
-            p1 = None
-            p2 = None
-
-            for p in participantes:
-
-                if p.jogador.id == jogador1.id:
-                    p1 = p
-
-                if p.jogador.id == jogador2.id:
-                    p2 = p
-
-            if p1 and p2 and p1.lado != p2.lado:
-
-                total_h2h += 1
-
-                if p1.vencedor:
-                    vitorias1 += 1
-                else:
-                    vitorias2 += 1
-
-                if p1.lado == 'A':
-                    games_j1 = jogo.total_games_lado_a()
-                    games_j2 = jogo.total_games_lado_b()
-                else:
-                    games_j1 = jogo.total_games_lado_b()
-                    games_j2 = jogo.total_games_lado_a()
-
-                games1 += games_j1
-                games2 += games_j2
-
-                sets_j1 = 0
-                sets_j2 = 0
-
-                for s in jogo.sets.all():
-
-                    if p1.lado == 'A':
-                        if s.games_lado_a > s.games_lado_b:
-                            sets_j1 += 1
-                        else:
-                            sets_j2 += 1
-                    else:
-                        if s.games_lado_b > s.games_lado_a:
-                            sets_j1 += 1
-                        else:
-                            sets_j2 += 1
-
-                sets1 += sets_j1
-                sets2 += sets_j2
-
-                jogo.vencedor_nome = jogador1.nome if p1.vencedor else jogador2.nome
-                jogo.jogadores_partida = jogo.descricao_confronto()
-
-                confrontos.append(jogo)
-
-        if total_h2h > 0:
-            percentual_h2h_1 = round((vitorias1 / total_h2h) * 100, 1)
-            percentual_h2h_2 = round((vitorias2 / total_h2h) * 100, 1)
-
-    return render(
-        request,
-        'headtohead/index.html',
-        {
-            'jogadores': jogadores,
-            'jogador1': jogador1,
-            'jogador2': jogador2,
-            'modalidade': modalidade,
-
-            'confrontos': confrontos,
-
-            'vitorias1': vitorias1,
-            'vitorias2': vitorias2,
-            'total_h2h': total_h2h,
-
-            'percentual_h2h_1': percentual_h2h_1,
-            'percentual_h2h_2': percentual_h2h_2,
-
-            'sets1': sets1,
-            'sets2': sets2,
-            'games1': games1,
-            'games2': games2,
-
-            'ranking1': ranking1,
-            'ranking2': ranking2,
+            'titulos1': titulos1,
+            'titulos2': titulos2,
+            'vices1': vices1,
+            'vices2': vices2,
 
             'stats1': stats1,
             'stats2': stats2,
         }
-    )
+    )      
 
-
+    
 @login_required
 def meu_painel(request):
 
@@ -1393,19 +1263,6 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-
-def logout_view(request):
-
-    logout(request)
-
-    return redirect('/')
-
-
-def logout_view(request):
-
-    logout(request)
-
-    return redirect('/')
 
 @login_required
 def lancar_jogo(request):
