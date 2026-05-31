@@ -504,7 +504,7 @@ body{
         <div class="status-card">
             <div class="icone roxo">🎾</div>
             <div>
-                <<h2>{{ jogos_ultima_rodada }}</h2>
+                <h2>{{ jogos_ultima_rodada }}</h2>
 
 <p>
     Jogos da Última Rodada
@@ -678,6 +678,7 @@ font-weight:bold;
 
             <tr>
                 <th>Data</th>
+                <th>Fase</th>
                 <th>Confronto</th>
                 <th>Placar</th>
                 <th>Torneio</th>
@@ -687,7 +688,27 @@ font-weight:bold;
 
             <tr>
                 <td>{{ jogo.data_jogo|date:"d/m/Y" }}</td>
-                <td><strong>{{ jogo.descricao_confronto }}</strong></td>
+                
+                <td>
+    {% if jogo.fase %}
+        <span style="
+        background:#8b5cf6;
+        color:white;
+        padding:5px 10px;
+        border-radius:8px;
+        font-size:12px;
+        font-weight:bold;
+        ">
+            {{ jogo.fase }}
+        </span>
+    {% else %}
+        -
+    {% endif %}
+</td>
+                
+                <td>
+    <strong>{{ jogo.descricao_confronto }}</strong>
+</td>
                 <td class="placar">{{ jogo.placar_resumido }}</td>
                 <td>
                     {% if jogo.torneio %}
@@ -704,17 +725,33 @@ font-weight:bold;
 
         <div class="mobile-jogos">
 
-            {% for jogo in ultimos_jogos %}
+    {% for jogo in ultimos_jogos %}
 
-            <div class="mobile-jogo-card">
+    <div class="mobile-jogo-card">
 
-                <div class="mobile-jogo-data">
-                    📅 {{ jogo.data_jogo|date:"d/m/Y" }}
-                </div>
+        <div class="mobile-jogo-data">
+            📅 {{ jogo.data_jogo|date:"d/m/Y" }}
+        </div>
 
-                <div class="mobile-jogo-confronto">
-                    🎾 {{ jogo.descricao_confronto }}
-                </div>
+        <div class="mobile-jogo-confronto">
+
+            {% if jogo.fase %}
+                <span style="
+                background:#8b5cf6;
+                color:white;
+                padding:4px 8px;
+                border-radius:8px;
+                font-size:12px;
+                font-weight:bold;
+                margin-right:6px;
+                ">
+                    {{ jogo.fase }}
+                </span>
+            {% endif %}
+
+            {{ jogo.descricao_confronto }}
+
+        </div>
 
                 <div class="mobile-jogo-info">
 
@@ -724,13 +761,13 @@ font-weight:bold;
 
                     <div class="mobile-jogo-torneio">
 
-                        {% if jogo.torneio %}
-                            🏆 {{ jogo.torneio.nome }}
-                        {% else %}
-                            -
-                        {% endif %}
+    {% if jogo.torneio %}
+        🏆 {{ jogo.torneio.nome }}
+    {% else %}
+        -
+    {% endif %}
 
-                    </div>
+</div>
 
                 </div>
 

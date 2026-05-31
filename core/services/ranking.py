@@ -38,6 +38,7 @@ def recalcular_ranking(torneio, categoria):
         for p in participantes:
 
             jogador = p.jogador
+            rodada = jogo.rodada or 0
 
             chave_jogo = f'{jogo.id}_{jogador.id}'
 
@@ -56,7 +57,6 @@ def recalcular_ranking(torneio, categoria):
             if not inscrito:
                 continue
 
-            rodada = jogo.rodada or 0
             chave_rodada = f'{jogador.id}_{rodada}'
 
             if chave_rodada not in controle_rodadas:
@@ -86,16 +86,24 @@ def recalcular_ranking(torneio, categoria):
             if jogador.id not in resultados_por_jogador:
                 resultados_por_jogador[jogador.id] = {
                     'jogador': jogador,
-                    'resultados': []
+                    'rodadas': {}
                 }
 
-            resultados_por_jogador[jogador.id]['resultados'].append({
-                'pontos': pontos,
-                'vitoria': vitoria,
-                'derrota': derrota,
-                'games_feitos': games_feitos,
-                'games_sofridos': games_sofridos,
-            })
+            if rodada not in resultados_por_jogador[jogador.id]['rodadas']:
+                resultados_por_jogador[jogador.id]['rodadas'][rodada] = {
+                    'rodada': rodada,
+                    'pontos': 0,
+                    'vitorias': 0,
+                    'derrotas': 0,
+                    'games_feitos': 0,
+                    'games_sofridos': 0,
+                }
+
+            resultados_por_jogador[jogador.id]['rodadas'][rodada]['pontos'] += pontos
+            resultados_por_jogador[jogador.id]['rodadas'][rodada]['vitorias'] += vitoria
+            resultados_por_jogador[jogador.id]['rodadas'][rodada]['derrotas'] += derrota
+            resultados_por_jogador[jogador.id]['rodadas'][rodada]['games_feitos'] += games_feitos
+            resultados_por_jogador[jogador.id]['rodadas'][rodada]['games_sofridos'] += games_sofridos
 
     inscricoes = InscricaoTorneio.objects.filter(
         torneio=torneio,
@@ -110,7 +118,7 @@ def recalcular_ranking(torneio, categoria):
         if jogador.id not in resultados_por_jogador:
             resultados_por_jogador[jogador.id] = {
                 'jogador': jogador,
-                'resultados': []
+                'rodadas': {}
             }
 
     ranking_lista = []
@@ -119,20 +127,22 @@ def recalcular_ranking(torneio, categoria):
 
         jogador = dados['jogador']
 
-        melhores = sorted(
-            dados['resultados'],
+        rodadas = list(dados['rodadas'].values())
+
+        melhores_rodadas = sorted(
+            rodadas,
             key=lambda r: r['pontos'],
             reverse=True
         )
 
         if categoria.melhores_resultados and categoria.melhores_resultados > 0:
-            melhores = melhores[:categoria.melhores_resultados]
+            melhores_rodadas = melhores_rodadas[:categoria.melhores_resultados]
 
-        pontos = sum(r['pontos'] for r in melhores)
-        vitorias = sum(r['vitoria'] for r in melhores)
-        derrotas = sum(r['derrota'] for r in melhores)
-        games_feitos = sum(r['games_feitos'] for r in melhores)
-        games_sofridos = sum(r['games_sofridos'] for r in melhores)
+        pontos = sum(r['pontos'] for r in melhores_rodadas)
+        vitorias = sum(r['vitorias'] for r in melhores_rodadas)
+        derrotas = sum(r['derrotas'] for r in melhores_rodadas)
+        games_feitos = sum(r['games_feitos'] for r in melhores_rodadas)
+        games_sofridos = sum(r['games_sofridos'] for r in melhores_rodadas)
 
         total_jogos = vitorias + derrotas
 
