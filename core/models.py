@@ -21,6 +21,25 @@ class Jogador(models.Model):
         ('ESQUERDA', 'Esquerda'),
     ]
 
+    BACKHANDS = [
+        ('UMA_MAO', '1 mão'),
+        ('DUAS_MAOS', '2 mãos'),
+    ]
+
+    ESTILOS_JOGO = [
+        ('OFENSIVO', 'Ofensivo'),
+        ('DEFENSIVO', 'Defensivo'),
+        ('ALL_COURT', 'All Court'),
+        ('SAQUE_VOLEIO', 'Saque e Voleio'),
+    ]
+
+    CLUBES = [
+        ('TENIS_PANAMBI', 'Tênis Panambi'),
+        ('AABB', 'AABB'),
+        ('AFUBRA', 'Afubra'),
+        ('OUTRO', 'Outro'),
+    ]
+
     usuario = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
@@ -48,11 +67,11 @@ class Jogador(models.Model):
     )
 
     categoria = models.CharField(
-    max_length=1,
-    choices=CATEGORIAS,
-    blank=True,
-    null=True
-)
+        max_length=1,
+        choices=CATEGORIAS,
+        blank=True,
+        null=True
+    )
 
     nivel = models.CharField(
         max_length=20,
@@ -84,14 +103,51 @@ class Jogador(models.Model):
         null=True
     )
 
+    ano_inicio = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Ano que começou a jogar'
+    )
+
+    clube = models.CharField(
+        max_length=30,
+        choices=CLUBES,
+        blank=True,
+        null=True
+    )
+
+    backhand = models.CharField(
+        max_length=20,
+        choices=BACKHANDS,
+        blank=True,
+        null=True
+    )
+
+    estilo_jogo = models.CharField(
+        max_length=30,
+        choices=ESTILOS_JOGO,
+        blank=True,
+        null=True
+    )
+
+    jogador_favorito = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    frase_pessoal = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+
     jogos_historicos = models.IntegerField(default=0)
     vitorias_historicas = models.IntegerField(default=0)
     derrotas_historicas = models.IntegerField(default=0)
     titulos_cd = models.IntegerField(default=0)
     vice_cd = models.IntegerField(default=0)
     semifinal_cd = models.IntegerField(default=0)
-    
-    
 
     ativo = models.BooleanField(default=False)
 

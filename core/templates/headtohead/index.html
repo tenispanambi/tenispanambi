@@ -111,6 +111,11 @@
     padding:14px 0;
     color:#e2e8f0;
     font-size:16px;
+    gap:12px;
+}
+
+.info-row strong{
+    text-align:right;
 }
 
 .center-area{
@@ -240,45 +245,159 @@
     border-bottom:1px solid #e5e7eb;
 }
 
+.history-mobile{
+    display:none;
+}
+
 @media(max-width:1000px){
+
     .h2h-page{
-        padding:12px;
+        padding:10px;
     }
 
     .h2h-box{
-        padding:20px;
+        padding:18px;
+        border-radius:22px;
     }
 
     .h2h-title{
-        font-size:32px;
+        font-size:30px;
+        letter-spacing:1px;
     }
 
-    .h2h-selects,
-    .h2h-grid,
-    .score-row{
+    .h2h-sub{
+        font-size:15px;
+        margin-bottom:22px;
+    }
+
+    .h2h-selects{
         grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .h2h-selects select{
+        font-size:15px;
+        padding:14px;
+    }
+
+    .h2h-grid{
+        grid-template-columns:1fr;
+        gap:16px;
     }
 
     .player-card{
-        order:1;
+        padding:18px;
+        border-radius:20px;
     }
 
-    .center-area{
-        order:2;
+    .player-photo{
+        width:115px;
+        height:115px;
+        margin-bottom:12px;
+        border-width:4px;
+    }
+
+    .player-name{
+        font-size:22px;
+        margin-bottom:8px;
+    }
+
+    .player-badge{
+        font-size:13px;
+        padding:7px 16px;
+        margin-bottom:12px;
+    }
+
+    .info-row{
+        font-size:14px;
+        padding:10px 0;
+    }
+
+    .info-row.mobile-hide{
+        display:none;
+    }
+
+    .score-row{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .total-circle{
+        grid-column:1 / 3;
+        grid-row:1;
+        width:115px;
+        height:115px;
+        border-width:6px;
+        margin-bottom:4px;
+    }
+
+    .total-circle strong{
+        font-size:36px;
+    }
+
+    .score-box{
+        padding:16px;
+    }
+
+    .score-number{
+        font-size:42px;
+    }
+
+    .score-label{
+        font-size:14px;
+    }
+
+    .stat-line{
+        font-size:16px;
+        padding:13px;
+        grid-template-columns:1fr 1.4fr 1fr;
+    }
+
+    .stat-label{
+        font-size:13px;
     }
 
     .filter-buttons{
         flex-direction:column;
+        gap:10px;
+        margin-top:18px;
     }
 
     .filter-buttons button{
         width:100%;
+        padding:14px;
+        font-size:15px;
     }
 
     .history table{
+        display:none;
+    }
+
+    .history-mobile{
         display:block;
-        overflow-x:auto;
-        white-space:nowrap;
+        padding:15px;
+    }
+
+    .history h2{
+        padding:18px;
+        font-size:22px;
+    }
+
+    .history-card{
+        background:#f8fafc;
+        border:1px solid #e5e7eb;
+        border-radius:16px;
+        padding:14px;
+        margin-bottom:12px;
+    }
+
+    .history-card strong{
+        color:#0b4d91;
+    }
+
+    .history-card div{
+        margin-bottom:6px;
+        font-size:14px;
     }
 }
 </style>
@@ -338,7 +457,7 @@
                     </div>
 
                     <div class="player-badge">
-                        {{ jogador1.nivel|default:"-" }}
+                        Categoria {{ jogador1.categoria|default:"-" }}
                     </div>
 
                     <div class="info-row">
@@ -348,7 +467,7 @@
 
                     <div class="info-row">
                         <span>Categoria</span>
-                        <strong>{{ jogador1.categoria }}</strong>
+                        <strong>{{ jogador1.categoria|default:"-" }}</strong>
                     </div>
 
                     <div class="info-row">
@@ -357,8 +476,23 @@
                     </div>
 
                     <div class="info-row">
-                        <span>Nível</span>
-                        <strong>{{ jogador1.nivel|default:"-" }}</strong>
+                        <span>Clube</span>
+                        <strong>{{ jogador1.get_clube_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Mão</span>
+                        <strong>{{ jogador1.get_mao_dominante_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Backhand</span>
+                        <strong>{{ jogador1.get_backhand_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Estilo</span>
+                        <strong>{{ jogador1.get_estilo_jogo_display|default:"-" }}</strong>
                     </div>
 
                 </div>
@@ -401,16 +535,16 @@
                     <div class="stats-table">
 
                         <div class="stat-line">
-    <div class="blue">{{ titulos1 }}</div>
-    <div class="stat-label">🏆 Títulos CD</div>
-    <div class="green">{{ titulos2 }}</div>
-</div>
+                            <div class="blue">{{ titulos1 }}</div>
+                            <div class="stat-label">🏆 Títulos CD</div>
+                            <div class="green">{{ titulos2 }}</div>
+                        </div>
 
-<div class="stat-line">
-    <div class="blue">{{ vices1 }}</div>
-    <div class="stat-label">⭐ Vice CD</div>
-    <div class="green">{{ vices2 }}</div>
-</div>
+                        <div class="stat-line">
+                            <div class="blue">{{ vices1 }}</div>
+                            <div class="stat-label">⭐ Vice CD</div>
+                            <div class="green">{{ vices2 }}</div>
+                        </div>
 
                         <div class="stat-line">
                             <div>{{ stats1.simples_vitorias }}/{{ stats1.simples_derrotas }}</div>
@@ -469,7 +603,7 @@
                     </div>
 
                     <div class="player-badge">
-                        {{ jogador2.nivel|default:"-" }}
+                        Categoria {{ jogador2.categoria|default:"-" }}
                     </div>
 
                     <div class="info-row">
@@ -479,7 +613,7 @@
 
                     <div class="info-row">
                         <span>Categoria</span>
-                        <strong>{{ jogador2.categoria }}</strong>
+                        <strong>{{ jogador2.categoria|default:"-" }}</strong>
                     </div>
 
                     <div class="info-row">
@@ -488,8 +622,23 @@
                     </div>
 
                     <div class="info-row">
-                        <span>Nível</span>
-                        <strong>{{ jogador2.nivel|default:"-" }}</strong>
+                        <span>Clube</span>
+                        <strong>{{ jogador2.get_clube_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Mão</span>
+                        <strong>{{ jogador2.get_mao_dominante_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Backhand</span>
+                        <strong>{{ jogador2.get_backhand_display|default:"-" }}</strong>
+                    </div>
+
+                    <div class="info-row mobile-hide">
+                        <span>Estilo</span>
+                        <strong>{{ jogador2.get_estilo_jogo_display|default:"-" }}</strong>
                     </div>
 
                 </div>
@@ -543,6 +692,38 @@
             {% endfor %}
 
         </table>
+
+        <div class="history-mobile">
+
+            {% for jogo in confrontos %}
+
+                <div class="history-card">
+                    <div>
+                        <strong>Data:</strong> {{ jogo.data_jogo|date:"d/m/Y" }}
+                    </div>
+
+                    <div>
+                        <strong>Confronto:</strong> {{ jogo.jogadores_partida }}
+                    </div>
+
+                    <div>
+                        <strong>Placar:</strong> {{ jogo.placar_resumido }}
+                    </div>
+
+                    <div>
+                        <strong>Vencedor:</strong> {{ jogo.vencedor_nome }}
+                    </div>
+                </div>
+
+            {% empty %}
+
+                <div style="text-align:center;padding:20px;">
+                    Nenhum confronto encontrado.
+                </div>
+
+            {% endfor %}
+
+        </div>
 
     </div>
 

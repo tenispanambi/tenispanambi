@@ -7,6 +7,10 @@ from django.shortcuts import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 
 from .services.ranking import recalcular_ranking
 from .services.avanco import avancar_vencedor
@@ -1154,6 +1158,7 @@ def chaveamento(request, torneio_id, categoria_id):
             'rodadas': rodadas,
         }
     )
+
 @login_required
 def meu_perfil(request):
 
@@ -1171,34 +1176,84 @@ def meu_perfil(request):
         )
 
     if request.method == 'POST':
+
         jogador.nome = request.POST.get('nome')
-        jogador.email = request.POST.get('email')
         jogador.telefone = request.POST.get('telefone')
         jogador.cidade = request.POST.get('cidade')
-        jogador.categoria = request.POST.get('categoria')
-        jogador.nivel = request.POST.get('nivel')
         jogador.mao_dominante = request.POST.get('mao_dominante')
         jogador.raquete = request.POST.get('raquete')
         jogador.instagram = request.POST.get('instagram')
+        jogador.ano_inicio = request.POST.get('ano_inicio') or None
+        jogador.clube = request.POST.get('clube')
+        jogador.backhand = request.POST.get('backhand')
+        jogador.estilo_jogo = request.POST.get('estilo_jogo')
+        jogador.jogador_favorito = request.POST.get('jogador_favorito')
+        jogador.frase_pessoal = request.POST.get('frase_pessoal')
+
+        print('POST RECEBIDO:', request.POST)
 
         if request.FILES.get('foto'):
             jogador.foto = request.FILES.get('foto')
 
         jogador.save()
 
+        print('SALVO:', jogador.nome, jogador.cidade, jogador.raquete, jogador.clube)
+
         return redirect('meu_perfil')
+
+    ranking = RankingJogador.objects.filter(
+        jogador=jogador
+    ).order_by(
+        'posicao'
+    ).first()
+
+    participacoes_confirmadas = ParticipanteJogo.objects.filter(
+        jogador=jogador,
+        jogo__status='CONFIRMADO'
+    )
+
+    jogos_sistema = participacoes_confirmadas.count()
+
+    vitorias_sistema = participacoes_confirmadas.filter(
+        vencedor=True
+    ).count()
+
+    derrotas_sistema = participacoes_confirmadas.filter(
+        vencedor=False
+    ).count()
+
+    total_jogos = jogador.jogos_historicos + jogos_sistema
+
+    total_vitorias = (
+        jogador.vitorias_historicas +
+        vitorias_sistema
+    )
+
+    total_derrotas = (
+        jogador.derrotas_historicas +
+        derrotas_sistema
+    )
+
+    aproveitamento = 0
+
+    if total_jogos > 0:
+        aproveitamento = round(
+            (total_vitorias / total_jogos) * 100,
+            1
+        )
 
     return render(
         request,
         'jogador/meu_perfil.html',
         {
-            'jogador': jogador
+            'jogador': jogador,
+            'ranking': ranking,
+            'total_jogos': total_jogos,
+            'total_vitorias': total_vitorias,
+            'total_derrotas': total_derrotas,
+            'aproveitamento': aproveitamento,
         }
     )
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
 
 
 def login_view(request):
