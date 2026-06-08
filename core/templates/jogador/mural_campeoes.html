@@ -2,208 +2,379 @@
 
 {% block content %}
 
-<div style="
-max-width:1400px;
-margin:20px auto;
-padding:14px;
-">
+<style>
+    .mural-page{
+        max-width:1600px;
+        margin:0 auto;
+        padding:24px;
+        color:#0f172a;
+    }
 
-    <!-- TOPO -->
+    .mural-hero{
+        position:relative;
+        overflow:hidden;
+        border-radius:34px;
+        padding:42px 38px;
+        margin-bottom:28px;
+        color:white;
+        background:
+            radial-gradient(circle at 90% 20%, rgba(132,204,22,.32), transparent 18%),
+            linear-gradient(135deg,#031b2f,#052e16 45%,#0b4d91);
+        box-shadow:0 18px 40px rgba(0,0,0,.22);
+    }
 
-    <div style="
-    text-align:center;
-    margin-bottom:30px;
-    ">
+    .mural-hero::after{
+        content:'🎾';
+        position:absolute;
+        right:34px;
+        top:18px;
+        font-size:110px;
+        opacity:.18;
+        transform:rotate(-18deg);
+    }
 
-        <h1 style="
-        font-size:clamp(32px,6vw,60px);
-        margin-bottom:8px;
-        color:#0b1f44;
-        line-height:1.1;
-        ">
-            🏆 Mural dos Campeões
-        </h1>
+    .hero-kicker{
+        color:#a3e635;
+        font-weight:900;
+        letter-spacing:2px;
+        font-size:13px;
+        margin-bottom:10px;
+    }
 
-        <p style="
-        font-size:clamp(16px,3.8vw,26px);
-        color:#64748b;
+    .mural-hero h1{
         margin:0;
-        ">
-            História dos campeões do Championship Duplas
-        </p>
+        font-size:clamp(38px,7vw,76px);
+        line-height:1;
+        font-weight:1000;
+        text-transform:uppercase;
+        font-style:italic;
+    }
 
-    </div>
+    .mural-hero h1 span{
+        color:#a3e635;
+    }
 
+    .mural-hero p{
+        margin:14px 0 0;
+        font-size:clamp(16px,3vw,24px);
+        color:#dbeafe;
+    }
 
-    <!-- CATEGORIA A -->
+    .categoria-row{
+        display:grid;
+        grid-template-columns:170px 1fr;
+        gap:14px;
+        margin-bottom:16px;
+    }
 
-    <div style="margin-bottom:40px;">
+    .categoria-badge{
+        min-height:230px;
+        border-radius:26px;
+        padding:20px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        color:white;
+        box-shadow:0 12px 26px rgba(0,0,0,.18);
+        border:2px solid rgba(255,255,255,.18);
+    }
 
-        <div style="
-        background:linear-gradient(90deg,#d4af37,#f7e08b);
-        color:#111;
-        padding:14px 20px;
-        border-radius:18px;
-        margin-bottom:20px;
-        ">
+    .categoria-badge .label{
+        font-size:15px;
+        letter-spacing:1px;
+        font-weight:900;
+        text-transform:uppercase;
+        opacity:.9;
+    }
 
-            <h2 style="
-            margin:0;
-            font-size:clamp(24px,5vw,34px);
-            ">
-                🥇 Categoria A
-            </h2>
+    .categoria-badge .letra{
+        width:96px;
+        height:96px;
+        margin:14px 0;
+        border-radius:26px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:60px;
+        font-weight:1000;
+        border:3px solid currentColor;
+        background:rgba(255,255,255,.08);
+    }
 
-        </div>
+    .categoria-badge .sub{
+        font-size:13px;
+        font-weight:900;
+        opacity:.9;
+        text-transform:uppercase;
+    }
 
-        <div style="
+    .cat-a{
+        background:linear-gradient(180deg,#0b1f44,#052e16);
+        color:#facc15;
+    }
+
+    .cat-b{
+        background:linear-gradient(180deg,#0f172a,#334155);
+        color:#cbd5e1;
+    }
+
+    .cat-c{
+        background:linear-gradient(180deg,#1f1308,#7c2d12);
+        color:#fb923c;
+    }
+
+    .campeoes-track{
         display:grid;
         grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-        gap:18px;
-        ">
+        gap:12px;
+    }
+
+    .champ-card{
+        position:relative;
+        background:white;
+        border-radius:22px;
+        padding:20px;
+        min-height:230px;
+        box-shadow:0 10px 26px rgba(15,23,42,.12);
+        border:1px solid #e5e7eb;
+        overflow:hidden;
+    }
+
+    .champ-card::before{
+        content:'';
+        position:absolute;
+        top:0;
+        right:0;
+        width:68px;
+        height:68px;
+        background:linear-gradient(135deg,#facc15,#f97316);
+        clip-path:polygon(100% 0,0 0,100% 100%);
+    }
+
+    .champ-card::after{
+        content:'🏆';
+        position:absolute;
+        top:8px;
+        right:8px;
+        font-size:20px;
+    }
+
+    .champ-top{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:12px;
+        margin-bottom:14px;
+        padding-right:34px;
+    }
+
+    .edicao{
+        color:#0b1f44;
+        font-size:24px;
+        font-weight:1000;
+        text-transform:uppercase;
+    }
+
+    .date-pill{
+        background:#eef2ff;
+        color:#0b1f44;
+        border-radius:999px;
+        padding:7px 10px;
+        font-size:12px;
+        font-weight:900;
+        white-space:nowrap;
+    }
+
+    .small-label{
+        font-size:12px;
+        color:#64748b;
+        font-weight:900;
+        text-transform:uppercase;
+        letter-spacing:.4px;
+        margin-bottom:6px;
+    }
+
+    .champions{
+        color:#078a2f;
+        font-size:22px;
+        line-height:1.12;
+        font-weight:1000;
+        margin-bottom:14px;
+    }
+
+    .score-area{
+        margin:10px 0 14px;
+    }
+
+    .score-list{
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+    }
+
+    .score-chip{
+        background:#eef2f7;
+        color:#0b1f44;
+        border-radius:9px;
+        padding:5px 10px;
+        font-size:23px;
+        line-height:1;
+        font-weight:1000;
+    }
+
+    .vice-box{
+        background:#fff7ed;
+        border-radius:16px;
+        padding:12px;
+        margin-top:8px;
+    }
+
+    .vice-names{
+        color:#ea580c;
+        font-size:18px;
+        line-height:1.12;
+        font-weight:1000;
+    }
+
+    .empty-card{
+        background:white;
+        border-radius:22px;
+        padding:30px;
+        color:#64748b;
+        box-shadow:0 10px 26px rgba(15,23,42,.08);
+    }
+
+    .mural-footer{
+        text-align:center;
+        margin-top:26px;
+        color:#0b1f44;
+        font-weight:900;
+        font-size:17px;
+    }
+
+    .mural-footer span{
+        color:#65a30d;
+    }
+
+    @media(max-width:900px){
+        .categoria-row{
+            grid-template-columns:1fr;
+        }
+
+        .categoria-badge{
+            min-height:auto;
+            flex-direction:row;
+            justify-content:flex-start;
+            gap:16px;
+        }
+
+        .categoria-badge .letra{
+            width:70px;
+            height:70px;
+            font-size:42px;
+            margin:0;
+        }
+    }
+
+    @media(max-width:600px){
+        .mural-page{
+            padding:14px;
+        }
+
+        .mural-hero{
+            padding:28px 22px;
+            border-radius:26px;
+        }
+
+        .champ-card{
+            min-height:auto;
+        }
+
+        .edicao{
+            font-size:21px;
+        }
+
+        .champions{
+            font-size:20px;
+        }
+
+        .score-chip{
+            font-size:20px;
+        }
+    }
+</style>
+
+<div class="mural-page">
+
+    <div class="mural-hero">
+        <div class="hero-kicker">CHAMPIONSHIP DUPLAS</div>
+        <h1>Mural dos <span>Campeões</span></h1>
+        <p>Cada edição, uma história. Cada dupla, um legado.</p>
+    </div>
+
+    <div class="categoria-row">
+
+        <div class="categoria-badge cat-a">
+            <div>
+                <div class="label">Categoria</div>
+                <div class="letra">A</div>
+                <div class="sub">Elite</div>
+            </div>
+        </div>
+
+        <div class="campeoes-track">
 
             {% for item in campeoes_a %}
 
-            <div style="
-            background:white;
-            border-radius:24px;
-            padding:22px;
-            box-shadow:0 5px 20px rgba(0,0,0,0.08);
-            ">
+                <div class="champ-card">
 
-                <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                gap:10px;
-                margin-bottom:18px;
-                flex-wrap:wrap;
-                ">
+                    <div class="champ-top">
+                        <div class="edicao">
+                            {{ item.edicao }}ª edição
+                        </div>
 
-                    <div style="
-                    font-size:clamp(22px,5vw,30px);
-                    font-weight:bold;
-                    color:#0b1f44;
-                    ">
-                        {{ item.edicao }}ª edição
+                        <div class="date-pill">
+                            📅 {{ item.data_final|date:"d/m/Y" }}
+                        </div>
                     </div>
 
-                    <div style="
-                    background:#0b1f44;
-                    color:white;
-                    padding:8px 14px;
-                    border-radius:999px;
-                    font-size:13px;
-                    ">
-                        {{ item.data_final }}
-                    </div>
+                    <div class="small-label">Campeões</div>
 
-                </div>
-
-                <!-- CAMPEÕES -->
-
-                <div style="
-                background:#f8fafc;
-                border-radius:18px;
-                padding:18px;
-                margin-bottom:18px;
-                ">
-
-                    <div style="
-                    font-size:14px;
-                    color:#64748b;
-                    margin-bottom:8px;
-                    ">
-                        Campeões
-                    </div>
-
-                    <div style="
-                    font-size:clamp(24px,5vw,34px);
-                    font-weight:bold;
-                    color:#16a34a;
-                    line-height:1.15;
-                    ">
-                        {{ item.campeao_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:clamp(22px,4.5vw,30px);
-                    font-weight:bold;
-                    color:#16a34a;
-                    line-height:1.15;
-                    ">
+                    <div class="champions">
+                        {{ item.campeao_1 }}<br>
                         {{ item.campeao_2 }}
                     </div>
 
-                </div>
+                    <div class="score-area">
+                        <div class="small-label">Placar da final</div>
 
-                <!-- PLACAR -->
+                        <div class="score-list">
+                            {% for set in item.placar.splitlines %}
+                                <span class="score-chip">{{ set }}</span>
+                            {% empty %}
+                                <span class="score-chip">{{ item.placar }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-                <div style="
-                text-align:center;
-                margin:20px 0;
-                ">
+                    <div class="vice-box">
+                        <div class="small-label">Vice-campeões</div>
 
-                    <div style="
-                    font-size:clamp(44px,10vw,70px);
-                    font-weight:900;
-                    color:#0b1f44;
-                    line-height:1;
-                    ">
-                        {{ item.placar }}
+                        <div class="vice-names">
+                            {{ item.finalista_1 }}<br>
+                            {{ item.finalista_2 }}
+                        </div>
                     </div>
 
                 </div>
-
-                <!-- FINALISTAS -->
-
-                <div style="
-                background:#fff7ed;
-                border-radius:18px;
-                padding:18px;
-                ">
-
-                    <div style="
-                    font-size:14px;
-                    color:#64748b;
-                    margin-bottom:8px;
-                    ">
-                        Vice-campeões
-                    </div>
-
-                    <div style="
-                    font-size:clamp(22px,4.8vw,30px);
-                    font-weight:bold;
-                    color:#ea580c;
-                    line-height:1.15;
-                    ">
-                        {{ item.finalista_1 }}
-                    </div>
-
-                    <div style="
-                    font-size:clamp(20px,4.5vw,28px);
-                    font-weight:bold;
-                    color:#ea580c;
-                    line-height:1.15;
-                    ">
-                        {{ item.finalista_2 }}
-                    </div>
-
-                </div>
-
-            </div>
 
             {% empty %}
 
-            <div style="
-            background:white;
-            border-radius:20px;
-            padding:40px;
-            text-align:center;
-            color:#64748b;
-            ">
-                Nenhum campeão registrado ainda.
-            </div>
+                <div class="empty-card">
+                    Nenhum campeão registrado ainda.
+                </div>
 
             {% endfor %}
 
@@ -211,146 +382,145 @@ padding:14px;
 
     </div>
 
-    <!-- CATEGORIA B -->
+    <div class="categoria-row">
 
-<div style="margin-bottom:40px;">
-
-    <div style="background:linear-gradient(90deg,#94a3b8,#e2e8f0);color:#111;padding:14px 20px;border-radius:18px;margin-bottom:20px;">
-        <h2 style="margin:0;font-size:clamp(24px,5vw,34px);">
-            🥈 Categoria B
-        </h2>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
-
-        {% for item in campeoes_b %}
-
-        <div style="background:white;border-radius:24px;padding:22px;box-shadow:0 5px 20px rgba(0,0,0,0.08);">
-
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
-                <div style="font-size:clamp(22px,5vw,30px);font-weight:bold;color:#0b1f44;">
-                    {{ item.edicao }}ª edição
-                </div>
-
-                <div style="background:#0b1f44;color:white;padding:8px 14px;border-radius:999px;font-size:13px;">
-                    {{ item.data_final }}
-                </div>
+        <div class="categoria-badge cat-b">
+            <div>
+                <div class="label">Categoria</div>
+                <div class="letra">B</div>
+                <div class="sub">Intermediária</div>
             </div>
+        </div>
 
-            <div style="background:#f8fafc;border-radius:18px;padding:18px;margin-bottom:18px;">
-                <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Campeões</div>
+        <div class="campeoes-track">
 
-                <div style="font-size:clamp(24px,5vw,34px);font-weight:bold;color:#16a34a;line-height:1.15;">
-                    {{ item.campeao_1 }}
+            {% for item in campeoes_b %}
+
+                <div class="champ-card">
+
+                    <div class="champ-top">
+                        <div class="edicao">
+                            {{ item.edicao }}ª edição
+                        </div>
+
+                        <div class="date-pill">
+                            📅 {{ item.data_final|date:"d/m/Y" }}
+                        </div>
+                    </div>
+
+                    <div class="small-label">Campeões</div>
+
+                    <div class="champions">
+                        {{ item.campeao_1 }}<br>
+                        {{ item.campeao_2 }}
+                    </div>
+
+                    <div class="score-area">
+                        <div class="small-label">Placar da final</div>
+
+                        <div class="score-list">
+                            {% for set in item.placar.splitlines %}
+                                <span class="score-chip">{{ set }}</span>
+                            {% empty %}
+                                <span class="score-chip">{{ item.placar }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="vice-box">
+                        <div class="small-label">Vice-campeões</div>
+
+                        <div class="vice-names">
+                            {{ item.finalista_1 }}<br>
+                            {{ item.finalista_2 }}
+                        </div>
+                    </div>
+
                 </div>
 
-                <div style="font-size:clamp(22px,4.5vw,30px);font-weight:bold;color:#16a34a;line-height:1.15;">
-                    {{ item.campeao_2 }}
-                </div>
-            </div>
+            {% empty %}
 
-            <div style="text-align:center;margin:20px 0;">
-                <div style="font-size:clamp(44px,10vw,70px);font-weight:900;color:#0b1f44;line-height:1;">
-                    {{ item.placar }}
-                </div>
-            </div>
-
-            <div style="background:#fff7ed;border-radius:18px;padding:18px;">
-                <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Vice-campeões</div>
-
-                <div style="font-size:clamp(22px,4.8vw,30px);font-weight:bold;color:#ea580c;line-height:1.15;">
-                    {{ item.finalista_1 }}
+                <div class="empty-card">
+                    Nenhum campeão registrado ainda.
                 </div>
 
-                <div style="font-size:clamp(20px,4.5vw,28px);font-weight:bold;color:#ea580c;line-height:1.15;">
-                    {{ item.finalista_2 }}
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
 
-        {% empty %}
+    </div>
 
-        <div style="background:white;border-radius:20px;padding:40px;text-align:center;color:#64748b;">
-            Nenhum campeão registrado ainda.
+    <div class="categoria-row">
+
+        <div class="categoria-badge cat-c">
+            <div>
+                <div class="label">Categoria</div>
+                <div class="letra">C</div>
+                <div class="sub">Desenvolvimento</div>
+            </div>
         </div>
 
-        {% endfor %}
+        <div class="campeoes-track">
 
-    </div>
+            {% for item in campeoes_c %}
 
-</div>
+                <div class="champ-card">
 
+                    <div class="champ-top">
+                        <div class="edicao">
+                            {{ item.edicao }}ª edição
+                        </div>
 
-<!-- CATEGORIA C -->
+                        <div class="date-pill">
+                            📅 {{ item.data_final|date:"d/m/Y" }}
+                        </div>
+                    </div>
 
-<div style="margin-bottom:40px;">
+                    <div class="small-label">Campeões</div>
 
-    <div style="background:linear-gradient(90deg,#cd7f32,#f5c58d);color:#111;padding:14px 20px;border-radius:18px;margin-bottom:20px;">
-        <h2 style="margin:0;font-size:clamp(24px,5vw,34px);">
-            🥉 Categoria C
-        </h2>
-    </div>
+                    <div class="champions">
+                        {{ item.campeao_1 }}<br>
+                        {{ item.campeao_2 }}
+                    </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
+                    <div class="score-area">
+                        <div class="small-label">Placar da final</div>
 
-        {% for item in campeoes_c %}
+                        <div class="score-list">
+                            {% for set in item.placar.splitlines %}
+                                <span class="score-chip">{{ set }}</span>
+                            {% empty %}
+                                <span class="score-chip">{{ item.placar }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-        <div style="background:white;border-radius:24px;padding:22px;box-shadow:0 5px 20px rgba(0,0,0,0.08);">
+                    <div class="vice-box">
+                        <div class="small-label">Vice-campeões</div>
 
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
-                <div style="font-size:clamp(22px,5vw,30px);font-weight:bold;color:#0b1f44;">
-                    {{ item.edicao }}ª edição
+                        <div class="vice-names">
+                            {{ item.finalista_1 }}<br>
+                            {{ item.finalista_2 }}
+                        </div>
+                    </div>
+
                 </div>
 
-                <div style="background:#0b1f44;color:white;padding:8px 14px;border-radius:999px;font-size:13px;">
-                    {{ item.data_final }}
-                </div>
-            </div>
+            {% empty %}
 
-            <div style="background:#f8fafc;border-radius:18px;padding:18px;margin-bottom:18px;">
-                <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Campeões</div>
-
-                <div style="font-size:clamp(24px,5vw,34px);font-weight:bold;color:#16a34a;line-height:1.15;">
-                    {{ item.campeao_1 }}
+                <div class="empty-card">
+                    Nenhum campeão registrado ainda.
                 </div>
 
-                <div style="font-size:clamp(22px,4.5vw,30px);font-weight:bold;color:#16a34a;line-height:1.15;">
-                    {{ item.campeao_2 }}
-                </div>
-            </div>
-
-            <div style="text-align:center;margin:20px 0;">
-                <div style="font-size:clamp(44px,10vw,70px);font-weight:900;color:#0b1f44;line-height:1;">
-                    {{ item.placar }}
-                </div>
-            </div>
-
-            <div style="background:#fff7ed;border-radius:18px;padding:18px;">
-                <div style="font-size:14px;color:#64748b;margin-bottom:8px;">Vice-campeões</div>
-
-                <div style="font-size:clamp(22px,4.8vw,30px);font-weight:bold;color:#ea580c;line-height:1.15;">
-                    {{ item.finalista_1 }}
-                </div>
-
-                <div style="font-size:clamp(20px,4.5vw,28px);font-weight:bold;color:#ea580c;line-height:1.15;">
-                    {{ item.finalista_2 }}
-                </div>
-            </div>
+            {% endfor %}
 
         </div>
 
-        {% empty %}
-
-        <div style="background:white;border-radius:20px;padding:40px;text-align:center;color:#64748b;">
-            Nenhum campeão registrado ainda.
-        </div>
-
-        {% endfor %}
-
     </div>
 
-</div>
+    <div class="mural-footer">
+        🎾 Cada edição, uma história. <span>Cada dupla, um legado.</span>
+    </div>
 
 </div>
 

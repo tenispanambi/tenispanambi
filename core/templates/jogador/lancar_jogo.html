@@ -2,530 +2,656 @@
 
 {% block content %}
 
-<div style="max-width:900px;margin:40px auto;">
+<style>
 
-    <div style="
-    background:white;
+.lancar-container{
+    max-width:1400px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.hero-lancar{
+    background:linear-gradient(
+        135deg,
+        #03132f,
+        #07346d,
+        #0b8d3d
+    );
     border-radius:30px;
-    padding:40px;
-    box-shadow:0 5px 18px rgba(0,0,0,0.08);
-    ">
+    overflow:hidden;
+    position:relative;
+    color:white;
+    padding:50px;
+    margin-bottom:25px;
+}
 
-        <h1 style="
-        margin-top:0;
-        color:#0b4d91;
-        font-size:42px;
-        ">
-            🎾 Lançar Resultado
+.hero-lancar:before{
+    content:"🎾";
+    position:absolute;
+    right:60px;
+    top:20px;
+    font-size:180px;
+    opacity:.08;
+}
+
+.hero-titulo{
+    font-size:78px;
+    line-height:.9;
+    font-weight:900;
+    font-style:italic;
+    text-transform:uppercase;
+    margin:0;
+}
+
+.hero-titulo span{
+    color:#b4ff2b;
+    display:block;
+}
+
+.hero-sub{
+    margin-top:20px;
+    font-size:22px;
+    opacity:.95;
+}
+
+.etapa{
+    background:white;
+    border-radius:24px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.etapa-titulo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.numero-etapa{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:#1fc94f;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    font-weight:900;
+}
+
+.etapa-titulo h2{
+    margin:0;
+    color:#0b4d91;
+    font-size:38px;
+    font-weight:900;
+    text-transform:uppercase;
+}
+
+.tipo-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.tipo-card{
+    border:3px solid #dbe4ee;
+    border-radius:22px;
+    padding:25px;
+    cursor:pointer;
+    transition:.3s;
+    text-align:center;
+    font-weight:800;
+    font-size:22px;
+}
+
+.tipo-card.ativo{
+    border-color:#1fc94f;
+    background:#eefdf3;
+}
+
+.tipo-card:hover{
+    transform:translateY(-3px);
+}
+
+.dados-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.card-time{
+    border-radius:24px;
+    overflow:hidden;
+}
+
+.time-a{
+    border:2px solid #a6cbff;
+}
+
+.time-b{
+    border:2px solid #ffd09d;
+}
+
+.topo-time-a{
+    background:linear-gradient(
+        135deg,
+        #0d57d1,
+        #003a99
+    );
+}
+
+.topo-time-b{
+    background:linear-gradient(
+        135deg,
+        #ff8b00,
+        #ff5e00
+    );
+}
+
+.topo-time{
+    padding:20px;
+    color:white;
+    font-size:34px;
+    font-weight:900;
+}
+
+.corpo-time{
+    padding:25px;
+    background:white;
+}
+
+.corpo-time label{
+    display:block;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+input,
+select{
+    width:100%;
+    box-sizing:border-box;
+    padding:16px;
+    border-radius:14px;
+    border:1px solid #cfd8e3;
+    font-size:16px;
+}
+
+.vs-centro{
+    text-align:center;
+    font-size:80px;
+    font-weight:900;
+    color:#0b4d91;
+    margin:25px 0;
+}
+.placar-opcoes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.set-card{
+    border:3px solid #dbe4ee;
+    border-radius:20px;
+    padding:22px;
+    text-align:center;
+    font-size:22px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.set-card.ativo{
+    border-color:#1fc94f;
+    background:#eefdf3;
+}
+
+.tabela-sets{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:18px;
+}
+
+.tabela-sets th{
+    background:#03132f;
+    color:white;
+    padding:16px;
+    text-transform:uppercase;
+}
+
+.tabela-sets td{
+    padding:14px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:center;
+    font-weight:900;
+}
+
+.tabela-sets input{
+    text-align:center;
+    font-size:20px;
+    font-weight:900;
+}
+
+.x-set{
+    font-size:30px;
+    font-weight:900;
+    color:#0b4d91;
+}
+
+.acoes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:25px;
+}
+
+.btn-cancelar,
+.btn-salvar{
+    padding:20px;
+    border-radius:18px;
+    text-align:center;
+    font-size:22px;
+    font-weight:900;
+    text-decoration:none;
+}
+
+.btn-cancelar{
+    background:#1f2937;
+    color:white;
+}
+
+.btn-salvar{
+    background:linear-gradient(135deg,#b4ff2b,#22c55e);
+    color:#052e16;
+    border:none;
+    cursor:pointer;
+}
+
+.hidden{
+    display:none;
+}
+
+@media(max-width:800px){
+
+    .hero-titulo{
+        font-size:44px;
+    }
+
+    .hero-lancar{
+        padding:30px 22px;
+    }
+
+    .tipo-grid,
+    .dados-grid,
+    .placar-opcoes,
+    .acoes{
+        grid-template-columns:1fr;
+    }
+
+    .vs-centro{
+        font-size:48px;
+    }
+
+    .etapa-titulo h2{
+        font-size:26px;
+    }
+}
+
+</style>
+
+<div class="lancar-container">
+
+    <div class="hero-lancar">
+        <h1 class="hero-titulo">
+            Lançar
+            <span>Resultado</span>
         </h1>
 
-        <p style="
-        color:#64748b;
-        font-size:18px;
-        margin-bottom:35px;
-        ">
-            Informe os jogadores, fase, data e placar do confronto.
-        </p>
-
-        <form method="POST">
-
-            {% csrf_token %}
-
-            <!-- TIPO -->
-
-            <div style="margin-bottom:25px;">
-
-                <label style="
-                display:block;
-                margin-bottom:10px;
-                font-weight:bold;
-                ">
-                    Tipo do Jogo
-                </label>
-
-                <select
-                    id="tipo_jogo"
-                    name="tipo_jogo"
-                    onchange="alterarTipo()"
-                    style="
-                    width:100%;
-                    padding:16px;
-                    border-radius:14px;
-                    border:1px solid #dbe2ea;
-                    "
-                >
-
-                    <option value="SIMPLES">
-                        Simples
-                    </option>
-
-                    <option value="DUPLAS">
-                        Duplas
-                    </option>
-
-                </select>
-
-            </div>
-
-            <!-- FASE -->
-
-            <div id="campoFase" style="
-            margin-bottom:25px;
-            display:none;
-            ">
-
-                <label style="
-                display:block;
-                margin-bottom:10px;
-                font-weight:bold;
-                ">
-                    Fase do Torneio
-                </label>
-
-                <select
-                    id="fase"
-                    name="fase"
-                    onchange="alterarTipo()"
-                    style="
-                    width:100%;
-                    padding:16px;
-                    border-radius:14px;
-                    border:1px solid #dbe2ea;
-                    "
-                >
-
-                    {% if torneio_duplas and torneio_duplas.status != 'FASE_FINAIS' %}
-                        <option value="">
-                            Classificatória
-                        </option>
-                    {% endif %}
-
-                    <option value="SEMI">
-                        Semifinal
-                    </option>
-
-                    <option value="FINAL">
-                        Final
-                    </option>
-
-                </select>
-
-            </div>
-
-            <!-- DATA -->
-
-            <div style="margin-bottom:25px;">
-
-                <label style="
-                display:block;
-                margin-bottom:10px;
-                font-weight:bold;
-                ">
-                    Data do Jogo
-                </label>
-
-                <input
-                    type="date"
-                    name="data_jogo"
-                    required
-                    style="
-                    width:100%;
-                    padding:16px;
-                    border-radius:14px;
-                    border:1px solid #dbe2ea;
-                    "
-                >
-
-            </div>
-
-            <!-- RODADA -->
-
-            <div id="campoRodada" style="
-            display:none;
-            margin-bottom:25px;
-            ">
-
-                <label style="
-                display:block;
-                margin-bottom:10px;
-                font-weight:bold;
-                ">
-                    Rodada
-                </label>
-
-                <input
-                    id="rodada"
-                    type="number"
-                    name="rodada"
-                    placeholder="Ex: 1, 2, 3..."
-                    style="
-                    width:100%;
-                    padding:16px;
-                    border-radius:14px;
-                    border:1px solid #dbe2ea;
-                    "
-                >
-
-            </div>
-
-            <!-- TIME A -->
-
-            <div style="
-            background:#eef4ff;
-            padding:25px;
-            border-radius:20px;
-            margin-bottom:25px;
-            ">
-
-                <h2 style="
-                margin-top:0;
-                color:#0b4d91;
-                ">
-                    Time A
-                </h2>
-
-                <div style="margin-bottom:20px;">
-
-                    <label style="
-                    display:block;
-                    margin-bottom:8px;
-                    font-weight:bold;
-                    ">
-                        Jogador 1
-                    </label>
-
-                    <input
-                        type="text"
-                        value="{{ request.user.username }}"
-                        disabled
-                        style="
-                        width:100%;
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                </div>
-
-                <!-- PARCEIRO -->
-
-                <div id="parceiroA" style="display:none;">
-
-                    <label style="
-                    display:block;
-                    margin-bottom:8px;
-                    font-weight:bold;
-                    ">
-                        Parceiro
-                    </label>
-
-                    <select
-                        id="parceiro_a"
-                        name="parceiro_a"
-                        style="
-                        width:100%;
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                        <option value="">
-                            Selecione
-                        </option>
-
-                        {% for jogador in jogadores_categoria %}
-                            <option value="{{ jogador.id }}">
-                                {{ jogador.nome }}
-                            </option>
-                        {% endfor %}
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <!-- TIME B -->
-
-            <div style="
-            background:#fff8e8;
-            padding:25px;
-            border-radius:20px;
-            margin-bottom:25px;
-            ">
-
-                <h2 style="
-                margin-top:0;
-                color:#f4a300;
-                ">
-                    Time B
-                </h2>
-
-                <!-- ADVERSARIO 1 -->
-
-                <div style="margin-bottom:20px;">
-
-                    <label style="
-                    display:block;
-                    margin-bottom:8px;
-                    font-weight:bold;
-                    ">
-                        Adversário 1
-                    </label>
-
-                    <!-- SIMPLES -->
-
-                    <select
-                        id="adversario_simples"
-                        name="adversario_1"
-                        style="
-                        width:100%;
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                        <option value="">
-                            Selecione
-                        </option>
-
-                        {% for jogador in jogadores_todos %}
-                            <option value="{{ jogador.id }}">
-                                {{ jogador.nome }}
-                            </option>
-                        {% endfor %}
-
-                    </select>
-
-                    <!-- DUPLAS -->
-
-                    <select
-                        id="adversario_duplas"
-                        style="
-                        display:none;
-                        width:100%;
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        margin-top:10px;
-                        "
-                    >
-
-                        <option value="">
-                            Selecione
-                        </option>
-
-                        {% for jogador in jogadores_categoria %}
-                            <option value="{{ jogador.id }}">
-                                {{ jogador.nome }}
-                            </option>
-                        {% endfor %}
-
-                    </select>
-
-                </div>
-
-                <!-- ADVERSÁRIO 2 -->
-
-                <div id="adversario2" style="display:none;">
-
-                    <label style="
-                    display:block;
-                    margin-bottom:8px;
-                    font-weight:bold;
-                    ">
-                        Adversário 2
-                    </label>
-
-                    <select
-                        id="adversario_2"
-                        name="adversario_2"
-                        style="
-                        width:100%;
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                        <option value="">
-                            Selecione
-                        </option>
-
-                        {% for jogador in jogadores_categoria %}
-                            <option value="{{ jogador.id }}">
-                                {{ jogador.nome }}
-                            </option>
-                        {% endfor %}
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <!-- PLACAR -->
-
-            <div style="
-            background:#f8fafc;
-            padding:25px;
-            border-radius:20px;
-            margin-bottom:30px;
-            ">
-
-                <h2 style="
-                margin-top:0;
-                color:#0f172a;
-                ">
-                    Placar
-                </h2>
-
-                <div style="
-                display:grid;
-                grid-template-columns:1fr 1fr;
-                gap:20px;
-                ">
-
-                    <input
-                        type="number"
-                        name="games_a"
-                        placeholder="Games Time A"
-                        required
-                        style="
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                    <input
-                        type="number"
-                        name="games_b"
-                        placeholder="Games Time B"
-                        required
-                        style="
-                        padding:15px;
-                        border-radius:14px;
-                        border:1px solid #dbe2ea;
-                        "
-                    >
-
-                </div>
-
-            </div>
-
-            <button
-                type="submit"
-                style="
-                width:100%;
-                background:#0b4d91;
-                color:white;
-                border:none;
-                padding:18px;
-                border-radius:16px;
-                font-size:18px;
-                font-weight:bold;
-                cursor:pointer;
-                "
-            >
-                Salvar Resultado
-            </button>
-
-        </form>
-
+        <div class="hero-sub">
+            Preencha em sequência: tipo do jogo, jogadores e placar por set.
+        </div>
     </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="etapa" style="color:#b91c1c;font-weight:900;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="etapa">
+
+            <div class="etapa-titulo">
+                <div class="numero-etapa">1</div>
+                <h2>Tipo do Jogo</h2>
+            </div>
+
+            <div class="tipo-grid">
+
+                <label class="tipo-card ativo" id="opcaoSimples">
+                    <input
+                        type="radio"
+                        name="tipo_jogo"
+                        value="SIMPLES"
+                        checked
+                        hidden
+                        onchange="alterarTipoJogo()"
+                    >
+                    🎾 Simples
+                    <br>
+                    <small>Jogo individual</small>
+                </label>
+
+                <label class="tipo-card" id="opcaoDuplas">
+                    <input
+                        type="radio"
+                        name="tipo_jogo"
+                        value="DUPLAS"
+                        hidden
+                        onchange="alterarTipoJogo()"
+                    >
+                    🏆 Duplas
+                    <br>
+                    <small>Championship Duplas</small>
+                </label>
+
+            </div>
+
+        </div>
+
+        <div class="etapa">
+
+            <div class="etapa-titulo">
+                <div class="numero-etapa">2</div>
+                <h2>Dados da Partida</h2>
+            </div>
+
+            <div class="dados-grid">
+
+                <div>
+                    <label>Data do jogo</label>
+                    <input type="date" name="data_jogo" required>
+                </div>
+
+                <div id="campoRodada" class="hidden">
+                    <label>Rodada</label>
+                    <input type="number" name="rodada" min="1" placeholder="Ex: 1">
+                </div>
+
+            </div>
+
+            <div id="campoFase" class="hidden" style="margin-top:20px;">
+                <label>Fase</label>
+                <select name="fase">
+                    <option value="">Classificatória</option>
+                    <option value="SEMI">Semifinal</option>
+                    <option value="FINAL">Final</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="etapa">
+
+            <div class="etapa-titulo">
+                <div class="numero-etapa">3</div>
+                <h2>Jogadores</h2>
+            </div>
+
+            <div class="dados-grid">
+
+                <div class="card-time time-a">
+
+                    <div class="topo-time topo-time-a">
+                        Time A
+                    </div>
+
+                    <div class="corpo-time">
+
+                        <label>Jogador 1</label>
+                        <input
+                            type="text"
+                            value="{{ request.user.username }}"
+                            disabled
+                        >
+
+                        <div id="campoParceiro" class="hidden" style="margin-top:18px;">
+                            <label>Parceiro</label>
+                            <select name="parceiro_a">
+                                <option value="">Selecione o parceiro</option>
+
+                                {% for j in jogadores_categoria %}
+                                    <option value="{{ j.id }}">
+                                        {{ j.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-time time-b">
+
+                    <div class="topo-time topo-time-b">
+                        Time B
+                    </div>
+
+                    <div class="corpo-time">
+
+                        <label>Adversário 1</label>
+                        <select name="adversario_1" required>
+                            <option value="">Selecione o adversário</option>
+
+                            {% for j in jogadores_todos %}
+                                <option value="{{ j.id }}">
+                                    {{ j.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <div id="campoAdversario2" class="hidden" style="margin-top:18px;">
+                            <label>Adversário 2</label>
+                            <select name="adversario_2">
+                                <option value="">Selecione o adversário 2</option>
+
+                                {% for j in jogadores_categoria %}
+                                    <option value="{{ j.id }}">
+                                        {{ j.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="vs-centro">
+                VS
+            </div>
+
+        </div>
+
+        <div class="etapa">
+
+            <div class="etapa-titulo">
+                <div class="numero-etapa">4</div>
+                <h2>Placar</h2>
+            </div>
+
+            <div class="placar-opcoes">
+
+                <label class="set-card ativo" id="opcao1Set">
+                    <input
+                        type="radio"
+                        name="quantidade_sets"
+                        value="1"
+                        checked
+                        hidden
+                        onchange="alterarSets()"
+                    >
+                    1 SET
+                    <br>
+                    <small>Definição em 1 set</small>
+                </label>
+
+                <label class="set-card" id="opcao3Sets">
+                    <input
+                        type="radio"
+                        name="quantidade_sets"
+                        value="3"
+                        hidden
+                        onchange="alterarSets()"
+                    >
+                    MELHOR DE 3 SETS
+                    <br>
+                    <small>Definição em até 3 sets</small>
+                </label>
+
+            </div>
+
+            <table class="tabela-sets">
+                <thead>
+                    <tr>
+                        <th>Set</th>
+                        <th>Time A</th>
+                        <th>X</th>
+                        <th>Time B</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>Set 1</td>
+                        <td>
+                            <input type="number" name="set1_a" min="0" placeholder="6" required>
+                        </td>
+                        <td class="x-set">X</td>
+                        <td>
+                            <input type="number" name="set1_b" min="0" placeholder="4" required>
+                        </td>
+                    </tr>
+
+                    <tr class="set-extra hidden">
+                        <td>Set 2</td>
+                        <td>
+                            <input type="number" name="set2_a" min="0" placeholder="6">
+                        </td>
+                        <td class="x-set">X</td>
+                        <td>
+                            <input type="number" name="set2_b" min="0" placeholder="4">
+                        </td>
+                    </tr>
+
+                    <tr class="set-extra hidden">
+                        <td>Set 3</td>
+                        <td>
+                            <input type="number" name="set3_a" min="0" placeholder="10">
+                        </td>
+                        <td class="x-set">X</td>
+                        <td>
+                            <input type="number" name="set3_b" min="0" placeholder="8">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="acoes">
+            <a href="/meus-jogos/" class="btn-cancelar">
+                ← Cancelar
+            </a>
+
+            <button type="submit" class="btn-salvar">
+                🏆 Salvar Resultado
+            </button>
+        </div>
+
+    </form>
 
 </div>
 
 <script>
+function alterarTipoJogo(){
 
-function alterarTipo(){
+    const tipo = document.querySelector('input[name="tipo_jogo"]:checked').value;
 
-    let tipo = document.getElementById('tipo_jogo').value;
+    const opcaoSimples = document.getElementById('opcaoSimples');
+    const opcaoDuplas = document.getElementById('opcaoDuplas');
 
-    let fase = document.getElementById('fase').value;
+    const campoRodada = document.getElementById('campoRodada');
+    const campoFase = document.getElementById('campoFase');
+    const campoParceiro = document.getElementById('campoParceiro');
+    const campoAdversario2 = document.getElementById('campoAdversario2');
 
-    let campoFase = document.getElementById('campoFase');
+    opcaoSimples.classList.remove('ativo');
+    opcaoDuplas.classList.remove('ativo');
 
-    let parceiroA = document.getElementById('parceiroA');
-    let adversario2 = document.getElementById('adversario2');
+    if(tipo === 'DUPLAS'){
 
-    let parceiroInput = document.getElementById('parceiro_a');
-    let adversario2Input = document.getElementById('adversario_2');
+        opcaoDuplas.classList.add('ativo');
 
-    let campoRodada = document.getElementById('campoRodada');
-    let rodada = document.getElementById('rodada');
-
-    let adversarioSimples = document.getElementById('adversario_simples');
-    let adversarioDuplas = document.getElementById('adversario_duplas');
-
-    // DUPLAS
-
-    if(tipo == 'DUPLAS'){
-
-        campoFase.style.display = 'block';
-
-        parceiroA.style.display = 'block';
-        adversario2.style.display = 'block';
-
-        parceiroInput.required = true;
-        adversario2Input.required = true;
-
-        adversarioSimples.style.display = 'none';
-        adversarioDuplas.style.display = 'block';
-
-        // sincroniza valores
-        adversarioDuplas.name = 'adversario_1';
-        adversarioSimples.name = '';
-
-        // CLASSIFICATÓRIA
-
-        if(fase == ''){
-
-            campoRodada.style.display = 'block';
-
-            rodada.required = true;
-
-        }else{
-
-            campoRodada.style.display = 'none';
-
-            rodada.required = false;
-
-            rodada.value = '';
-        }
+        campoRodada.classList.remove('hidden');
+        campoFase.classList.remove('hidden');
+        campoParceiro.classList.remove('hidden');
+        campoAdversario2.classList.remove('hidden');
 
     }else{
 
-        campoFase.style.display = 'none';
+        opcaoSimples.classList.add('ativo');
 
-        parceiroA.style.display = 'none';
-        adversario2.style.display = 'none';
-
-        parceiroInput.required = false;
-        adversario2Input.required = false;
-
-        campoRodada.style.display = 'none';
-
-        rodada.required = false;
-
-        rodada.value = '';
-
-        document.getElementById('fase').value = '';
-
-        adversarioSimples.style.display = 'block';
-        adversarioDuplas.style.display = 'none';
-
-        adversarioSimples.name = 'adversario_1';
-        adversarioDuplas.name = '';
+        campoRodada.classList.add('hidden');
+        campoFase.classList.add('hidden');
+        campoParceiro.classList.add('hidden');
+        campoAdversario2.classList.add('hidden');
     }
 }
 
-window.onload = alterarTipo;
+function alterarSets(){
 
+    const qtd = document.querySelector('input[name="quantidade_sets"]:checked').value;
+
+    const opcao1Set = document.getElementById('opcao1Set');
+    const opcao3Sets = document.getElementById('opcao3Sets');
+
+    const extras = document.querySelectorAll('.set-extra');
+
+    opcao1Set.classList.remove('ativo');
+    opcao3Sets.classList.remove('ativo');
+
+    if(qtd === '3'){
+
+        opcao3Sets.classList.add('ativo');
+
+        extras.forEach(function(item){
+            item.classList.remove('hidden');
+        });
+
+    }else{
+
+        opcao1Set.classList.add('ativo');
+
+        extras.forEach(function(item){
+            item.classList.add('hidden');
+        });
+    }
+}
+
+alterarTipoJogo();
+alterarSets();
 </script>
 
 {% endblock %}

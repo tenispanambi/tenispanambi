@@ -4,6 +4,8 @@ from django.shortcuts import (
     redirect
 )
 
+import math
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
@@ -15,8 +17,10 @@ from django.shortcuts import render, redirect
 from .services.ranking import recalcular_ranking
 from .services.avanco import avancar_vencedor
 from .services.chaveamento import gerar_chaveamento
-from datetime import date
+from datetime import date, datetime, timedelta
+from django.utils import timezone
 from collections import Counter
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import (
     RankingJogador,
@@ -28,109 +32,129 @@ from .models import (
     InscricaoTorneio,
     CategoriaTorneio,
     CampeaoTorneio,
+    Quadra,
+    ConfiguracaoHorarioQuadra,
+    ReservaQuadra,
 )
 
 def home(request):
 
-    total_jogadores = Jogador.objects.count()
+    torneio_ativo = Torneio.objects.filter(
+        ativo=True
+    ).order_by(
+        '-ano',
+        '-edicao',
+        '-id'
+    ).first()
 
-    total_jogos = Jogo.objects.filter(
+    total_jogadores = Jogador.objects.count()
+    total_torneios = Torneio.objects.count()
+
+    total_jogos_geral = Jogo.objects.filter(
         status='CONFIRMADO'
     ).count()
 
-    total_torneios = Torneio.objects.count()
-
-    # =========================================
-    # PLACARES MAIS COMUNS
-    # =========================================
-
-    resultados_validos = [
-        '7x6',
-        '7x5',
-        '6x4',
-        '6x3',
-        '6x2',
-        '6x1',
-        '6x0',
-    ]
-
-    contador_placares = {
-        placar: 0
-        for placar in resultados_validos
-    }
-
-    jogos_duplas = Jogo.objects.filter(
+    total_jogos_duplas = Jogo.objects.filter(
         status='CONFIRMADO',
         tipo_jogo='CHAMPIONSHIP_DUPLAS'
-    )
+    ).count()
 
-    for jogo in jogos_duplas:
-
-        placar = jogo.placar_resumido()
-
-        if placar in contador_placares:
-            contador_placares[placar] += 1
-
-    placares_mais_comuns = sorted(
-        contador_placares.items(),
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    # =========================================
-
-    # JOGOS DA ÚLTIMA RODADA
-
-    ultima_rodada_geral = Jogo.objects.filter(
+    total_jogos_simples = Jogo.objects.filter(
         status='CONFIRMADO',
-        tipo_jogo='CHAMPIONSHIP_DUPLAS',
-        rodada__isnull=False
-    ).order_by(
-        '-rodada'
-    ).values_list(
-        'rodada',
-        flat=True
-    ).first()
+        tipo_jogo='SIMPLES'
+    ).count()
 
+    total_jogos = 0
     jogos_ultima_rodada = 0
+    ultima_rodada_geral = None
+    ultimos_jogos = []
+    ranking_a = []
+    ranking_b = []
+    ranking_c = []
 
-    if ultima_rodada_geral:
+    destaques_a = {
+        'rodada': None,
+        'jogadores': []
+    }
 
-        jogos_ultima_rodada = Jogo.objects.filter(
-            status='CONFIRMADO',
-            tipo_jogo='CHAMPIONSHIP_DUPLAS',
-            rodada=ultima_rodada_geral
+    destaques_b = {
+        'rodada': None,
+        'jogadores': []
+    }
+
+    destaques_c = {
+        'rodada': None,
+        'jogadores': []
+    }
+
+    placares_mais_comuns = []
+
+    if torneio_ativo:
+
+        total_jogos = Jogo.objects.filter(
+            torneio=torneio_ativo,
+            status='CONFIRMADO'
         ).count()
 
-    ultimos_jogos = Jogo.objects.filter(
-        status='CONFIRMADO'
-    ).order_by(
-        '-data_jogo',
-        '-id'
-    )[:10]
+        # ====================================
+        # PLACARES MAIS COMUNS
+        # Soma 6x2 e 2x6 como o mesmo placar
+        # ====================================
 
-    ranking_a = RankingJogador.objects.filter(
-        categoria__categoria='A'
-    ).order_by('posicao')[:5]
+        resultados_validos = [
+            '7x6',
+            '7x5',
+            '6x4',
+            '6x3',
+            '6x2',
+            '6x1',
+            '6x0',
+        ]
 
-    ranking_b = RankingJogador.objects.filter(
-        categoria__categoria='B'
-    ).order_by('posicao')[:5]
+        contador_placares = {
+            placar: 0
+            for placar in resultados_validos
+        }
 
-    ranking_c = RankingJogador.objects.filter(
-        categoria__categoria='C'
-    ).order_by('posicao')[:5]
+        jogos_duplas = Jogo.objects.filter(
+            status='CONFIRMADO',
+            tipo_jogo='CHAMPIONSHIP_DUPLAS'
+        )
 
-    proximos_torneios = Torneio.objects.filter(
-        data_inicio__gte=date.today()
-    ).order_by('data_inicio')[:3]
+        for jogo in jogos_duplas:
 
-    def destaques_ultima_rodada(categoria_letra):
+            placar = jogo.placar_resumido()
 
-        ultima_rodada = Jogo.objects.filter(
+            if not placar or 'x' not in placar:
+                continue
+
+            try:
+                a, b = placar.split('x')
+
+                a = int(a.strip())
+                b = int(b.strip())
+
+                maior = max(a, b)
+                menor = min(a, b)
+
+                placar_normalizado = f'{maior}x{menor}'
+
+                if placar_normalizado in contador_placares:
+                    contador_placares[placar_normalizado] += 1
+
+            except Exception:
+                pass
+
+        placares_mais_comuns = sorted(
+            contador_placares.items(),
+            key=lambda item: item[1],
+            reverse=True
+        )
+
+        ultima_rodada_geral = Jogo.objects.filter(
+            torneio=torneio_ativo,
             status='CONFIRMADO',
             tipo_jogo='CHAMPIONSHIP_DUPLAS',
-            categoria__categoria=categoria_letra,
             rodada__isnull=False
         ).order_by(
             '-rodada'
@@ -139,81 +163,151 @@ def home(request):
             flat=True
         ).first()
 
-        if not ultima_rodada:
-            return {
-                'rodada': None,
-                'jogadores': []
-            }
+        if ultima_rodada_geral:
 
-        jogos_rodada = Jogo.objects.filter(
-            status='CONFIRMADO',
-            tipo_jogo='CHAMPIONSHIP_DUPLAS',
-            categoria__categoria=categoria_letra,
-            rodada=ultima_rodada
-        ).prefetch_related(
-            'participantes',
-            'participantes__jogador'
+            jogos_ultima_rodada = Jogo.objects.filter(
+                torneio=torneio_ativo,
+                status='CONFIRMADO',
+                tipo_jogo='CHAMPIONSHIP_DUPLAS',
+                rodada=ultima_rodada_geral
+            ).count()
+
+        # Últimos jogos gerais do histórico
+        ultimos_jogos = Jogo.objects.filter(
+            status='CONFIRMADO'
         ).order_by(
-            'data_jogo',
-            'id'
-        )
+            '-data_jogo',
+            '-id'
+        )[:15]
 
-        dados = {}
-        controle_jogos_jogador = {}
-
-        for jogo in jogos_rodada:
-
-            for p in jogo.participantes.all():
-
-                jogador = p.jogador
-
-                if jogador.id not in controle_jogos_jogador:
-                    controle_jogos_jogador[jogador.id] = 0
-
-                if controle_jogos_jogador[jogador.id] >= 2:
-                    continue
-
-                controle_jogos_jogador[jogador.id] += 1
-
-                if jogador.id not in dados:
-                    dados[jogador.id] = {
-                        'nome': jogador.nome,
-                        'vitorias': 0,
-                        'derrotas': 0,
-                        'pontos': 0,
-                    }
-
-                if p.lado == 'A':
-                    games = jogo.total_games_lado_a()
-                else:
-                    games = jogo.total_games_lado_b()
-
-                if p.vencedor:
-                    dados[jogador.id]['vitorias'] += 1
-                    dados[jogador.id]['pontos'] += 20 + games
-                else:
-                    dados[jogador.id]['derrotas'] += 1
-                    dados[jogador.id]['pontos'] += 5 + games
-
-        jogadores = sorted(
-            dados.values(),
-            key=lambda x: x['pontos'],
-            reverse=True
+        ranking_a = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='A'
+        ).order_by(
+            'posicao'
         )[:5]
 
-        return {
-            'rodada': ultima_rodada,
-            'jogadores': jogadores
-        }
+        ranking_b = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='B'
+        ).order_by(
+            'posicao'
+        )[:5]
 
-    destaques_a = destaques_ultima_rodada('A')
-    destaques_b = destaques_ultima_rodada('B')
-    destaques_c = destaques_ultima_rodada('C')
+        ranking_c = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='C'
+        ).order_by(
+            'posicao'
+        )[:5]
+
+        def destaques_ultima_rodada(categoria_letra):
+
+            ultima_rodada = Jogo.objects.filter(
+                torneio=torneio_ativo,
+                status='CONFIRMADO',
+                tipo_jogo='CHAMPIONSHIP_DUPLAS',
+                categoria__categoria=categoria_letra,
+                rodada__isnull=False
+            ).order_by(
+                '-rodada'
+            ).values_list(
+                'rodada',
+                flat=True
+            ).first()
+
+            if not ultima_rodada:
+                return {
+                    'rodada': None,
+                    'jogadores': []
+                }
+
+            jogos_rodada = Jogo.objects.filter(
+                torneio=torneio_ativo,
+                status='CONFIRMADO',
+                tipo_jogo='CHAMPIONSHIP_DUPLAS',
+                categoria__categoria=categoria_letra,
+                rodada=ultima_rodada
+            ).prefetch_related(
+                'participantes',
+                'participantes__jogador'
+            ).order_by(
+                'data_jogo',
+                'id'
+            )
+
+            dados = {}
+            controle_jogos_jogador = {}
+
+            for jogo in jogos_rodada:
+
+                for p in jogo.participantes.all():
+
+                    jogador = p.jogador
+
+                    if jogador.id not in controle_jogos_jogador:
+                        controle_jogos_jogador[jogador.id] = 0
+
+                    if controle_jogos_jogador[jogador.id] >= 2:
+                        continue
+
+                    controle_jogos_jogador[jogador.id] += 1
+
+                    if jogador.id not in dados:
+                        dados[jogador.id] = {
+                            'nome': jogador.nome,
+                            'vitorias': 0,
+                            'derrotas': 0,
+                            'pontos': 0,
+                        }
+
+                    if p.lado == 'A':
+                        games = jogo.total_games_lado_a()
+                    else:
+                        games = jogo.total_games_lado_b()
+
+                    if p.vencedor:
+                        dados[jogador.id]['vitorias'] += 1
+                        dados[jogador.id]['pontos'] += 20 + games
+                    else:
+                        dados[jogador.id]['derrotas'] += 1
+                        dados[jogador.id]['pontos'] += 5 + games
+
+            jogadores = sorted(
+                dados.values(),
+                key=lambda x: x['pontos'],
+                reverse=True
+            )[:5]
+
+            return {
+                'rodada': ultima_rodada,
+                'jogadores': jogadores
+            }
+
+        destaques_a = destaques_ultima_rodada('A')
+        destaques_b = destaques_ultima_rodada('B')
+        destaques_c = destaques_ultima_rodada('C')
+
+    else:
+
+        ultimos_jogos = Jogo.objects.filter(
+            status='CONFIRMADO'
+        ).order_by(
+            '-data_jogo',
+            '-id'
+        )[:15]
+
+    proximos_torneios = Torneio.objects.filter(
+        data_inicio__gte=date.today()
+    ).order_by(
+        'data_inicio'
+    )[:3]
 
     return render(
         request,
         'core/index.html',
         {
+            'torneio_ativo': torneio_ativo,
             'total_jogadores': total_jogadores,
             'total_jogos': total_jogos,
             'total_torneios': total_torneios,
@@ -228,6 +322,9 @@ def home(request):
             'destaques_b': destaques_b,
             'destaques_c': destaques_c,
             'placares_mais_comuns': placares_mais_comuns,
+            'total_jogos_geral': total_jogos_geral,
+            'total_jogos_duplas': total_jogos_duplas,
+            'total_jogos_simples': total_jogos_simples,
         }
     )
 
@@ -285,17 +382,36 @@ def cadastro(request):
 
 def ranking(request):
 
-    ranking_a = RankingJogador.objects.filter(
-        categoria__categoria='A'
-    ).order_by('posicao')
+    torneio_ativo = Torneio.objects.filter(
+        ativo=True
+    ).order_by(
+        '-ano',
+        '-edicao',
+        '-id'
+    ).first()
 
-    ranking_b = RankingJogador.objects.filter(
-        categoria__categoria='B'
-    ).order_by('posicao')
+    if not torneio_ativo:
 
-    ranking_c = RankingJogador.objects.filter(
-        categoria__categoria='C'
-    ).order_by('posicao')
+        ranking_a = []
+        ranking_b = []
+        ranking_c = []
+
+    else:
+
+        ranking_a = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='A'
+        ).order_by('posicao')
+
+        ranking_b = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='B'
+        ).order_by('posicao')
+
+        ranking_c = RankingJogador.objects.filter(
+            torneio=torneio_ativo,
+            categoria__categoria='C'
+        ).order_by('posicao')
 
     def aplicar_variacao(lista):
 
@@ -324,9 +440,130 @@ def ranking(request):
         request,
         'ranking/lista.html',
         {
+            'torneio_ativo': torneio_ativo,
             'ranking_a': ranking_a,
             'ranking_b': ranking_b,
             'ranking_c': ranking_c,
+        }
+    )
+
+def detalhe_torneio(request, torneio_id):
+
+    torneio = get_object_or_404(
+        Torneio,
+        id=torneio_id
+    )
+
+    total_jogos = Jogo.objects.filter(
+        torneio=torneio,
+        status='CONFIRMADO'
+    ).count()
+
+    ultimos_jogos = Jogo.objects.filter(
+        torneio=torneio,
+        status='CONFIRMADO'
+    ).order_by(
+        '-data_jogo',
+        '-id'
+    )[:20]
+
+    ranking_a = RankingJogador.objects.filter(
+        torneio=torneio,
+        categoria__categoria='A'
+    ).order_by('posicao')
+
+    ranking_b = RankingJogador.objects.filter(
+        torneio=torneio,
+        categoria__categoria='B'
+    ).order_by('posicao')
+
+    ranking_c = RankingJogador.objects.filter(
+        torneio=torneio,
+        categoria__categoria='C'
+    ).order_by('posicao')
+
+    resultados_validos = [
+        '7x6',
+        '7x5',
+        '6x4',
+        '6x3',
+        '6x2',
+        '6x1',
+        '6x0',
+    ]
+
+    contador_placares = {
+        placar: 0
+        for placar in resultados_validos
+    }
+
+    jogos_duplas = Jogo.objects.filter(
+        torneio=torneio,
+        status='CONFIRMADO',
+        tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    )
+
+    for jogo in jogos_duplas:
+
+        placar = jogo.placar_resumido()
+
+        if not placar or 'x' not in placar:
+            continue
+
+        try:
+            a, b = placar.split('x')
+
+            a = int(a.strip())
+            b = int(b.strip())
+
+            maior = max(a, b)
+            menor = min(a, b)
+
+            placar_normalizado = f'{maior}x{menor}'
+
+            if placar_normalizado in contador_placares:
+                contador_placares[placar_normalizado] += 1
+
+        except Exception:
+            pass
+
+    placares_mais_comuns = sorted(
+        contador_placares.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    jogos_por_rodada = Jogo.objects.filter(
+        torneio=torneio,
+        status='CONFIRMADO',
+        rodada__isnull=False
+    ).values(
+        'rodada'
+    ).annotate(
+        total=Count('id')
+    ).order_by(
+        'rodada'
+    )
+
+    torneios_historico = Torneio.objects.all().order_by(
+        '-ano',
+        '-edicao',
+        '-id'
+    )
+
+    return render(
+        request,
+        'torneios/detalhe.html',
+        {
+            'torneio': torneio,
+            'total_jogos': total_jogos,
+            'ultimos_jogos': ultimos_jogos,
+            'ranking_a': ranking_a,
+            'ranking_b': ranking_b,
+            'ranking_c': ranking_c,
+            'placares_mais_comuns': placares_mais_comuns,
+            'jogos_por_rodada': jogos_por_rodada,
+            'torneios_historico': torneios_historico,
         }
     )
 
@@ -799,7 +1036,7 @@ def meu_painel(request):
 
     return render(
         request,
-        'jogador/painel.html',
+        'jogador/painel_v2.html',
         {
             'jogador': jogador,
             'ranking': ranking,
@@ -826,6 +1063,7 @@ def meu_painel(request):
 
 @login_required
 def meus_jogos(request):
+
     jogador = Jogador.objects.filter(
         usuario=request.user
     ).first()
@@ -845,9 +1083,10 @@ def meus_jogos(request):
     )
 
     controle_rodadas = {}
-    jogos_validos = []
+    rodadas_validas = {}
 
     for p in participacoes:
+
         jogo = p.jogo
         categoria = jogo.categoria
         rodada = jogo.rodada or 0
@@ -856,8 +1095,8 @@ def meus_jogos(request):
         p.historico_valido = False
         p.motivo_desconsiderado = ''
         p.pontos_calculados = 0
+        p.pontos_rodada = 0
 
-        # Amistoso ou simples não entra no ranking, mas vale para histórico
         if jogo.tipo_jogo != 'CHAMPIONSHIP_DUPLAS':
             p.historico_valido = True
             p.motivo_desconsiderado = 'Jogo amistoso/simples: vale para histórico, mas não soma ranking.'
@@ -865,60 +1104,99 @@ def meus_jogos(request):
 
         if jogo.status != 'CONFIRMADO':
             p.motivo_desconsiderado = 'Jogo ainda não confirmado.'
-
-        elif categoria and rodada > categoria.rodadas_contabilizadas:
-            p.motivo_desconsiderado = 'Rodada fora do limite contabilizado.'
-
-        else:
-            categoria_id = categoria.id if categoria else 0
-            chave = f'{jogador.id}_{categoria_id}_{rodada}'
-
-            if chave not in controle_rodadas:
-                controle_rodadas[chave] = 0
-
-            if categoria and controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
-                p.motivo_desconsiderado = 'Excedeu o limite de jogos contabilizados nesta rodada.'
-            else:
-                controle_rodadas[chave] += 1
-                p.historico_valido = True
-
-                if p.lado == 'A':
-                    games_feitos = jogo.total_games_lado_a()
-                else:
-                    games_feitos = jogo.total_games_lado_b()
-
-                if p.vencedor:
-                    p.pontos_calculados = 20 + games_feitos
-                else:
-                    p.pontos_calculados = 5 + games_feitos
-
-                jogos_validos.append(p)
-
-    jogos_validos_ordenados = sorted(
-        jogos_validos,
-        key=lambda p: p.pontos_calculados,
-        reverse=True
-    )
-
-    categorias_processadas = {}
-
-    for p in jogos_validos_ordenados:
-        categoria = p.jogo.categoria
-
-        if not categoria:
             continue
 
-        chave_categoria = categoria.id
+        if not categoria:
+            p.motivo_desconsiderado = 'Jogo sem categoria.'
+            continue
 
-        if chave_categoria not in categorias_processadas:
-            categorias_processadas[chave_categoria] = 0
+        if rodada > categoria.rodadas_contabilizadas:
+            p.motivo_desconsiderado = 'Rodada fora do limite contabilizado.'
+            continue
 
-        if categorias_processadas[chave_categoria] < categoria.melhores_resultados:
-            p.contabilizado = True
-            categorias_processadas[chave_categoria] += 1
+        chave = f'{jogador.id}_{categoria.id}_{rodada}'
+
+        if chave not in controle_rodadas:
+            controle_rodadas[chave] = 0
+
+        if controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+            p.motivo_desconsiderado = 'Excedeu o limite de jogos contabilizados nesta rodada.'
+            continue
+
+        controle_rodadas[chave] += 1
+        p.historico_valido = True
+
+        if p.lado == 'A':
+            games_feitos = jogo.total_games_lado_a()
         else:
-            p.contabilizado = False
-            p.motivo_desconsiderado = 'Fora dos melhores resultados.'
+            games_feitos = jogo.total_games_lado_b()
+
+        if p.vencedor:
+            p.pontos_calculados = 20 + games_feitos
+        else:
+            p.pontos_calculados = 5 + games_feitos
+
+        chave_rodada = f'{categoria.id}_{rodada}'
+
+        if chave_rodada not in rodadas_validas:
+            rodadas_validas[chave_rodada] = {
+                'categoria': categoria,
+                'rodada': rodada,
+                'pontos': 0,
+                'participacoes': []
+            }
+
+        rodadas_validas[chave_rodada]['pontos'] += p.pontos_calculados
+        rodadas_validas[chave_rodada]['participacoes'].append(p)
+
+    rodadas_por_categoria = {}
+
+    for dados_rodada in rodadas_validas.values():
+
+        categoria = dados_rodada['categoria']
+
+        if categoria.id not in rodadas_por_categoria:
+            rodadas_por_categoria[categoria.id] = []
+
+        rodadas_por_categoria[categoria.id].append(dados_rodada)
+
+    for categoria_id, lista_rodadas in rodadas_por_categoria.items():
+
+        lista_rodadas_ordenadas = sorted(
+            lista_rodadas,
+            key=lambda r: r['pontos'],
+            reverse=True
+        )
+
+        if lista_rodadas_ordenadas:
+            categoria = lista_rodadas_ordenadas[0]['categoria']
+            limite = categoria.melhores_resultados
+        else:
+            limite = 0
+
+        melhores_rodadas = lista_rodadas_ordenadas[:limite]
+
+        chaves_melhores = set()
+
+        for r in melhores_rodadas:
+            chaves_melhores.add(
+                f"{r['categoria'].id}_{r['rodada']}"
+            )
+
+        for r in lista_rodadas_ordenadas:
+
+            chave_rodada = f"{r['categoria'].id}_{r['rodada']}"
+
+            for p in r['participacoes']:
+
+                p.pontos_rodada = r['pontos']
+
+                if chave_rodada in chaves_melhores:
+                    p.contabilizado = True
+                    p.motivo_desconsiderado = ''
+                else:
+                    p.contabilizado = False
+                    p.motivo_desconsiderado = 'Rodada fora dos melhores resultados.'
 
     participacoes = sorted(
         participacoes,
@@ -936,9 +1214,9 @@ def meus_jogos(request):
         }
     )
 
-
 @login_required
 def lancar_resultado(request, jogo_id):
+
     jogador = Jogador.objects.get(
         usuario=request.user
     )
@@ -957,21 +1235,55 @@ def lancar_resultado(request, jogo_id):
             adversarios.append(p.jogador)
 
     if request.method == 'POST':
-        placar_a = int(request.POST.get('placar_a'))
-        placar_b = int(request.POST.get('placar_b'))
+
+        sets_recebidos = []
+
+        for numero in [1, 2, 3]:
+
+            games_a = request.POST.get(f'set{numero}_a')
+            games_b = request.POST.get(f'set{numero}_b')
+
+            if games_a not in [None, ''] and games_b not in [None, '']:
+
+                sets_recebidos.append({
+                    'numero': numero,
+                    'games_a': int(games_a),
+                    'games_b': int(games_b),
+                })
+
+        if not sets_recebidos:
+            messages.error(
+                request,
+                'Informe pelo menos o placar do Set 1.'
+            )
+
+            return redirect(
+                'lancar_resultado',
+                jogo_id=jogo.id
+            )
 
         jogo.sets.all().delete()
 
-        SetJogo.objects.create(
-            jogo=jogo,
-            numero_set=1,
-            games_lado_a=placar_a,
-            games_lado_b=placar_b
-        )
+        sets_a = 0
+        sets_b = 0
+
+        for item in sets_recebidos:
+
+            SetJogo.objects.create(
+                jogo=jogo,
+                numero_set=item['numero'],
+                games_lado_a=item['games_a'],
+                games_lado_b=item['games_b']
+            )
+
+            if item['games_a'] > item['games_b']:
+                sets_a += 1
+            else:
+                sets_b += 1
 
         vencedor_lado = 'A'
 
-        if placar_b > placar_a:
+        if sets_b > sets_a:
             vencedor_lado = 'B'
 
         for p in participantes:
@@ -1375,8 +1687,27 @@ def lancar_jogo(request):
         adversario_1_id = request.POST.get('adversario_1')
         adversario_2_id = request.POST.get('adversario_2')
 
-        games_a = int(request.POST.get('games_a'))
-        games_b = int(request.POST.get('games_b'))
+        sets_recebidos = []
+
+        for numero in [1, 2, 3]:
+
+            games_a = request.POST.get(f'set{numero}_a')
+            games_b = request.POST.get(f'set{numero}_b')
+
+            if games_a not in [None, ''] and games_b not in [None, '']:
+
+                sets_recebidos.append({
+                    'numero': numero,
+                    'games_a': int(games_a),
+                    'games_b': int(games_b),
+                })
+
+        if not sets_recebidos:
+            messages.error(
+                request,
+                'Informe pelo menos o placar do Set 1.'
+            )
+            return redirect('/lancar-jogo/')
 
         data_jogo = date.fromisoformat(data_jogo_str)
 
@@ -1433,10 +1764,10 @@ def lancar_jogo(request):
 
                 rodada = None
 
-            if not parceiro_a_id or not adversario_2_id:
+            if not parceiro_a_id or not adversario_1_id or not adversario_2_id:
                 messages.error(
                     request,
-                    'Para jogo de duplas, informe parceiro e adversário 2.'
+                    'Para jogo de duplas, informe parceiro, adversário 1 e adversário 2.'
                 )
                 return redirect('/lancar-jogo/')
 
@@ -1468,6 +1799,13 @@ def lancar_jogo(request):
             torneio = None
             categoria = None
             tipo_jogo_salvar = 'SIMPLES'
+
+            if not adversario_1_id:
+                messages.error(
+                    request,
+                    'Informe o adversário.'
+                )
+                return redirect('/lancar-jogo/')
 
             adversario_1 = Jogador.objects.get(
                 id=adversario_1_id
@@ -1511,16 +1849,26 @@ def lancar_jogo(request):
                 lado='B'
             )
 
-        SetJogo.objects.create(
-            jogo=jogo,
-            numero_set=1,
-            games_lado_a=games_a,
-            games_lado_b=games_b
-        )
+        sets_a = 0
+        sets_b = 0
+
+        for item in sets_recebidos:
+
+            SetJogo.objects.create(
+                jogo=jogo,
+                numero_set=item['numero'],
+                games_lado_a=item['games_a'],
+                games_lado_b=item['games_b']
+            )
+
+            if item['games_a'] > item['games_b']:
+                sets_a += 1
+            else:
+                sets_b += 1
 
         lado_vencedor = 'A'
 
-        if games_b > games_a:
+        if sets_b > sets_a:
             lado_vencedor = 'B'
 
         participantes = ParticipanteJogo.objects.filter(
@@ -1622,3 +1970,545 @@ def confirmar_resultado_usuario(request, jogo_id):
     )
 
     return redirect('/meus-jogos/')
+
+@login_required
+def quadras(request):
+
+    hoje = date.today()
+    agora = timezone.localtime().time()
+
+    proximos_dias = []
+
+    quadras = Quadra.objects.filter(
+        ativa=True
+    ).order_by('nome')
+
+    for i in range(0, 14):
+
+        dia = hoje + timedelta(days=i)
+
+        quadras_dia = []
+        possui_horarios = False
+        pode_reservar_dia = dia == hoje
+
+        for quadra in quadras:
+
+            horarios = ConfiguracaoHorarioQuadra.objects.filter(
+                ativo=True,
+                quadra=quadra,
+                dia_semana=dia.weekday()
+            ).order_by('hora_inicio')
+
+            reservas = ReservaQuadra.objects.filter(
+                data=dia,
+                status='AGENDADA'
+            )
+
+            lista_horarios = []
+
+            for horario in horarios:
+
+                reserva = reservas.filter(
+                    horario=horario
+                ).first()
+
+                horario_passado = False
+
+                if dia == hoje and horario.hora_inicio <= agora:
+                    horario_passado = True
+
+                lista_horarios.append({
+                    'horario': horario,
+                    'reserva': reserva,
+                    'horario_passado': horario_passado,
+                    'pode_reservar': pode_reservar_dia and not horario_passado,
+                })
+
+            if lista_horarios:
+                possui_horarios = True
+
+            quadras_dia.append({
+                'quadra': quadra,
+                'horarios': lista_horarios,
+            })
+
+        if possui_horarios:
+            proximos_dias.append({
+                'data': dia,
+                'quadras': quadras_dia,
+                'pode_reservar': pode_reservar_dia,
+            })
+
+    return render(
+        request,
+        'quadras/index.html',
+        {
+            'proximos_dias': proximos_dias
+        }
+    )
+
+
+@login_required
+def reservar_quadra(request, horario_id):
+
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador:
+        return redirect('/meu-perfil/')
+
+    horario = get_object_or_404(
+        ConfiguracaoHorarioQuadra,
+        id=horario_id,
+        ativo=True
+    )
+
+    data_reserva_str = (
+        request.GET.get('data') or
+        request.POST.get('data_reserva')
+    )
+
+    if not data_reserva_str:
+        messages.error(
+            request,
+            'Data da reserva não informada.'
+        )
+        return redirect('/quadras/')
+
+    data_reserva = date.fromisoformat(data_reserva_str)
+
+    hoje = date.today()
+    agora = timezone.localtime().time()
+
+    if data_reserva != hoje:
+        messages.error(
+            request,
+            'As reservas só podem ser feitas no próprio dia.'
+        )
+        return redirect('/quadras/')
+
+    if horario.hora_inicio <= agora:
+        messages.error(
+            request,
+            'Este horário já passou e não pode mais ser reservado.'
+        )
+        return redirect('/quadras/')
+
+    if data_reserva.weekday() != horario.dia_semana:
+        messages.error(
+            request,
+            'Este horário não pertence ao dia da semana selecionado.'
+        )
+        return redirect('/quadras/')
+
+    reserva_existente = ReservaQuadra.objects.filter(
+        data=data_reserva,
+        horario=horario,
+        status='AGENDADA'
+    ).exists()
+
+    if reserva_existente:
+        messages.error(
+            request,
+            'Este horário já está reservado.'
+        )
+        return redirect('/quadras/')
+
+    ja_reservou_no_dia = ReservaQuadra.objects.filter(
+        reservado_por=jogador,
+        data=data_reserva,
+        status='AGENDADA'
+    ).exists()
+
+    if ja_reservou_no_dia:
+        messages.error(
+            request,
+            'Você já possui uma reserva neste dia.'
+        )
+        return redirect('/quadras/')
+
+    jogadores_lista = Jogador.objects.filter(
+        ativo=True
+    ).order_by(
+        'nome'
+    )
+
+    if request.method == 'POST':
+
+        jogadores_ids = request.POST.getlist('jogadores')
+        observacao = request.POST.get('observacao')
+
+        jogadores_selecionados = Jogador.objects.filter(
+            id__in=jogadores_ids
+        ).order_by(
+            'nome'
+        )
+
+        jogadores_nomes = '\n'.join(
+            [j.nome for j in jogadores_selecionados]
+        )
+
+        if not jogadores_nomes:
+            messages.error(
+                request,
+                'Selecione pelo menos um jogador.'
+            )
+            return redirect(
+                f'/quadras/reservar/{horario.id}/?data={data_reserva}'
+            )
+
+        ReservaQuadra.objects.create(
+            data=data_reserva,
+            horario=horario,
+            reservado_por=jogador,
+            jogadores=jogadores_nomes,
+            observacao=observacao,
+            status='AGENDADA'
+        )
+
+        messages.success(
+            request,
+            'Reserva realizada com sucesso.'
+        )
+
+        return redirect('/quadras/')
+
+    return render(
+        request,
+        'quadras/reservar.html',
+        {
+            'horario': horario,
+            'jogador': jogador,
+            'data_reserva': data_reserva,
+            'jogadores_lista': jogadores_lista,
+        }
+    )
+
+
+@login_required
+def cancelar_reserva_quadra(request, reserva_id):
+
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    reserva = get_object_or_404(
+        ReservaQuadra,
+        id=reserva_id
+    )
+
+    if reserva.reservado_por != jogador and not request.user.is_staff:
+
+        messages.error(
+            request,
+            'Você não tem permissão para cancelar esta reserva.'
+        )
+
+        return redirect('/quadras/')
+
+    if reserva.checkin_realizado:
+
+        messages.error(
+            request,
+            'Não é possível cancelar uma reserva após o check-in.'
+        )
+
+        return redirect('/quadras/')
+
+    if reserva.status == 'CANCELADA':
+
+        messages.error(
+            request,
+            'Esta reserva já foi cancelada.'
+        )
+
+        return redirect('/quadras/')
+
+    reserva.status = 'CANCELADA'
+    reserva.save()
+
+    messages.success(
+        request,
+        'Reserva cancelada com sucesso.'
+    )
+
+    return redirect('/quadras/')
+
+
+@staff_member_required
+def gerar_horarios_quadra(request):
+
+    quadras = Quadra.objects.filter(
+        ativa=True
+    ).order_by('nome')
+
+    dias_semana = ConfiguracaoHorarioQuadra.DIAS_SEMANA
+
+    if request.method == 'POST':
+
+        quadra_id = request.POST.get('quadra')
+        dias = request.POST.getlist('dias')
+        hora_inicio_str = request.POST.get('hora_inicio')
+        hora_fim_str = request.POST.get('hora_fim')
+        intervalo = int(request.POST.get('intervalo', 60))
+
+        quadra = get_object_or_404(
+            Quadra,
+            id=quadra_id
+        )
+
+        hora_inicio = datetime.strptime(
+            hora_inicio_str,
+            '%H:%M'
+        )
+
+        hora_fim = datetime.strptime(
+            hora_fim_str,
+            '%H:%M'
+        )
+
+        total_criados = 0
+        total_existentes = 0
+
+        for dia in dias:
+
+            dia_int = int(dia)
+
+            atual = hora_inicio
+
+            while atual < hora_fim:
+
+                proximo = atual + timedelta(
+                    minutes=intervalo
+                )
+
+                if proximo > hora_fim:
+                    break
+
+                _, criado = ConfiguracaoHorarioQuadra.objects.get_or_create(
+                    quadra=quadra,
+                    dia_semana=dia_int,
+                    hora_inicio=atual.time(),
+                    hora_fim=proximo.time(),
+                    defaults={
+                        'ativo': True
+                    }
+                )
+
+                if criado:
+                    total_criados += 1
+                else:
+                    total_existentes += 1
+
+                atual = proximo
+
+        messages.success(
+            request,
+            f'{total_criados} horários criados. {total_existentes} já existiam.'
+        )
+
+        return redirect('/gerar-horarios-quadra/')
+
+    return render(
+        request,
+        'quadras/gerar_horarios.html',
+        {
+            'quadras': quadras,
+            'dias_semana': dias_semana,
+        }
+    )
+
+@login_required
+def checkin_quadra(request, reserva_id):
+
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    reserva = get_object_or_404(
+        ReservaQuadra,
+        id=reserva_id,
+        reservado_por=jogador,
+        status='AGENDADA'
+    )
+
+    if reserva.checkin_realizado:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': 'Check-in já realizado.'
+        })
+
+    hoje = date.today()
+
+    if reserva.data != hoje:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': 'O check-in só pode ser feito no dia da reserva.'
+        })
+
+    agora = timezone.localtime()
+
+    inicio_reserva = timezone.make_aware(
+        datetime.combine(
+            reserva.data,
+            reserva.horario.hora_inicio
+        )
+    )
+
+    fim_reserva = timezone.make_aware(
+        datetime.combine(
+            reserva.data,
+            reserva.horario.hora_fim
+        )
+    )
+
+    liberado_a_partir = inicio_reserva - timedelta(minutes=30)
+
+    if agora < liberado_a_partir:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': 'Check-in liberado somente 30 minutos antes do horário.'
+        })
+
+    if agora > fim_reserva:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': 'O horário da reserva já encerrou.'
+        })
+
+    try:
+        latitude = float(request.POST.get('latitude'))
+        longitude = float(request.POST.get('longitude'))
+    except:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': 'Localização inválida.'
+        })
+
+    # TROQUE PELAS COORDENADAS REAIS DO CLUBE
+    LAT_CLUBE = -28.29805
+    LNG_CLUBE = -53.50565
+
+    RAIO_PERMITIDO = 100
+
+    def calcular_distancia(lat1, lon1, lat2, lon2):
+
+        raio_terra = 6371000
+
+        phi1 = math.radians(lat1)
+        phi2 = math.radians(lat2)
+
+        delta_phi = math.radians(lat2 - lat1)
+        delta_lambda = math.radians(lon2 - lon1)
+
+        a = (
+            math.sin(delta_phi / 2) ** 2 +
+            math.cos(phi1) *
+            math.cos(phi2) *
+            math.sin(delta_lambda / 2) ** 2
+        )
+
+        c = 2 * math.atan2(
+            math.sqrt(a),
+            math.sqrt(1 - a)
+        )
+
+        return raio_terra * c
+
+    distancia = calcular_distancia(
+        latitude,
+        longitude,
+        LAT_CLUBE,
+        LNG_CLUBE
+    )
+
+    if distancia > RAIO_PERMITIDO:
+        return JsonResponse({
+            'ok': False,
+            'mensagem': f'Você está a {int(distancia)} metros da quadra. O limite é {RAIO_PERMITIDO} metros.'
+        })
+
+    reserva.checkin_realizado = True
+    reserva.checkin_data_hora = timezone.now()
+    reserva.checkin_latitude = latitude
+    reserva.checkin_longitude = longitude
+    reserva.checkin_distancia_metros = round(distancia, 2)
+    reserva.status = 'CHECKIN'
+    reserva.save()
+
+    return JsonResponse({
+        'ok': True,
+        'mensagem': f'Check-in realizado com sucesso! Distância registrada: {int(distancia)} metros.'
+    })
+
+from django.db.models import Count
+
+
+@staff_member_required
+def relatorio_quadras(request):
+
+    hoje = date.today()
+
+    reservas_mes = ReservaQuadra.objects.filter(
+        data__year=hoje.year,
+        data__month=hoje.month
+    )
+
+    total_reservas = reservas_mes.count()
+
+    total_checkin = reservas_mes.filter(
+        status='CHECKIN'
+    ).count()
+
+    total_canceladas = reservas_mes.filter(
+        status='CANCELADA'
+    ).count()
+
+    total_agendadas = reservas_mes.filter(
+        status='AGENDADA'
+    ).count()
+
+    total_no_show = reservas_mes.filter(
+        status='NO_SHOW'
+    ).count()
+
+    reservas_por_quadra = reservas_mes.values(
+        'horario__quadra__nome'
+    ).annotate(
+        total=Count('id')
+    ).order_by(
+        '-total'
+    )
+
+    top_jogadores = reservas_mes.values(
+        'reservado_por__nome'
+    ).annotate(
+        total=Count('id')
+    ).order_by(
+        '-total'
+    )[:10]
+
+    ultimas_reservas = reservas_mes.select_related(
+        'reservado_por',
+        'horario',
+        'horario__quadra'
+    ).order_by(
+        '-data',
+        '-criado_em'
+    )[:30]
+
+    return render(
+        request,
+        'quadras/relatorio.html',
+        {
+            'total_reservas': total_reservas,
+            'total_checkin': total_checkin,
+            'total_canceladas': total_canceladas,
+            'total_agendadas': total_agendadas,
+            'total_no_show': total_no_show,
+            'reservas_por_quadra': reservas_por_quadra,
+            'top_jogadores': top_jogadores,
+            'ultimas_reservas': ultimas_reservas,
+        }
+    )

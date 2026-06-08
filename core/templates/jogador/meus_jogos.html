@@ -3,91 +3,241 @@
 {% block content %}
 
 <style>
-
-.meus-jogos{
-    max-width:1400px;
-    margin:auto;
+.meus-jogos-sport{
+    max-width:1500px;
+    margin:0 auto;
+    padding:24px;
 }
 
-.topo-jogos{
+.hero-jogos{
+    background:
+        radial-gradient(circle at 90% 20%, rgba(132,204,22,.35), transparent 18%),
+        linear-gradient(135deg,#020617,#06264a,#052e16);
+    color:white;
+    border-radius:34px;
+    padding:38px;
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 18px 40px rgba(0,0,0,.22);
+}
+
+.hero-jogos::after{
+    content:'🎾';
+    position:absolute;
+    right:40px;
+    top:18px;
+    font-size:120px;
+    opacity:.15;
+    transform:rotate(-18deg);
+}
+
+.hero-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:30px;
-    flex-wrap:wrap;
     gap:20px;
+    position:relative;
+    z-index:2;
 }
 
 .titulo-jogos{
-    font-size:48px;
-    font-weight:900;
-    color:#0b4d91;
+    font-size:clamp(42px,7vw,72px);
+    font-weight:1000;
+    font-style:italic;
+    text-transform:uppercase;
+    line-height:1;
+}
+
+.titulo-jogos span{
+    color:#a3e635;
 }
 
 .subtitulo-jogos{
-    color:#64748b;
+    margin-top:10px;
+    color:#dbeafe;
     font-size:20px;
-    margin-top:5px;
 }
 
 .btn-lancar{
-    background:#0b4d91;
+    background:linear-gradient(135deg,#16a34a,#22c55e);
     color:white;
-    padding:16px 26px;
-    border-radius:16px;
+    padding:16px 28px;
+    border-radius:999px;
     text-decoration:none;
-    font-weight:bold;
+    font-weight:1000;
     font-size:18px;
+    box-shadow:0 12px 24px rgba(34,197,94,.25);
+    white-space:nowrap;
 }
 
-.box-jogos{
-    background:white;
+.jogos-painel{
+    background:#031b2f;
     border-radius:30px;
-    overflow:hidden;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    padding:24px;
+    box-shadow:0 16px 36px rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.filtros-jogos{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.filtro-chip{
+    background:rgba(255,255,255,.08);
+    color:white;
+    border:1px solid rgba(255,255,255,.12);
+    padding:12px 18px;
+    border-radius:999px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.filtro-chip.ativo{
+    background:linear-gradient(135deg,#16a34a,#22c55e);
 }
 
 .tabela-jogos{
     width:100%;
-    border-collapse:collapse;
-}
-
-.tabela-jogos tr.header{
-    background:#0b4d91;
-    color:white;
-    font-size:17px;
+    border-collapse:separate;
+    border-spacing:0 10px;
 }
 
 .tabela-jogos th{
-    padding:18px;
+    background:#0b4d91;
+    color:white;
+    padding:15px;
+    text-align:left;
+    text-transform:uppercase;
+    font-size:13px;
+    letter-spacing:.7px;
+}
+
+.tabela-jogos th:first-child{
+    border-radius:16px 0 0 16px;
+}
+
+.tabela-jogos th:last-child{
+    border-radius:0 16px 16px 0;
 }
 
 .tabela-jogos td{
-    padding:18px;
-    border-bottom:1px solid #eee;
+    background:white;
+    padding:16px;
+    color:#0b1f44;
+    vertical-align:middle;
 }
 
-.data-jogo{
-    font-weight:bold;
+.tabela-jogos tr td:first-child{
+    border-radius:18px 0 0 18px;
+}
+
+.tabela-jogos tr td:last-child{
+    border-radius:0 18px 18px 0;
+}
+
+.data-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.data-dia{
+    font-size:34px;
+    font-weight:1000;
     color:#0b4d91;
+    line-height:1;
 }
 
-.nome-confronto{
+.data-mes{
+    font-size:13px;
+    font-weight:900;
+    color:#64748b;
+    text-transform:uppercase;
+}
+
+.confronto{
     font-size:20px;
-    font-weight:bold;
-    color:#0b4d91;
+    font-weight:1000;
+    color:#0b1f44;
+    line-height:1.25;
 }
 
 .torneio-jogo{
-    margin-top:6px;
-    color:#64748b;
-    font-size:15px;
+    display:inline-block;
+    margin-top:7px;
+    background:#eef2ff;
+    color:#0b4d91;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:900;
 }
 
 .placar{
-    font-size:24px;
-    font-weight:bold;
+    display:inline-block;
+    background:#eff6ff;
     color:#0b4d91;
+    padding:10px 18px;
+    border-radius:14px;
+    font-size:28px;
+    font-weight:1000;
+}
+
+.status-ok{
+    color:#16a34a;
+    font-weight:1000;
+}
+
+.status-pendente{
+    color:#f59e0b;
+    font-weight:1000;
+}
+
+.status-erro{
+    color:#dc2626;
+    font-weight:1000;
+}
+
+.ranking-badge{
+    font-weight:900;
+}
+
+.ranking-motivo{
+    font-size:12px;
+    color:#64748b;
+    margin-top:4px;
+    max-width:220px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.acao-finalizado{
+    display:inline-block;
+    color:#16a34a;
+    border:1px solid #bbf7d0;
+    background:#f0fdf4;
+    padding:9px 15px;
+    border-radius:999px;
+    font-weight:1000;
+}
+
+.acao-confirmar{
+    display:inline-block;
+    background:#16a34a;
+    color:white;
+    padding:10px 16px;
+    border-radius:999px;
+    text-decoration:none;
+    font-weight:1000;
+}
+
+.acao-aguardando{
+    color:#f59e0b;
+    font-weight:1000;
 }
 
 .mobile-jogos{
@@ -95,85 +245,55 @@
 }
 
 .mobile-card{
-    background:#f8fafc;
-    border:1px solid #e5e7eb;
+    background:white;
     border-radius:22px;
     padding:18px;
-    margin:16px;
+    margin-bottom:14px;
+}
+
+.mobile-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
 }
 
 .mobile-data{
-    color:#64748b;
-    font-size:14px;
-    font-weight:bold;
-    margin-bottom:10px;
+    color:#0b4d91;
+    font-weight:1000;
 }
 
 .mobile-confronto{
+    color:#0b1f44;
     font-size:18px;
-    font-weight:900;
-    color:#0b4d91;
     line-height:1.3;
+    font-weight:1000;
     margin-bottom:10px;
 }
 
 .mobile-torneio{
     color:#64748b;
     font-size:14px;
-    margin-bottom:16px;
+    margin-bottom:12px;
 }
 
 .mobile-info{
     display:grid;
-    gap:10px;
-    font-size:15px;
-    font-weight:bold;
+    gap:8px;
+    font-weight:900;
 }
 
-.mobile-btn{
-    display:block;
-    margin-top:16px;
-    background:#16a34a;
-    color:white;
-    text-align:center;
-    padding:14px;
-    border-radius:14px;
-    text-decoration:none;
-    font-weight:bold;
-}
+@media(max-width:850px){
 
-@media(max-width:768px){
-
-    .meus-jogos{
-        margin-top:10px;
-    }
-
-    .topo-jogos{
+    .hero-top{
         flex-direction:column;
-        align-items:stretch;
-        gap:14px;
-        margin-bottom:18px;
-    }
-
-    .titulo-jogos{
-        font-size:32px;
-        text-align:center;
-    }
-
-    .subtitulo-jogos{
-        font-size:16px;
-        text-align:center;
+        align-items:flex-start;
     }
 
     .btn-lancar{
         width:100%;
         text-align:center;
-        padding:15px;
-        font-size:16px;
-    }
-
-    .box-jogos{
-        border-radius:22px;
     }
 
     .tabela-jogos{
@@ -182,70 +302,114 @@
 
     .mobile-jogos{
         display:block;
-        padding:4px 0;
     }
 
-}
+    .hero-jogos{
+        padding:28px 22px;
+        border-radius:26px;
+    }
 
+    .meus-jogos-sport{
+        padding:14px;
+    }
+
+    .jogos-painel{
+        padding:16px;
+    }
+}
 </style>
 
-<div class="meus-jogos">
+<div class="meus-jogos-sport">
 
-    <div class="topo-jogos">
+    <div class="hero-jogos">
 
-        <div>
+        <div class="hero-top">
 
-            <div class="titulo-jogos">
-                Meus Jogos
+            <div>
+                <div class="titulo-jogos">
+                    Meus <span>Jogos</span>
+                </div>
+
+                <div class="subtitulo-jogos">
+                    Histórico dos jogos lançados e participações
+                </div>
             </div>
 
-            <div class="subtitulo-jogos">
-                Histórico dos jogos lançados e participações
-            </div>
+            <a href="/lancar-jogo/" class="btn-lancar">
+                + Lançar Jogo
+            </a>
 
         </div>
 
-        <a href="/lancar-jogo/" class="btn-lancar">
-            + Lançar Jogo
-        </a>
-
     </div>
 
-    <div class="box-jogos">
+    <div class="jogos-painel">
 
-        <!-- DESKTOP -->
+        <div class="filtros-jogos">
+
+            <button type="button" class="filtro-chip ativo" onclick="filtrarJogos('todos', this)">
+                ▦ Todos
+            </button>
+
+            <button type="button" class="filtro-chip" onclick="filtrarJogos('simples', this)">
+                🎾 Simples
+            </button>
+
+            <button type="button" class="filtro-chip" onclick="filtrarJogos('duplas', this)">
+                👥 Duplas
+            </button>
+
+            <button type="button" class="filtro-chip" onclick="filtrarJogos('championship', this)">
+                🏆 Championship Duplas
+            </button>
+
+        </div>
 
         <table class="tabela-jogos">
 
-            <tr class="header">
-
-                <th style="text-align:left;">Data</th>
-                <th style="text-align:left;">Confronto</th>
+            <tr>
+                <th>Data</th>
+                <th>Confronto</th>
                 <th style="text-align:center;">Placar</th>
                 <th style="text-align:center;">Status</th>
                 <th style="text-align:center;">Ranking</th>
                 <th style="text-align:center;">Ações</th>
-
             </tr>
 
             {% for p in participacoes %}
 
-            <tr>
+            <tr
+                class="linha-jogo"
+                data-tipo="{% if p.jogo.tipo_jogo == 'SIMPLES' %}simples{% elif p.jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS' %}championship{% else %}duplas{% endif %}"
+            >
 
-                <td class="data-jogo">
-                    {{ p.jogo.data_jogo }}
+                <td>
+                    <div class="data-box">
+                        <div>🎾</div>
+                        <div>
+                            <div class="data-dia">
+                                {{ p.jogo.data_jogo|date:"d" }}
+                            </div>
+                            <div class="data-mes">
+                                {{ p.jogo.data_jogo|date:"M Y" }}
+                            </div>
+                        </div>
+                    </div>
                 </td>
 
                 <td>
-
-                    <div class="nome-confronto">
+                    <div class="confronto">
                         {{ p.jogo.descricao_confronto }}
                     </div>
 
                     <div class="torneio-jogo">
-                        {{ p.jogo.torneio.nome }}
+                        🏆
+                        {% if p.jogo.torneio %}
+                            {{ p.jogo.torneio.nome }}
+                        {% else %}
+                            Jogo avulso
+                        {% endif %}
                     </div>
-
                 </td>
 
                 <td style="text-align:center;">
@@ -257,51 +421,45 @@
                 <td style="text-align:center;">
 
                     {% if p.jogo.status == 'CONFIRMADO' %}
-
-                        <div style="color:#16a34a;font-weight:bold;">
-                            ✅ Confirmado
-                        </div>
-
+                        <div class="status-ok">✅ Confirmado</div>
                     {% elif p.jogo.status == 'PENDENTE' %}
-
-                        <div style="color:#f4a300;font-weight:bold;">
-                            ⏳ Pendente
-                        </div>
-
+                        <div class="status-pendente">⏳ Pendente</div>
                     {% else %}
-
-                        <div style="color:#dc2626;font-weight:bold;">
-                            ❌ Cancelado
-                        </div>
-
+                        <div class="status-erro">❌ Cancelado</div>
                     {% endif %}
 
                 </td>
 
                 <td style="text-align:center;">
 
-                    {% if p.jogo.status_ranking == 'Computado' %}
+                    {% if p.contabilizado %}
 
-                        <div style="color:#16a34a;font-weight:bold;">
+                        <div class="status-ok ranking-badge">
                             ✅ Computado
                         </div>
 
-                    {% elif p.jogo.status_ranking == 'Parcial' %}
-
-                        <div style="color:#f59e0b;font-weight:bold;">
-                            ⚠️ Parcial
+                        <div class="ranking-motivo">
+                            {{ p.pontos_calculados }} pts
                         </div>
 
-                    {% elif p.jogo.status_ranking == 'Não computado' %}
+                    {% elif p.historico_valido %}
 
-                        <div style="color:#dc2626;font-weight:bold;">
-                            ❌ Não computado
+                        <div class="status-pendente ranking-badge">
+                            ⚠️ Histórico
+                        </div>
+
+                        <div class="ranking-motivo">
+                            {{ p.motivo_desconsiderado }}
                         </div>
 
                     {% else %}
 
-                        <div style="color:#64748b;font-weight:bold;">
-                            —
+                        <div class="status-erro ranking-badge">
+                            ❌ Fora do ranking
+                        </div>
+
+                        <div class="ranking-motivo">
+                            {{ p.motivo_desconsiderado }}
                         </div>
 
                     {% endif %}
@@ -314,29 +472,21 @@
 
                         <a
                             href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
-                            style="
-                            background:#16a34a;
-                            color:white;
-                            padding:12px 18px;
-                            border-radius:14px;
-                            text-decoration:none;
-                            font-weight:bold;
-                            display:inline-block;
-                            "
+                            class="acao-confirmar"
                         >
-                            Confirmar Resultado
+                            Confirmar
                         </a>
 
                     {% elif p.jogo.status == 'PENDENTE' %}
 
-                        <div style="color:#f59e0b;font-weight:bold;">
-                            Aguardando confirmação
+                        <div class="acao-aguardando">
+                            Aguardando
                         </div>
 
                     {% else %}
 
-                        <div style="color:#16a34a;font-weight:bold;">
-                            Finalizado
+                        <div class="acao-finalizado">
+                            🏆 Finalizado
                         </div>
 
                     {% endif %}
@@ -348,122 +498,122 @@
             {% empty %}
 
             <tr>
-
-                <td colspan="6" style="
-                padding:40px;
-                text-align:center;
-                color:#64748b;
-                font-size:20px;
-                ">
-
+                <td colspan="6" style="padding:40px;text-align:center;color:#64748b;font-size:20px;">
                     Nenhum jogo encontrado.
-
                 </td>
-
             </tr>
 
             {% endfor %}
 
         </table>
 
-        <!-- MOBILE -->
-
         <div class="mobile-jogos">
 
             {% for p in participacoes %}
 
-            <div class="mobile-card">
+            <div
+                class="mobile-card linha-jogo"
+                data-tipo="{% if p.jogo.tipo_jogo == 'SIMPLES' %}simples{% elif p.jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS' %}championship{% else %}duplas{% endif %}"
+            >
 
-                <div class="mobile-data">
-                    📅 {{ p.jogo.data_jogo }}
+                <div class="mobile-top">
+                    <div class="mobile-data">
+                        📅 {{ p.jogo.data_jogo|date:"d/m/Y" }}
+                    </div>
+
+                    <div class="placar">
+                        {{ p.jogo.placar_resumido }}
+                    </div>
                 </div>
 
                 <div class="mobile-confronto">
-                    🎾 {{ p.jogo.descricao_confronto }}
+                    {{ p.jogo.descricao_confronto }}
                 </div>
 
                 <div class="mobile-torneio">
-                    🏆 {{ p.jogo.torneio.nome }}
+                    🏆
+                    {% if p.jogo.torneio %}
+                        {{ p.jogo.torneio.nome }}
+                    {% else %}
+                        Jogo avulso
+                    {% endif %}
                 </div>
 
                 <div class="mobile-info">
 
-                    <div style="color:#0b4d91;">
-                        📊 {{ p.jogo.placar_resumido }}
-                    </div>
-
                     <div>
-
+                        Status:
                         {% if p.jogo.status == 'CONFIRMADO' %}
-                            <span style="color:#16a34a;">✅ Confirmado</span>
+                            <span class="status-ok">✅ Confirmado</span>
                         {% elif p.jogo.status == 'PENDENTE' %}
-                            <span style="color:#f4a300;">⏳ Pendente</span>
+                            <span class="status-pendente">⏳ Pendente</span>
                         {% else %}
-                            <span style="color:#dc2626;">❌ Cancelado</span>
+                            <span class="status-erro">❌ Cancelado</span>
                         {% endif %}
-
                     </div>
 
                     <div>
+                        Ranking:
 
-                        {% if p.jogo.status_ranking == 'Computado' %}
-                            <span style="color:#16a34a;">✅ Computado</span>
-                        {% elif p.jogo.status_ranking == 'Parcial' %}
-                            <span style="color:#f59e0b;">⚠️ Parcial</span>
-                        {% elif p.jogo.status_ranking == 'Não computado' %}
-                            <span style="color:#dc2626;">❌ Não computado</span>
+                        {% if p.contabilizado %}
+
+                            <span class="status-ok">
+                                ✅ Computado - {{ p.pontos_calculados }} pts
+                            </span>
+
+                        {% elif p.historico_valido %}
+
+                            <span class="status-pendente">
+                                ⚠️ Histórico
+                            </span>
+                            <br>
+                            <small>{{ p.motivo_desconsiderado }}</small>
+
                         {% else %}
-                            <span style="color:#64748b;">—</span>
+
+                            <span class="status-erro">
+                                ❌ Fora do ranking
+                            </span>
+                            <br>
+                            <small>{{ p.motivo_desconsiderado }}</small>
+
                         {% endif %}
 
                     </div>
+
+                    {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
+
+                        <a
+                            href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
+                            class="acao-confirmar"
+                            style="text-align:center;margin-top:10px;"
+                        >
+                            Confirmar Resultado
+                        </a>
+
+                    {% elif p.jogo.status == 'PENDENTE' %}
+
+                        <div class="acao-aguardando" style="text-align:center;margin-top:10px;">
+                            Aguardando confirmação
+                        </div>
+
+                    {% else %}
+
+                        <div class="acao-finalizado" style="text-align:center;margin-top:10px;">
+                            🏆 Finalizado
+                        </div>
+
+                    {% endif %}
 
                 </div>
-
-                {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
-
-                    <a
-                        href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
-                        class="mobile-btn"
-                    >
-                        Confirmar Resultado
-                    </a>
-
-                {% elif p.jogo.status == 'PENDENTE' %}
-
-                    <div style="
-                    margin-top:14px;
-                    color:#f59e0b;
-                    font-weight:bold;
-                    text-align:center;
-                    ">
-                        Aguardando confirmação
-                    </div>
-
-                {% else %}
-
-                    <div style="
-                    margin-top:14px;
-                    color:#16a34a;
-                    font-weight:bold;
-                    text-align:center;
-                    ">
-                        Finalizado
-                    </div>
-
-                {% endif %}
 
             </div>
 
             {% empty %}
 
-            <div style="
-            padding:30px;
-            text-align:center;
-            color:#64748b;
-            ">
-                Nenhum jogo encontrado.
-            </div>
+                <div style="padding:30px;text-align:center;color:white;">
+                    Nenhum jogo encontrado.
+                </div>
 
             {% endfor %}
 
@@ -472,5 +622,31 @@
     </div>
 
 </div>
+
+<script>
+function filtrarJogos(tipo, botao){
+
+    const botoes = document.querySelectorAll('.filtro-chip');
+    const linhas = document.querySelectorAll('.linha-jogo');
+
+    botoes.forEach(function(item){
+        item.classList.remove('ativo');
+    });
+
+    botao.classList.add('ativo');
+
+    linhas.forEach(function(linha){
+
+        const tipoLinha = linha.getAttribute('data-tipo');
+
+        if(tipo === 'todos' || tipoLinha === tipo){
+            linha.style.display = '';
+        }else{
+            linha.style.display = 'none';
+        }
+
+    });
+}
+</script>
 
 {% endblock %}

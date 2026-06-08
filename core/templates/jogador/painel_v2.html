@@ -1,0 +1,813 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.painel-sport{
+    max-width:1400px;
+    margin:0 auto;
+    padding:24px;
+}
+
+.hero-player{
+    background:
+        radial-gradient(circle at 90% 15%, rgba(132,204,22,.30), transparent 18%),
+        linear-gradient(135deg,#020617,#06264a,#052e16);
+    color:white;
+    border-radius:34px;
+    padding:34px;
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:34px;
+    align-items:center;
+    box-shadow:0 18px 40px rgba(0,0,0,.25);
+    position:relative;
+    overflow:hidden;
+}
+
+.hero-player::after{
+    content:'🎾';
+    position:absolute;
+    right:35px;
+    top:20px;
+    font-size:120px;
+    opacity:.14;
+    transform:rotate(-18deg);
+}
+
+.player-photo-wrap{
+    text-align:center;
+    position:relative;
+    z-index:2;
+}
+
+.player-photo{
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    object-fit:cover;
+    border:6px solid #38bdf8;
+    background:#ddd;
+    box-shadow:0 0 0 8px rgba(56,189,248,.12);
+}
+
+.player-level{
+    display:inline-block;
+    margin-top:-8px;
+    background:#0b4d91;
+    color:white;
+    padding:9px 22px;
+    border-radius:999px;
+    font-weight:900;
+    border:1px solid rgba(255,255,255,.25);
+}
+
+.player-name{
+    margin:0 0 18px;
+    font-size:clamp(38px,7vw,68px);
+    font-style:italic;
+    font-weight:1000;
+    line-height:1;
+    text-shadow:0 4px 12px rgba(0,0,0,.35);
+}
+
+.player-info-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px 28px;
+    max-width:850px;
+    font-size:18px;
+    position:relative;
+    z-index:2;
+}
+
+.player-info-item{
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.12);
+    padding:12px 14px;
+    border-radius:14px;
+}
+
+.player-info-item strong{
+    color:white;
+}
+
+.btn-editar-sport{
+    display:inline-block;
+    margin-top:22px;
+    background:linear-gradient(135deg,#0ea5e9,#2563eb);
+    color:white;
+    padding:14px 28px;
+    border-radius:14px;
+    text-decoration:none;
+    font-size:18px;
+    font-weight:900;
+    box-shadow:0 10px 20px rgba(37,99,235,.25);
+}
+
+.stats-sport{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-top:24px;
+}
+
+.stat-sport-card{
+    background:#031b2f;
+    color:white;
+    border-radius:24px;
+    padding:26px;
+    min-height:150px;
+    box-shadow:0 12px 26px rgba(0,0,0,.16);
+    border:1px solid rgba(255,255,255,.08);
+    position:relative;
+    overflow:hidden;
+}
+
+.stat-sport-card::after{
+    content:'';
+    position:absolute;
+    right:-30px;
+    bottom:-30px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:rgba(255,255,255,.06);
+}
+
+.stat-icon{
+    font-size:34px;
+    opacity:.8;
+}
+
+.stat-number{
+    font-size:56px;
+    font-weight:1000;
+    line-height:1;
+    margin-top:12px;
+}
+
+.stat-label{
+    margin-top:10px;
+    font-size:16px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    opacity:.9;
+}
+
+.stat-blue{border-bottom:5px solid #0ea5e9;}
+.stat-green{border-bottom:5px solid #22c55e;}
+.stat-red{border-bottom:5px solid #ef4444;}
+.stat-yellow{border-bottom:5px solid #f59e0b;}
+
+.cards-analysis{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-top:24px;
+}
+
+.analysis-card{
+    background:#031b2f;
+    color:white;
+    border-radius:24px;
+    padding:26px;
+    min-height:180px;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 12px 26px rgba(0,0,0,.14);
+    position:relative;
+    overflow:hidden;
+}
+
+.analysis-card h2{
+    margin:0 0 16px;
+    font-size:26px;
+    font-style:italic;
+    text-transform:uppercase;
+}
+
+.analysis-card p{
+    color:#cbd5e1;
+}
+
+.analysis-list-line{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    padding:10px 0;
+    gap:12px;
+}
+
+.analysis-list-line strong{
+    color:white;
+}
+
+.analysis-value{
+    color:#38bdf8;
+    font-weight:900;
+}
+
+.big-name{
+    font-size:28px;
+    font-weight:1000;
+    margin-top:20px;
+}
+
+.analysis-details{
+    margin-top:18px;
+    line-height:1.8;
+    color:#e5e7eb;
+}
+
+.card-blue{border-left:5px solid #0ea5e9;}
+.card-green{border-left:5px solid #22c55e;}
+.card-red{border-left:5px solid #ef4444;}
+.card-yellow{border-left:5px solid #f59e0b;}
+.card-orange{border-left:5px solid #f97316;}
+
+.jogos-sport{
+    background:#031b2f;
+    color:white;
+    border-radius:28px;
+    margin-top:26px;
+    padding:28px;
+    box-shadow:0 14px 32px rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.jogos-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.jogos-top h2{
+    margin:0;
+    font-size:34px;
+    font-style:italic;
+    text-transform:uppercase;
+}
+
+.tabela-sport{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:18px;
+}
+
+.tabela-sport th{
+    background:#0b4d91;
+    color:white;
+    padding:15px;
+    text-align:left;
+    text-transform:uppercase;
+    font-size:13px;
+    letter-spacing:.6px;
+}
+
+.tabela-sport td{
+    padding:15px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    color:#e5e7eb;
+}
+
+.badge-result{
+    padding:7px 12px;
+    border-radius:999px;
+    font-weight:900;
+    font-size:13px;
+}
+
+.badge-win{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-loss{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-status{
+    background:#e0f2fe;
+    color:#075985;
+    padding:7px 12px;
+    border-radius:999px;
+    font-weight:900;
+    font-size:13px;
+}
+
+.mobile-jogos-sport{
+    display:none;
+}
+
+.mobile-game-card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+}
+
+@media(max-width:1000px){
+    .hero-player{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .player-info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats-sport{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .cards-analysis{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:700px){
+    .painel-sport{
+        padding:14px;
+    }
+
+    .hero-player{
+        padding:24px;
+        border-radius:26px;
+    }
+
+    .player-photo{
+        width:135px;
+        height:135px;
+    }
+
+    .stats-sport{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .stat-sport-card{
+        padding:18px;
+        min-height:120px;
+    }
+
+    .stat-number{
+        font-size:38px;
+    }
+
+    .stat-label{
+        font-size:13px;
+    }
+
+    .tabela-sport{
+        display:none;
+    }
+
+    .mobile-jogos-sport{
+        display:block;
+    }
+
+    .jogos-sport{
+        padding:20px;
+    }
+
+    .jogos-top h2{
+        font-size:26px;
+    }
+}
+</style>
+
+<div class="painel-sport">
+
+    <div class="hero-player">
+
+        <div class="player-photo-wrap">
+            {% if jogador.foto %}
+                <img src="{{ jogador.foto.url }}" class="player-photo">
+            {% else %}
+                <div class="player-photo"></div>
+            {% endif %}
+
+            <div class="player-level">
+                {{ jogador.nivel|default:"INICIANTE" }}
+            </div>
+        </div>
+
+        <div>
+
+            <h1 class="player-name">
+                {{ jogador.nome }}
+            </h1>
+
+            <div class="player-info-grid">
+
+                <div class="player-info-item">
+                    🎾 Categoria:
+                    <strong>{{ jogador.categoria|default:"Sem categoria" }}</strong>
+                </div>
+
+                <div class="player-info-item">
+                    🏆 Ranking:
+                    <strong>
+                        {% if ranking %}
+                            {{ ranking.posicao }}º Lugar
+                        {% else %}
+                            Sem ranking
+                        {% endif %}
+                    </strong>
+                </div>
+
+                <div class="player-info-item">
+                    📈 Nível:
+                    <strong>{{ jogador.nivel|default:"-" }}</strong>
+                </div>
+
+                <div class="player-info-item">
+                    📍 Cidade:
+                    <strong>{{ jogador.cidade|default:"-" }}</strong>
+                </div>
+
+                <div class="player-info-item">
+                    🎾 Raquete:
+                    <strong>{{ jogador.raquete|default:"-" }}</strong>
+                </div>
+
+                <div class="player-info-item">
+                    📸 Instagram:
+                    <strong>{{ jogador.instagram|default:"-" }}</strong>
+                </div>
+
+            </div>
+
+            <a href="/meu-perfil/" class="btn-editar-sport">
+                ✎ Editar Perfil
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="stats-sport">
+
+        <div class="stat-sport-card stat-blue">
+            <div class="stat-icon">🎾</div>
+            <div class="stat-number">{{ total_jogos }}</div>
+            <div class="stat-label">Jogos</div>
+        </div>
+
+        <div class="stat-sport-card stat-green">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-number">{{ total_vitorias }}</div>
+            <div class="stat-label">Vitórias</div>
+        </div>
+
+        <div class="stat-sport-card stat-red">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-number">{{ total_derrotas }}</div>
+            <div class="stat-label">Derrotas</div>
+        </div>
+
+        <div class="stat-sport-card stat-yellow">
+            <div class="stat-icon">📈</div>
+            <div class="stat-number">{{ aproveitamento }}%</div>
+            <div class="stat-label">Aproveitamento</div>
+        </div>
+
+    </div>
+
+    <div class="cards-analysis">
+
+    <div class="analysis-card card-blue">
+
+        <h2>🤝 Parceiros Frequentes</h2>
+
+        {% for parceiro, dados in parceiros_ordenados|slice:":8" %}
+
+            <div class="analysis-list-line">
+                <strong>{{ parceiro }}</strong>
+
+                <span class="analysis-value">
+                    {{ dados.jogos }} jogos
+                </span>
+            </div>
+
+        {% empty %}
+
+            <p>Nenhum parceiro encontrado.</p>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="analysis-card card-green">
+
+        <h2>🔥 Maior Freguês</h2>
+
+        {% if maior_fregues_detalhe %}
+
+            <div class="big-name">
+                {{ maior_fregues_detalhe.nome }}
+            </div>
+
+            <div class="analysis-details">
+
+                🎾 Jogos:
+                <strong>{{ maior_fregues_detalhe.jogos }}</strong>
+
+                <br>
+
+                ✅ Vitórias:
+                <strong>{{ maior_fregues_detalhe.vitorias }}</strong>
+
+                <br>
+
+                ❌ Derrotas:
+                <strong>{{ maior_fregues_detalhe.derrotas }}</strong>
+
+            </div>
+
+        {% else %}
+
+            <p>Nenhum confronto encontrado.</p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="analysis-card card-red">
+
+        <h2>⚔️ Maior Rival</h2>
+
+        {% if maior_rival_detalhe %}
+
+            <div class="big-name">
+                {{ maior_rival_detalhe.nome }}
+            </div>
+
+            <div class="analysis-details">
+
+                🎾 Jogos:
+                <strong>{{ maior_rival_detalhe.jogos }}</strong>
+
+                <br>
+
+                ✅ Vitórias:
+                <strong>{{ maior_rival_detalhe.vitorias }}</strong>
+
+                <br>
+
+                ❌ Derrotas:
+                <strong>{{ maior_rival_detalhe.derrotas }}</strong>
+
+            </div>
+
+        {% else %}
+
+            <p>Nenhum rival encontrado.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="cards-analysis">
+
+    <div class="analysis-card card-blue">
+
+        <h2>🏆 Melhor Parceiro</h2>
+
+        {% if melhor_parceiro_detalhe %}
+
+            <div class="big-name">
+                {{ melhor_parceiro_detalhe.nome }}
+            </div>
+
+            <div class="analysis-details">
+
+                🤝 Jogos:
+                <strong>{{ melhor_parceiro_detalhe.jogos }}</strong>
+
+                <br>
+
+                ✅ Vitórias:
+                <strong>{{ melhor_parceiro_detalhe.vitorias }}</strong>
+
+                <br>
+
+                ❌ Derrotas:
+                <strong>{{ melhor_parceiro_detalhe.derrotas }}</strong>
+
+            </div>
+
+        {% else %}
+
+            <p>Nenhum parceiro encontrado.</p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="analysis-card card-orange">
+
+        <h2>💀 Pior Parceiro</h2>
+
+        {% if pior_parceiro_detalhe %}
+
+            <div class="big-name">
+                {{ pior_parceiro_detalhe.nome }}
+            </div>
+
+            <div class="analysis-details">
+
+                🤝 Jogos:
+                <strong>{{ pior_parceiro_detalhe.jogos }}</strong>
+
+                <br>
+
+                ✅ Vitórias:
+                <strong>{{ pior_parceiro_detalhe.vitorias }}</strong>
+
+                <br>
+
+                ❌ Derrotas:
+                <strong>{{ pior_parceiro_detalhe.derrotas }}</strong>
+
+            </div>
+
+        {% else %}
+
+            <p>Nenhum parceiro encontrado.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="jogos-sport">
+
+    <div class="jogos-top">
+
+        <h2>
+            Últimos Jogos
+        </h2>
+
+    </div>
+
+    <table class="tabela-sport">
+
+        <tr>
+            <th>Data</th>
+            <th>Confronto</th>
+            <th>Resultado</th>
+            <th>Placar</th>
+            <th>Status</th>
+        </tr>
+
+        {% for p in jogos %}
+
+        <tr>
+
+            <td>
+                {{ p.jogo.data_jogo }}
+            </td>
+
+            <td>
+                <strong>{{ p.jogo.descricao_confronto }}</strong>
+            </td>
+
+            <td>
+
+                {% if p.vencedor %}
+
+                    <span class="badge-result badge-win">
+                        Vitória
+                    </span>
+
+                {% else %}
+
+                    <span class="badge-result badge-loss">
+                        Derrota
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+                <strong>
+                    {{ p.jogo.placar_resumido }}
+                </strong>
+            </td>
+
+            <td>
+
+                {% if p.jogo.tipo_jogo == 'SIMPLES' %}
+
+                    <span class="badge-status">
+                        Simples
+                    </span>
+
+                {% elif p.jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS' %}
+
+                    {% if p.jogo.fase == 'FINAL' %}
+
+                        <span class="badge-status">
+                            Final
+                        </span>
+
+                    {% elif p.jogo.fase == 'SEMI' %}
+
+                        <span class="badge-status">
+                            Semifinal
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge-status">
+                            Ranking Duplas
+                        </span>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <span class="badge-status">
+                        Histórico
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="5" style="text-align:center;padding:30px;">
+
+                Nenhum jogo encontrado.
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <div class="mobile-jogos-sport">
+
+        {% for p in jogos %}
+
+        <div class="mobile-game-card">
+
+            <strong>
+                {{ p.jogo.data_jogo }}
+            </strong>
+
+            <br><br>
+
+            {{ p.jogo.descricao_confronto }}
+
+            <br><br>
+
+            <strong>
+                {{ p.jogo.placar_resumido }}
+            </strong>
+
+            <br><br>
+
+            {% if p.vencedor %}
+
+                <span class="badge-result badge-win">
+                    Vitória
+                </span>
+
+            {% else %}
+
+                <span class="badge-result badge-loss">
+                    Derrota
+                </span>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

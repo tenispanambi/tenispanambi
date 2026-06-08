@@ -214,6 +214,10 @@ class Torneio(models.Model):
         default='ABERTO'
     )
 
+    ativo = models.BooleanField(
+    default=False
+)
+
     criado_em = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -625,3 +629,122 @@ class CampeaoTorneio(models.Model):
 
     def __str__(self):
         return f'{self.get_categoria_display()} - {self.edicao}ª edição'
+    
+class Quadra(models.Model):
+
+    nome = models.CharField(max_length=100)
+
+    ativa = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['nome']
+
+    def __str__(self):
+        return self.nome    
+    
+class ConfiguracaoHorarioQuadra(models.Model):
+
+    DIAS_SEMANA = [
+        (0, 'Segunda-feira'),
+        (1, 'Terça-feira'),
+        (2, 'Quarta-feira'),
+        (3, 'Quinta-feira'),
+        (4, 'Sexta-feira'),
+        (5, 'Sábado'),
+        (6, 'Domingo'),
+    ]
+
+    quadra = models.ForeignKey(
+    Quadra,
+    on_delete=models.CASCADE,
+    related_name='horarios',
+    null=True,
+    blank=True
+    )
+
+    dia_semana = models.IntegerField(
+        choices=DIAS_SEMANA
+    )
+
+    hora_inicio = models.TimeField()
+    hora_fim = models.TimeField()
+
+    ativo = models.BooleanField(default=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['quadra', 'dia_semana', 'hora_inicio']
+        unique_together = [
+            'quadra',
+            'dia_semana',
+            'hora_inicio',
+            'hora_fim'
+        ]
+
+    def __str__(self):
+
+        nome_quadra = 'Sem quadra'
+
+        if self.quadra:
+            nome_quadra = self.quadra.nome
+
+        return (
+            f'{nome_quadra} - '
+            f'{self.get_dia_semana_display()} - '
+            f'{self.hora_inicio} às {self.hora_fim}'
+        )
+
+
+class ReservaQuadra(models.Model):
+
+    STATUS = [
+        ('AGENDADA', 'Agendada'),
+        ('CANCELADA', 'Cancelada'),
+        ('CHECKIN', 'Check-in realizado'),
+        ('NO_SHOW', 'Não compareceu'),
+    ]
+
+    data = models.DateField()
+
+    horario = models.ForeignKey(
+        ConfiguracaoHorarioQuadra,
+        on_delete=models.CASCADE,
+        related_name='reservas'
+    )
+
+    reservado_por = models.ForeignKey(
+        Jogador,
+        on_delete=models.CASCADE,
+        related_name='reservas_quadra'
+    )
+
+    jogadores = models.TextField(
+        help_text='Informe quem vai jogar neste horário.'
+    )
+
+    observacao = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS,
+        default='AGENDADA'
+    )
+
+    checkin_realizado = models.BooleanField(default=False)
+    checkin_data_hora = models.DateTimeField(blank=True, null=True)
+    checkin_latitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
+    checkin_longitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True)
+    checkin_distancia_metros = models.FloatField(blank=True, null=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['data', 'horario__hora_inicio']
+        unique_together = ['data', 'horario']
+
+    def __str__(self):
+        return f'{self.data} - {self.horario} - {self.reservado_por.nome}' 

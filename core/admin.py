@@ -10,6 +10,9 @@ from .models import (
     SetJogo,
     RankingJogador,
     CampeaoTorneio,
+    Quadra,
+    ConfiguracaoHorarioQuadra,
+    ReservaQuadra,
 )
 
 from .services.ranking import recalcular_ranking
@@ -71,12 +74,14 @@ class TorneioAdmin(admin.ModelAdmin):
         'tipo',
         'disputa',
         'status',
+        'ativo',
     )
 
     list_filter = (
         'tipo',
         'disputa',
         'status',
+        'ativo',
     )
 
     search_fields = (
@@ -269,7 +274,9 @@ class JogoAdmin(admin.ModelAdmin):
                     break
 
             if posicao <= obj.categoria.max_jogos_por_rodada:
-                jogadores_contabilizados.append(p.jogador.id)
+                jogadores_contabilizados.append(
+                    p.jogador.id
+                )
 
         if len(jogadores_contabilizados) == 0:
             return 'Não computado'
@@ -285,7 +292,12 @@ class JogoAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
 
-        super().save_model(request, obj, form, change)
+        super().save_model(
+            request,
+            obj,
+            form,
+            change
+        )
 
         if obj.status == 'CONFIRMADO':
             recalcular_ranking(
@@ -298,12 +310,55 @@ class JogoAdmin(admin.ModelAdmin):
         torneio = obj.torneio
         categoria = obj.categoria
 
-        super().delete_model(request, obj)
+        super().delete_model(
+            request,
+            obj
+        )
 
         recalcular_ranking(
             torneio,
             categoria
-        )        
+        )
+
+    def formfield_for_foreignkey(
+        self,
+        db_field,
+        request,
+        **kwargs
+    ):
+
+        torneio_ativo = Torneio.objects.filter(
+            ativo=True
+        ).order_by(
+            '-ano',
+            '-edicao',
+            '-id'
+        ).first()
+
+        if db_field.name == 'torneio':
+
+            kwargs['queryset'] = Torneio.objects.filter(
+                ativo=True
+            ).order_by(
+                '-ano',
+                '-edicao',
+                '-id'
+            )
+
+        elif db_field.name == 'categoria' and torneio_ativo:
+
+            kwargs['queryset'] = CategoriaTorneio.objects.filter(
+                torneio=torneio_ativo
+            ).order_by(
+                'categoria'
+            )
+
+        return super().formfield_for_foreignkey(
+            db_field,
+            request,
+            **kwargs
+        )
+
 
 
 # =========================
@@ -361,3 +416,81 @@ class CampeaoTorneioAdmin(admin.ModelAdmin):
         'finalista_1',
         'finalista_2',
     )
+    
+
+# =========================
+# ALUGUEL DA QUADRA
+# =========================
+
+@admin.register(ConfiguracaoHorarioQuadra)
+class ConfiguracaoHorarioQuadraAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'quadra',
+        'dia_semana',
+        'hora_inicio',
+        'hora_fim',
+        'ativo',
+    )
+
+    list_filter = (
+        'quadra',
+        'dia_semana',
+        'ativo',
+    )
+
+    ordering = (
+        'quadra',
+        'dia_semana',
+        'hora_inicio',
+    )
+
+
+@admin.register(ReservaQuadra)
+class ReservaQuadraAdmin(admin.ModelAdmin):
+
+    list_display = (
+    'data',
+    'horario',
+    'reservado_por',
+    'status',
+    'checkin_realizado',
+    'checkin_data_hora',
+    'checkin_distancia_metros',
+)
+
+    list_filter = (
+        'data',
+        'status',
+        'checkin_realizado',
+    )
+
+    search_fields = (
+        'reservado_por__nome',
+        'jogadores',
+    )
+
+    readonly_fields = (
+        'checkin_realizado',
+        'checkin_data_hora',
+        'checkin_latitude',
+        'checkin_longitude',
+        'checkin_distancia_metros',
+        'criado_em',
+    )
+
+@admin.register(Quadra)
+class QuadraAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'nome',
+        'ativa',
+    )
+
+    list_filter = (
+        'ativa',
+    )
+
+    search_fields = (
+        'nome',
+    )    

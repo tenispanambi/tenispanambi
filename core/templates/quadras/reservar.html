@@ -1,0 +1,467 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+    .reserva-container{
+        max-width:900px;
+        margin:0 auto;
+    }
+
+    .reserva-card{
+        background:white;
+        border-radius:28px;
+        padding:35px;
+        box-shadow:0 10px 30px rgba(0,0,0,.10);
+    }
+
+    .topo{
+        background:linear-gradient(135deg,#052e16,#0f766e,#0ea5e9);
+        color:white;
+        border-radius:24px;
+        padding:28px;
+        margin-bottom:25px;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:20px;
+        align-items:center;
+    }
+
+    .topo h1{
+        margin:0;
+        font-size:38px;
+        line-height:1.1;
+    }
+
+    .topo p{
+        margin:0;
+        opacity:.95;
+        font-size:16px;
+    }
+
+    .info-reserva{
+        background:#f8fafc;
+        border-radius:18px;
+        padding:18px;
+        margin-bottom:25px;
+        border:1px solid #e5e7eb;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .info-item{
+        font-size:16px;
+    }
+
+    .info-item strong{
+        color:#0b4d91;
+    }
+
+    .campo{
+        margin-bottom:22px;
+    }
+
+    .campo label{
+        display:block;
+        font-weight:900;
+        margin-bottom:8px;
+        color:#0b4d91;
+    }
+
+    .tipo-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:14px;
+    }
+
+    .tipo-card{
+        border:2px solid #d1d5db;
+        border-radius:16px;
+        padding:16px;
+        cursor:pointer;
+        background:#f8fafc;
+        font-weight:900;
+        color:#334155;
+        transition:.2s;
+    }
+
+    .tipo-card input{
+        margin-right:8px;
+    }
+
+    .tipo-card:has(input:checked){
+        border-color:#22c55e;
+        background:#dcfce7;
+        color:#166534;
+    }
+
+    .busca{
+        width:100%;
+        padding:15px;
+        border:1px solid #d1d5db;
+        border-radius:16px;
+        font-size:16px;
+        margin-bottom:12px;
+    }
+
+    .contador{
+        background:#ecfeff;
+        color:#155e75;
+        padding:12px;
+        border-radius:12px;
+        margin-bottom:15px;
+        font-weight:800;
+    }
+
+    .selecionados-box{
+        background:#f0fdf4;
+        border:1px solid #bbf7d0;
+        border-radius:16px;
+        padding:14px;
+        margin-bottom:15px;
+        color:#166534;
+        font-size:14px;
+        display:none;
+    }
+
+    .lista-jogadores{
+        max-height:420px;
+        overflow-y:auto;
+        border:1px solid #e5e7eb;
+        border-radius:18px;
+        padding:10px;
+        background:#f8fafc;
+    }
+
+    .jogador-item{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        background:white;
+        border:1px solid #e5e7eb;
+        border-radius:14px;
+        padding:13px;
+        margin-bottom:8px;
+        cursor:pointer;
+    }
+
+    .jogador-info{
+        display:flex;
+        flex-direction:column;
+        gap:3px;
+    }
+
+    .jogador-nome{
+        font-weight:900;
+        color:#111827;
+    }
+
+    .jogador-cat{
+        font-size:13px;
+        color:#64748b;
+    }
+
+    .jogador-check{
+        width:22px;
+        height:22px;
+        cursor:pointer;
+    }
+
+    .campo textarea{
+        width:100%;
+        padding:14px;
+        border:1px solid #d1d5db;
+        border-radius:14px;
+        font-size:15px;
+        min-height:100px;
+        resize:vertical;
+    }
+
+    .btn-salvar{
+        width:100%;
+        border:none;
+        background:linear-gradient(135deg,#00d084,#22c55e);
+        color:#022c22;
+        padding:16px;
+        border-radius:16px;
+        font-size:18px;
+        font-weight:900;
+        cursor:pointer;
+    }
+
+    .btn-voltar{
+        display:block;
+        text-align:center;
+        margin-top:15px;
+        color:#64748b;
+        text-decoration:none;
+        font-weight:700;
+    }
+
+    @media(max-width:768px){
+        .reserva-card{
+            padding:20px;
+        }
+
+        .topo{
+            grid-template-columns:1fr;
+        }
+
+        .topo h1{
+            font-size:30px;
+        }
+
+        .info-reserva,
+        .tipo-grid{
+            grid-template-columns:1fr;
+        }
+    }
+</style>
+
+<div class="reserva-container">
+
+    <div class="reserva-card">
+
+        <div class="topo">
+            <h1>🎾 Reservar Quadra</h1>
+            <p>Escolha o tipo da reserva e selecione os jogadores que irão participar.</p>
+        </div>
+
+        <div class="info-reserva">
+            <div class="info-item">
+                <strong>Quadra:</strong>
+                {{ horario.quadra.nome }}
+            </div>
+
+            <div class="info-item">
+                <strong>Data:</strong>
+                {{ data_reserva|date:"d/m/Y" }}
+            </div>
+
+            <div class="info-item">
+                <strong>Horário:</strong>
+                {{ horario.hora_inicio|time:"H:i" }}
+                às
+                {{ horario.hora_fim|time:"H:i" }}
+            </div>
+
+            <div class="info-item">
+                <strong>Responsável:</strong>
+                {{ jogador.nome }}
+            </div>
+        </div>
+
+        <form method="post" id="formReserva">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="data_reserva"
+                value="{{ data_reserva|date:'Y-m-d' }}"
+            >
+
+            <div class="campo">
+                <label>Tipo de reserva</label>
+
+                <div class="tipo-grid">
+                    <label class="tipo-card">
+                        <input
+                            type="radio"
+                            name="tipo_reserva"
+                            value="2"
+                            checked
+                            onchange="atualizarLimite()"
+                        >
+                        Simples
+                        <br>
+                        <small>Máximo 2 jogadores</small>
+                    </label>
+
+                    <label class="tipo-card">
+                        <input
+                            type="radio"
+                            name="tipo_reserva"
+                            value="4"
+                            onchange="atualizarLimite()"
+                        >
+                        Duplas
+                        <br>
+                        <small>Máximo 4 jogadores</small>
+                    </label>
+                </div>
+            </div>
+
+            <div class="campo">
+
+                <label>Buscar jogador</label>
+
+                <input
+                    type="text"
+                    id="buscaJogador"
+                    class="busca"
+                    placeholder="Digite o nome do jogador..."
+                    onkeyup="filtrarJogadores()"
+                >
+
+                <div class="contador" id="contadorSelecionados">
+                    0 de 2 jogadores selecionados
+                </div>
+
+                <div class="selecionados-box" id="selecionadosBox"></div>
+
+                <div class="lista-jogadores" id="listaJogadores">
+
+                    {% for j in jogadores_lista %}
+
+                        <label
+                            class="jogador-item"
+                            data-nome="{{ j.nome|lower }}"
+                        >
+
+                            <div class="jogador-info">
+                                <span class="jogador-nome">
+                                    {{ j.nome }}
+                                </span>
+
+                                <span class="jogador-cat">
+                                    {% if j.categoria %}
+                                        Categoria {{ j.categoria }}
+                                    {% else %}
+                                        Sem categoria
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <input
+                                type="checkbox"
+                                name="jogadores"
+                                value="{{ j.id }}"
+                                class="jogador-check"
+                                data-nome="{{ j.nome }}"
+                                onchange="controlarSelecao(this)"
+                            >
+
+                        </label>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <div class="campo">
+                <label>Observação</label>
+
+                <textarea
+                    name="observacao"
+                    placeholder="Ex.: treino, amistoso, aula, desafio..."
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn-salvar">
+                Confirmar Reserva
+            </button>
+
+        </form>
+
+        <a href="/quadras/" class="btn-voltar">
+            ← Voltar
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+let limiteJogadores = 2;
+
+function atualizarLimite(){
+    const tipoSelecionado = document.querySelector('input[name="tipo_reserva"]:checked');
+    limiteJogadores = parseInt(tipoSelecionado.value);
+
+    const checks = document.querySelectorAll('.jogador-check:checked');
+
+    if(checks.length > limiteJogadores){
+        alert('Você mudou o tipo da reserva. Ajuste a quantidade de jogadores selecionados.');
+    }
+
+    atualizarContador();
+}
+
+function controlarSelecao(checkbox){
+
+    const selecionados = document.querySelectorAll('.jogador-check:checked');
+
+    if(selecionados.length > limiteJogadores){
+        checkbox.checked = false;
+        alert('Você pode selecionar no máximo ' + limiteJogadores + ' jogadores.');
+        return;
+    }
+
+    atualizarContador();
+}
+
+function atualizarContador(){
+
+    const selecionados = document.querySelectorAll('.jogador-check:checked');
+    const contador = document.getElementById('contadorSelecionados');
+    const box = document.getElementById('selecionadosBox');
+
+    contador.innerText = selecionados.length + ' de ' + limiteJogadores + ' jogadores selecionados';
+
+    if(selecionados.length > 0){
+        let nomes = [];
+
+        selecionados.forEach(function(item){
+            nomes.push('✅ ' + item.dataset.nome);
+        });
+
+        box.style.display = 'block';
+        box.innerHTML = '<strong>Selecionados:</strong><br>' + nomes.join('<br>');
+    }else{
+        box.style.display = 'none';
+        box.innerHTML = '';
+    }
+}
+
+function filtrarJogadores(){
+
+    const termo = document.getElementById('buscaJogador').value.toLowerCase();
+    const jogadores = document.querySelectorAll('.jogador-item');
+
+    jogadores.forEach(function(item){
+
+        const nome = item.dataset.nome;
+
+        if(nome.includes(termo)){
+            item.style.display = 'flex';
+        }else{
+            item.style.display = 'none';
+        }
+
+    });
+}
+
+document.getElementById('formReserva').addEventListener('submit', function(e){
+
+    const selecionados = document.querySelectorAll('.jogador-check:checked');
+
+    if(selecionados.length === 0){
+        e.preventDefault();
+        alert('Selecione pelo menos um jogador.');
+        return;
+    }
+
+    if(selecionados.length > limiteJogadores){
+        e.preventDefault();
+        alert('Você selecionou jogadores demais.');
+        return;
+    }
+
+});
+</script>
+
+{% endblock %}

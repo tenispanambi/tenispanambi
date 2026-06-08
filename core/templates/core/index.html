@@ -420,6 +420,82 @@ body{
 
 }
 
+.torneio-atual-card{
+    background:linear-gradient(135deg,#052e16,#0f766e,#0ea5e9);
+    color:white;
+    border-radius:28px;
+    padding:30px;
+    margin:25px 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+}
+
+.badge-atual{
+    background:#ffffff20;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.torneio-atual-info h2{
+    margin:12px 0 5px;
+    font-size:34px;
+    color:white;
+}
+
+.torneio-atual-info p{
+    margin:0;
+    opacity:.9;
+    font-size:17px;
+}
+
+.btn-torneio-atual{
+    background:white;
+    color:#0b4d91;
+    text-decoration:none;
+    font-weight:900;
+    padding:14px 28px;
+    border-radius:14px;
+    display:inline-block;
+}
+
+.btn-torneio-atual:hover{
+    transform:translateY(-2px);
+}
+
+.btn-torneio-secundario{
+    background:#ffffff20;
+    color:white;
+    text-decoration:none;
+    font-weight:900;
+    padding:14px 24px;
+    border-radius:14px;
+    display:inline-block;
+    margin-left:10px;
+    border:1px solid #ffffff55;
+}
+
+.btn-torneio-secundario:hover{
+    background:#ffffff35;
+}
+
+@media(max-width:768px){
+
+    .torneio-atual-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .torneio-atual-info h2{
+        font-size:26px;
+    }
+}
+
 </style>
 
 <div class="container">
@@ -428,6 +504,42 @@ body{
         <h1>Plataforma oficial do Tênis Panambi</h1>
         <p>Rankings, torneios, estatísticas e confrontos dos tenistas de Panambi.</p>
     </div>
+
+    {% if torneio_ativo %}
+
+<div class="torneio-atual-card">
+
+    <div class="torneio-atual-info">
+
+        <span class="badge-atual">
+            TORNEIO ATUAL
+        </span>
+
+        <h2>
+            🎾 {{ torneio_ativo.nome }}
+        </h2>
+
+        <p>
+            {{ torneio_ativo.edicao }}ª edição • {{ torneio_ativo.ano }} • {{ torneio_ativo.get_status_display }}
+        </p>
+
+    </div>
+
+    <div class="torneio-atual-acoes">
+
+        <a href="/torneios/{{ torneio_ativo.id }}/" class="btn-torneio-atual">
+            Ver Torneio Completo →
+        </a>
+
+        <a href="/ranking/" class="btn-torneio-secundario">
+            Ver Ranking
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
 
     <div class="cards-status">
 
@@ -440,12 +552,27 @@ body{
         </div>
 
         <div class="status-card">
-            <div class="icone verde">🎾</div>
-            <div>
-                <h2>{{ total_jogos }}</h2>
-                <p>Jogos realizados</p>
-            </div>
+    <div class="icone verde">🎾</div>
+
+    <div id="jogosSlider">
+
+        <div class="jogo-slide">
+            <h2>{{ total_jogos_geral }}</h2>
+            <p>Total de jogos</p>
         </div>
+
+        <div class="jogo-slide" style="display:none;">
+            <h2>{{ total_jogos_duplas }}</h2>
+            <p>Jogos de duplas</p>
+        </div>
+
+        <div class="jogo-slide" style="display:none;">
+            <h2>{{ total_jogos_simples }}</h2>
+            <p>Jogos simples</p>
+        </div>
+
+    </div>
+</div>
 
         <div class="status-card">
 
@@ -855,6 +982,29 @@ function trocarPlacar(){
 }
 
 setInterval(trocarPlacar, 3500);
+
+let jogoAtual = 0;
+
+function trocarJogoCard(){
+
+    const slides = document.querySelectorAll('.jogo-slide');
+
+    if(slides.length <= 1){
+        return;
+    }
+
+    slides[jogoAtual].style.display = 'none';
+
+    jogoAtual++;
+
+    if(jogoAtual >= slides.length){
+        jogoAtual = 0;
+    }
+
+    slides[jogoAtual].style.display = 'block';
+}
+
+setInterval(trocarJogoCard, 3500);
 
 </script>
 

@@ -140,4 +140,33 @@ urlpatterns = [
     views.confirmar_resultado_usuario,
     name='confirmar_resultado_usuario'
 ),
+
+    path('quadras/', views.quadras, name='quadras'),
+    path('quadras/reservar/<int:horario_id>/', views.reservar_quadra, name='reservar_quadra'),
+    path('quadras/cancelar/<int:reserva_id>/', views.cancelar_reserva_quadra, name='cancelar_reserva_quadra'),
+
+    path(
+    'gerar-horarios-quadra/',
+    views.gerar_horarios_quadra,
+    name='gerar_horarios_quadra'
+),
+
+path(
+    'quadras/checkin/<int:reserva_id>/',
+    views.checkin_quadra,
+    name='checkin_quadra'
+),
+
+path(
+    'quadras/relatorio/',
+    views.relatorio_quadras,
+    name='relatorio_quadras'
+),
+
+path(
+    'torneios/<int:torneio_id>/',
+    views.detalhe_torneio,
+    name='detalhe_torneio'
+),
+
 ]
