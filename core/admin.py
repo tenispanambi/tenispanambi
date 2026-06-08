@@ -299,7 +299,7 @@ class JogoAdmin(admin.ModelAdmin):
             change
         )
 
-        if obj.status == 'CONFIRMADO':
+        if obj.status == 'CONFIRMADO' and obj.torneio and obj.categoria:
             recalcular_ranking(
                 obj.torneio,
                 obj.categoria
@@ -315,10 +315,32 @@ class JogoAdmin(admin.ModelAdmin):
             obj
         )
 
-        recalcular_ranking(
-            torneio,
-            categoria
+        if torneio and categoria:
+            recalcular_ranking(
+                torneio,
+                categoria
+            )
+
+    def delete_queryset(self, request, queryset):
+
+        recalculos = []
+
+        for obj in queryset:
+            if obj.torneio and obj.categoria:
+                recalculos.append(
+                    (obj.torneio, obj.categoria)
+                )
+
+        super().delete_queryset(
+            request,
+            queryset
         )
+
+        for torneio, categoria in recalculos:
+            recalcular_ranking(
+                torneio,
+                categoria
+            )
 
     def formfield_for_foreignkey(
         self,
