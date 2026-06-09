@@ -26,13 +26,13 @@
 
         .topo{
             background:
-                radial-gradient(circle at right, rgba(14,165,233,.55), transparent 35%),
-                linear-gradient(135deg, #020617 0%, #061b4f 55%, #053b7a 100%);
-            padding:20px 38px;
-            display:flex;
+                radial-gradient(circle at right, rgba(14,165,233,.45), transparent 35%),
+                linear-gradient(135deg,#020617 0%,#061b4f 55%,#053b7a 100%);
+            padding:16px 34px;
+            display:grid;
+            grid-template-columns:auto 1fr auto;
             align-items:center;
-            justify-content:space-between;
-            gap:25px;
+            gap:24px;
             box-shadow:0 8px 28px rgba(0,0,0,.22);
             border-bottom:1px solid rgba(255,255,255,.08);
             position:relative;
@@ -41,12 +41,12 @@
         .logo-area{
             display:flex;
             align-items:center;
-            gap:18px;
-            min-width:330px;
+            gap:16px;
+            min-width:300px;
         }
 
         .logo-area img{
-            height:86px;
+            height:82px;
             width:auto;
             object-fit:contain;
             filter:drop-shadow(0 5px 12px rgba(0,0,0,.35));
@@ -54,17 +54,19 @@
 
         .titulo-site{
             color:white;
-            font-size:42px;
-            font-weight:900;
-            line-height:1;
+            font-size:38px;
+            font-weight:1000;
+            line-height:.95;
             letter-spacing:-1px;
         }
 
         .subtitulo-site{
             color:#67e8f9;
-            font-size:17px;
+            font-size:13px;
             margin-top:8px;
-            font-weight:500;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:1.4px;
         }
 
         .menu-toggle{
@@ -88,19 +90,19 @@
         .menu{
             display:flex;
             align-items:center;
-            justify-content:flex-end;
-            gap:8px;
+            justify-content:center;
+            gap:6px;
             flex-wrap:wrap;
         }
 
         .menu a{
             color:white;
             text-decoration:none;
-            font-weight:800;
-            font-size:15px;
+            font-weight:900;
+            font-size:14px;
             white-space:nowrap;
             transition:.2s;
-            padding:11px 13px;
+            padding:10px 12px;
             border-radius:14px;
         }
 
@@ -109,30 +111,61 @@
             color:#d7ff00;
         }
 
+        .acoes-topo{
+            display:flex;
+            align-items:center;
+            justify-content:flex-end;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .btn-quadra{
+            background:rgba(255,255,255,.10) !important;
+            border:1px solid rgba(255,255,255,.18);
+            color:white !important;
+            padding:12px 16px !important;
+            border-radius:16px;
+        }
+
+        .btn-quadra:hover{
+            background:#0ea5e9 !important;
+            color:white !important;
+        }
+
         .btn-lancar{
             background:linear-gradient(135deg,#00d084,#22c55e) !important;
             color:#021526 !important;
             padding:13px 20px !important;
             box-shadow:0 8px 20px rgba(0,208,132,.28);
+            border-radius:16px !important;
         }
 
         .usuario-dropdown{
-            position:relative;
-            display:inline-block;
-            padding:8px 0;
-        }
+    position:relative;
+    display:inline-block;
+    padding:8px 0;
+}
+
+.usuario-dropdown::after{
+    content:'';
+    position:absolute;
+    left:0;
+    right:0;
+    top:38px;
+    height:18px;
+}
 
         .usuario{
             color:#d7ff00 !important;
-            font-weight:900;
+            font-weight:1000;
             display:flex;
             align-items:center;
             gap:8px;
         }
 
         .dropdown-menu{
-            position:absolute;
-            top:48px;
+    position:absolute;
+    top:42px;
             right:0;
             background:white;
             min-width:210px;
@@ -166,19 +199,18 @@
         .social-topo{
             display:flex;
             align-items:center;
-            gap:10px;
-            margin-left:8px;
+            gap:8px;
         }
 
         .social-link{
-            width:42px;
-            height:42px;
+            width:40px;
+            height:40px;
             border-radius:50%;
             display:flex;
             align-items:center;
             justify-content:center;
             color:white !important;
-            font-size:20px;
+            font-size:18px;
             text-decoration:none;
             transition:.25s;
             padding:0 !important;
@@ -209,18 +241,23 @@
             max-width:100%;
         }
 
-        @media(max-width:1150px){
+        @media(max-width:1250px){
             .topo{
-                flex-wrap:wrap;
+                grid-template-columns:1fr auto;
+            }
+
+            .menu{
+                grid-column:1 / -1;
+                justify-content:center;
+            }
+
+            .acoes-topo{
+                grid-column:1 / -1;
+                justify-content:center;
             }
 
             .logo-area{
                 min-width:0;
-            }
-
-            .menu{
-                width:100%;
-                justify-content:center;
             }
         }
 
@@ -240,15 +277,15 @@
             }
 
             .logo-area img{
-                height:60px;
+                height:58px;
             }
 
             .titulo-site{
-                font-size:26px;
+                font-size:25px;
             }
 
             .subtitulo-site{
-                font-size:12px;
+                font-size:10px;
                 margin-top:5px;
             }
 
@@ -256,7 +293,8 @@
                 display:flex;
             }
 
-            .menu{
+            .menu,
+            .acoes-topo{
                 display:none;
                 grid-column:1 / -1;
                 width:100%;
@@ -269,11 +307,13 @@
                 gap:10px;
             }
 
-            .menu-toggle:checked ~ .menu{
+            .menu-toggle:checked ~ .menu,
+            .menu-toggle:checked ~ .acoes-topo{
                 display:grid;
             }
 
             .menu a,
+            .acoes-topo a,
             .usuario{
                 display:flex;
                 align-items:center;
@@ -286,7 +326,8 @@
                 text-align:center;
             }
 
-            .btn-lancar{
+            .btn-lancar,
+            .btn-quadra{
                 grid-column:1 / -1;
                 font-size:16px !important;
             }
@@ -316,7 +357,6 @@
             .social-topo{
                 grid-column:1 / -1;
                 justify-content:center;
-                margin-left:0;
                 margin-top:4px;
             }
 
@@ -392,11 +432,11 @@
 
         <div>
             <div class="titulo-site">
-                Tênis Panambi
+                Tênis<br>Panambi
             </div>
 
             <div class="subtitulo-site">
-                Ranking • Jogos • Torneios
+                Portal Oficial
             </div>
         </div>
     </div>
@@ -425,6 +465,10 @@
             <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
         </a>
 
+        <a href="/quadras/">
+            <i class="fa-solid fa-calendar-check"></i> Reservar Quadra
+        </a>
+
         {% if user.is_authenticated %}
 
             <a href="/meu-painel/">
@@ -434,6 +478,14 @@
             <a href="/meus-jogos/">
                 <i class="fa-solid fa-calendar-days"></i> Meus Jogos
             </a>
+
+        {% endif %}
+
+    </nav>
+
+    <div class="acoes-topo">
+
+        {% if user.is_authenticated %}
 
             <a href="/lancar-jogo/" class="btn-lancar">
                 <i class="fa-solid fa-plus"></i> Lançar Jogo
@@ -455,11 +507,11 @@
 
         {% else %}
 
-            <a href="/login/">
+            <a href="/login/" class="btn-lancar">
                 <i class="fa-solid fa-right-to-bracket"></i> Login
             </a>
 
-            <a href="/cadastro/">
+            <a href="/cadastro/" class="btn-quadra">
                 <i class="fa-solid fa-user-plus"></i> Criar Conta
             </a>
 
@@ -485,7 +537,7 @@
 
         </div>
 
-    </nav>
+    </div>
 
 </header>
 
