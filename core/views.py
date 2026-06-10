@@ -8,7 +8,7 @@ import math
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -467,21 +467,6 @@ def detalhe_torneio(request, torneio_id):
         '-id'
     )[:20]
 
-    ranking_a = RankingJogador.objects.filter(
-        torneio=torneio,
-        categoria__categoria='A'
-    ).order_by('posicao')
-
-    ranking_b = RankingJogador.objects.filter(
-        torneio=torneio,
-        categoria__categoria='B'
-    ).order_by('posicao')
-
-    ranking_c = RankingJogador.objects.filter(
-        torneio=torneio,
-        categoria__categoria='C'
-    ).order_by('posicao')
-
     resultados_validos = [
         '7x6',
         '7x5',
@@ -551,6 +536,202 @@ def detalhe_torneio(request, torneio_id):
         '-id'
     )
 
+    def montar_matriz_categoria(categoria_letra):
+
+        categoria = CategoriaTorneio.objects.filter(
+            torneio=torneio,
+            categoria=categoria_letra
+        ).first()
+
+        if not categoria:
+            return {
+                'categoria': categoria_letra,
+                'rodadas': [],
+                'jogadores': [],
+                'config': None
+            }
+
+        jogos = Jogo.objects.filter(
+            torneio=torneio,
+            categoria=categoria,
+            status='CONFIRMADO',
+            tipo_jogo='CHAMPIONSHIP_DUPLAS'
+        ).filter(
+            fase__isnull=True
+        ).order_by(
+            'rodada',
+            'id'
+        )
+
+        maior_rodada = jogos.aggregate(
+            maior=Max('rodada')
+        )['maior'] or 0
+
+        rodadas_numeros = list(
+            range(1, maior_rodada + 1)
+        )
+
+        inscricoes = InscricaoTorneio.objects.filter(
+            torneio=torneio,
+            categoria=categoria,
+            ativo=True
+        ).select_related(
+            'jogador'
+        )
+
+        dados_jogadores = {}
+
+        for inscricao in inscricoes:
+
+            jogador = inscricao.jogador
+
+            dados_jogadores[jogador.id] = {
+                'jogador': jogador,
+                'rodadas': {},
+                'total': 0,
+                'posicao': '-',
+            }
+
+        ranking = RankingJogador.objects.filter(
+            torneio=torneio,
+            categoria=categoria
+        ).select_related(
+            'jogador'
+        )
+
+        for r in ranking:
+
+            if r.jogador.id not in dados_jogadores:
+                dados_jogadores[r.jogador.id] = {
+                    'jogador': r.jogador,
+                    'rodadas': {},
+                    'total': r.pontos,
+                    'posicao': r.posicao,
+                }
+            else:
+                dados_jogadores[r.jogador.id]['total'] = r.pontos
+                dados_jogadores[r.jogador.id]['posicao'] = r.posicao
+
+        controle_rodadas = {}
+
+        for jogo in jogos:
+
+            rodada = jogo.rodada or 0
+
+            if rodada == 0:
+                continue
+
+            participantes = ParticipanteJogo.objects.filter(
+                jogo=jogo
+            ).select_related(
+                'jogador'
+            )
+
+            for p in participantes:
+
+                jogador = p.jogador
+
+                if jogador.id not in dados_jogadores:
+                    continue
+
+                chave = f'{jogador.id}_{rodada}'
+
+                if chave not in controle_rodadas:
+                    controle_rodadas[chave] = 0
+
+                if controle_rodadas[chave] >= categoria.max_jogos_por_rodada:
+                    continue
+
+                controle_rodadas[chave] += 1
+
+                if p.lado == 'A':
+                    games_feitos = jogo.total_games_lado_a()
+                else:
+                    games_feitos = jogo.total_games_lado_b()
+
+                if p.vencedor:
+                    pontos = 20 + games_feitos
+                else:
+                    pontos = 5 + games_feitos
+
+                if rodada not in dados_jogadores[jogador.id]['rodadas']:
+                    dados_jogadores[jogador.id]['rodadas'][rodada] = {
+                        'pontos': 0,
+                        'conta': False,
+                    }
+
+                dados_jogadores[jogador.id]['rodadas'][rodada]['pontos'] += pontos
+
+        for dados in dados_jogadores.values():
+
+            lista_rodadas = []
+
+            for rodada, info in dados['rodadas'].items():
+                lista_rodadas.append({
+                    'rodada': rodada,
+                    'pontos': info['pontos']
+                })
+
+            melhores = sorted(
+                lista_rodadas,
+                key=lambda item: item['pontos'],
+                reverse=True
+            )[:categoria.rodadas_contabilizadas]
+
+            rodadas_contam = [
+                item['rodada']
+                for item in melhores
+            ]
+
+            for rodada, info in dados['rodadas'].items():
+                if rodada in rodadas_contam:
+                    info['conta'] = True
+
+            linha_rodadas = []
+
+            for numero in rodadas_numeros:
+
+                if numero in dados['rodadas']:
+
+                    info = dados['rodadas'][numero]
+
+                    linha_rodadas.append({
+                        'rodada': numero,
+                        'pontos': info['pontos'],
+                        'conta': info['conta'],
+                        'jogou': True,
+                    })
+
+                else:
+
+                    linha_rodadas.append({
+                        'rodada': numero,
+                        'pontos': '-',
+                        'conta': False,
+                        'jogou': False,
+                    })
+
+            dados['linha_rodadas'] = linha_rodadas
+
+        jogadores = sorted(
+            dados_jogadores.values(),
+            key=lambda item: (
+                item['posicao'] if item['posicao'] != '-' else 9999,
+                item['jogador'].nome
+            )
+        )
+
+        return {
+            'categoria': categoria_letra,
+            'config': categoria,
+            'rodadas': rodadas_numeros,
+            'jogadores': jogadores
+        }
+
+    matriz_a = montar_matriz_categoria('A')
+    matriz_b = montar_matriz_categoria('B')
+    matriz_c = montar_matriz_categoria('C')
+
     return render(
         request,
         'torneios/detalhe.html',
@@ -558,16 +739,14 @@ def detalhe_torneio(request, torneio_id):
             'torneio': torneio,
             'total_jogos': total_jogos,
             'ultimos_jogos': ultimos_jogos,
-            'ranking_a': ranking_a,
-            'ranking_b': ranking_b,
-            'ranking_c': ranking_c,
             'placares_mais_comuns': placares_mais_comuns,
             'jogos_por_rodada': jogos_por_rodada,
             'torneios_historico': torneios_historico,
+            'matriz_a': matriz_a,
+            'matriz_b': matriz_b,
+            'matriz_c': matriz_c,
         }
     )
-
-
 @login_required
 def jogador(request, jogador_id):
     jogador = get_object_or_404(
@@ -645,6 +824,14 @@ def headtohead(request):
         usuario__is_superuser=True
     ).order_by('nome')
 
+    torneio_ativo = Torneio.objects.filter(
+        ativo=True
+    ).order_by(
+        '-ano',
+        '-edicao',
+        '-id'
+    ).first()
+
     jogador1_id = request.GET.get('j1')
     jogador2_id = request.GET.get('j2')
     modalidade = request.GET.get('modalidade', 'TODOS')
@@ -692,27 +879,41 @@ def headtohead(request):
     }
 
     if jogador1_id:
-        jogador1 = get_object_or_404(Jogador, id=jogador1_id)
+        jogador1 = get_object_or_404(
+            Jogador,
+            id=jogador1_id
+        )
 
-        r1 = RankingJogador.objects.filter(
-            jogador=jogador1
-        ).order_by('posicao').first()
+        if torneio_ativo:
+            r1 = RankingJogador.objects.filter(
+                jogador=jogador1,
+                torneio=torneio_ativo
+            ).order_by(
+                'posicao'
+            ).first()
 
-        if r1:
-            ranking1 = f'{r1.posicao}º'
+            if r1:
+                ranking1 = f'{r1.posicao}º'
 
         titulos1 = jogador1.titulos_cd
         vices1 = jogador1.vice_cd
 
     if jogador2_id:
-        jogador2 = get_object_or_404(Jogador, id=jogador2_id)
+        jogador2 = get_object_or_404(
+            Jogador,
+            id=jogador2_id
+        )
 
-        r2 = RankingJogador.objects.filter(
-            jogador=jogador2
-        ).order_by('posicao').first()
+        if torneio_ativo:
+            r2 = RankingJogador.objects.filter(
+                jogador=jogador2,
+                torneio=torneio_ativo
+            ).order_by(
+                'posicao'
+            ).first()
 
-        if r2:
-            ranking2 = f'{r2.posicao}º'
+            if r2:
+                ranking2 = f'{r2.posicao}º'
 
         titulos2 = jogador2.titulos_cd
         vices2 = jogador2.vice_cd
@@ -762,13 +963,20 @@ def headtohead(request):
         ).prefetch_related(
             'participantes',
             'sets'
-        ).order_by('-data_jogo', '-id')
+        ).order_by(
+            '-data_jogo',
+            '-id'
+        )
 
         if modalidade == 'SIMPLES':
-            jogos = jogos.filter(tipo_jogo='SIMPLES')
+            jogos = jogos.filter(
+                tipo_jogo='SIMPLES'
+            )
 
         elif modalidade == 'DUPLAS':
-            jogos = jogos.exclude(tipo_jogo='SIMPLES')
+            jogos = jogos.exclude(
+                tipo_jogo='SIMPLES'
+            )
 
         for jogo in jogos:
 
@@ -832,8 +1040,15 @@ def headtohead(request):
                 confrontos.append(jogo)
 
         if total_h2h > 0:
-            percentual_h2h_1 = round((vitorias1 / total_h2h) * 100, 1)
-            percentual_h2h_2 = round((vitorias2 / total_h2h) * 100, 1)
+            percentual_h2h_1 = round(
+                (vitorias1 / total_h2h) * 100,
+                1
+            )
+
+            percentual_h2h_2 = round(
+                (vitorias2 / total_h2h) * 100,
+                1
+            )
 
     return render(
         request,
@@ -843,6 +1058,7 @@ def headtohead(request):
             'jogador1': jogador1,
             'jogador2': jogador2,
             'modalidade': modalidade,
+            'torneio_ativo': torneio_ativo,
 
             'confrontos': confrontos,
 
@@ -869,7 +1085,7 @@ def headtohead(request):
             'stats1': stats1,
             'stats2': stats2,
         }
-    )      
+    )     
 
     
 @login_required

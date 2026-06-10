@@ -1,0 +1,89 @@
+{% if matriz and matriz.config %}
+
+<div class="ranking-rodadas-box">
+
+    <div class="ranking-rodadas-header">
+        <h2>Categoria {{ matriz.categoria }}</h2>
+
+        <p>
+            Máximo de {{ matriz.config.max_jogos_por_rodada }} jogos por rodada.
+O torneio possui {{ matriz.rodadas|length }} rodadas.
+Contam somente as {{ matriz.config.rodadas_contabilizadas }} melhores rodadas.
+As demais são descartadas inteiras.
+        </p>
+    </div>
+
+    <div class="legenda-rodadas">
+        <span class="legenda-item conta">Conta no ranking</span>
+        <span class="legenda-item descarta">Rodada descartada</span>
+        <span class="legenda-item nao-jogou">Não jogou</span>
+    </div>
+
+    <div class="tabela-rodadas-scroll">
+        <table class="tabela-rodadas">
+            <thead>
+                <tr>
+                    <th class="col-pos">#</th>
+                    <th class="col-jogador">Jogador</th>
+
+                    {% for rodada in matriz.rodadas %}
+                        <th>R{{ rodada }}</th>
+                    {% endfor %}
+
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for linha in matriz.jogadores %}
+                    <tr>
+                        <td class="col-pos">
+                            {% if linha.posicao != '-' %}
+                                <span class="posicao-mini">{{ linha.posicao }}</span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td class="col-jogador">
+                            {{ linha.jogador.nome }}
+                        </td>
+
+                        {% for r in linha.linha_rodadas %}
+                            <td>
+                                {% if r.jogou %}
+
+                                    {% if r.conta %}
+                                        <span class="ponto-rodada conta">
+                                            {{ r.pontos }}
+                                        </span>
+                                    {% else %}
+                                        <span class="ponto-rodada descarta">
+                                            {{ r.pontos }}
+                                        </span>
+                                    {% endif %}
+
+                                {% else %}
+                                    <span class="ponto-rodada vazio">-</span>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+
+                        <td class="total-ranking">
+                            {{ linha.total }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="99" class="sem-dados">
+                            Nenhum jogador encontrado nesta categoria.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endif %}

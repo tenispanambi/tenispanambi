@@ -56,50 +56,17 @@
         font-weight:900;
     }
 
-    .grid{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:25px;
-        margin-bottom:25px;
-    }
-
     .box{
         background:white;
         border-radius:22px;
         padding:25px;
         box-shadow:0 8px 22px rgba(0,0,0,.08);
+        margin-bottom:25px;
     }
 
     .box h2{
         margin-top:0;
         color:#0b4d91;
-    }
-
-    .ranking-item{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:12px 0;
-        border-bottom:1px solid #e5e7eb;
-        gap:12px;
-    }
-
-    .ranking-left{
-        display:flex;
-        align-items:center;
-        gap:12px;
-    }
-
-    .posicao{
-        width:34px;
-        height:34px;
-        border-radius:50%;
-        background:#0b4d91;
-        color:white;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-weight:900;
     }
 
     .tabela{
@@ -135,11 +102,154 @@
         font-weight:800;
     }
 
-    @media(max-width:900px){
-        .grid{
-            grid-template-columns:1fr;
-        }
+    .ranking-rodadas-box{
+        background:white;
+        border-radius:22px;
+        padding:25px;
+        box-shadow:0 8px 22px rgba(0,0,0,.08);
+        margin-bottom:25px;
+    }
 
+    .ranking-rodadas-header h2{
+        margin:0;
+        color:#0b4d91;
+    }
+
+    .ranking-rodadas-header p{
+        color:#64748b;
+        margin-top:8px;
+        margin-bottom:15px;
+    }
+
+    .legenda-rodadas{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-bottom:15px;
+    }
+
+    .legenda-item{
+        padding:7px 12px;
+        border-radius:999px;
+        font-size:13px;
+        font-weight:900;
+    }
+
+    .legenda-item.conta{
+        background:#dcfce7;
+        color:#166534;
+    }
+
+    .legenda-item.descarta{
+        background:#fee2e2;
+        color:#991b1b;
+    }
+
+    .legenda-item.nao-jogou{
+        background:#e5e7eb;
+        color:#475569;
+    }
+
+    .tabela-rodadas-scroll{
+        overflow-x:auto;
+    }
+
+    .tabela-rodadas{
+        width:100%;
+        border-collapse:collapse;
+        min-width:1000px;
+    }
+
+    .tabela-rodadas th{
+        background:#0b4d91;
+        color:white;
+        padding:10px;
+        text-align:center;
+        font-size:13px;
+        white-space:nowrap;
+    }
+
+    .tabela-rodadas td{
+        padding:10px;
+        border-bottom:1px solid #e5e7eb;
+        text-align:center;
+        font-weight:800;
+    }
+
+    .col-pos{
+        width:55px;
+    }
+
+    .col-jogador{
+        min-width:190px;
+        text-align:left !important;
+        color:#0b4d91;
+        font-weight:900;
+        position:sticky;
+        left:0;
+        background:white;
+        z-index:2;
+    }
+
+    .tabela-rodadas th.col-jogador{
+        background:#0b4d91;
+        color:white;
+        z-index:3;
+    }
+
+    .posicao-mini{
+        width:30px;
+        height:30px;
+        border-radius:50%;
+        background:#0b4d91;
+        color:white;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:900;
+    }
+
+    .ponto-rodada{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:42px;
+        padding:7px 9px;
+        border-radius:12px;
+        font-weight:900;
+        font-size:13px;
+    }
+
+    .ponto-rodada.conta{
+        background:#22c55e;
+        color:white;
+    }
+
+    .ponto-rodada.descarta{
+        background:#ef4444;
+        color:white;
+        opacity:.75;
+        text-decoration:line-through;
+    }
+
+    .ponto-rodada.vazio{
+        background:#f1f5f9;
+        color:#94a3b8;
+    }
+
+    .total-ranking{
+        color:#0b4d91;
+        font-weight:1000;
+        background:#f8fafc;
+    }
+
+    .sem-dados{
+        text-align:center;
+        color:#64748b;
+        padding:25px;
+    }
+
+    @media(max-width:900px){
         .hero-torneio h1{
             font-size:30px;
         }
@@ -151,6 +261,14 @@
         .tabela{
             font-size:13px;
         }
+
+        .ranking-rodadas-box{
+            padding:18px;
+        }
+
+        .tabela-rodadas{
+            min-width:850px;
+        }
     }
 </style>
 
@@ -158,9 +276,7 @@
 
     <div class="hero-torneio">
         <h1>{{ torneio.nome }} - {{ torneio.edicao }}ª edição</h1>
-        <p>
-            Estatísticas, rankings e jogos desta edição.
-        </p>
+        <p>Estatísticas, rankings e jogos desta edição.</p>
     </div>
 
     <div class="cards">
@@ -176,24 +292,12 @@
             <div id="placarSliderTorneio">
 
                 {% for placar, qtd in placares_mais_comuns %}
-
-                    <div
-                        class="placar-slide-torneio"
-                        style="{% if not forloop.first %}display:none;{% endif %}"
-                    >
-                        <div class="numero">
-                            {{ placar }}
-                        </div>
-
-                        <p>
-                            {{ qtd }} vez{{ qtd|pluralize:"es" }}
-                        </p>
+                    <div class="placar-slide-torneio" style="{% if not forloop.first %}display:none;{% endif %}">
+                        <div class="numero">{{ placar }}</div>
+                        <p>{{ qtd }} vez{{ qtd|pluralize:"es" }}</p>
                     </div>
-
                 {% empty %}
-
                     <div class="numero">-</div>
-
                 {% endfor %}
 
             </div>
@@ -208,76 +312,18 @@
 
     </div>
 
-    <div class="grid">
-
-        <div class="box">
-            <h2>Ranking Categoria A</h2>
-
-            {% for r in ranking_a %}
-                <div class="ranking-item">
-                    <div class="ranking-left">
-                        <div class="posicao">{{ r.posicao }}</div>
-                        <strong>{{ r.jogador.nome }}</strong>
-                    </div>
-                    <strong>{{ r.pontos }} pts</strong>
-                </div>
-            {% empty %}
-                <p>Nenhum ranking encontrado.</p>
-            {% endfor %}
-        </div>
-
-        <div class="box">
-            <h2>Ranking Categoria B</h2>
-
-            {% for r in ranking_b %}
-                <div class="ranking-item">
-                    <div class="ranking-left">
-                        <div class="posicao">{{ r.posicao }}</div>
-                        <strong>{{ r.jogador.nome }}</strong>
-                    </div>
-                    <strong>{{ r.pontos }} pts</strong>
-                </div>
-            {% empty %}
-                <p>Nenhum ranking encontrado.</p>
-            {% endfor %}
-        </div>
-
+    <div class="box">
+        <h2>Ranking detalhado por rodada</h2>
+        <p style="color:#64748b;">
+            Mostra os pontos de cada jogador por rodada, destacando quais rodadas contam para o ranking e quais foram descartadas.
+        </p>
     </div>
 
-    <div class="grid">
+    {% include 'torneios/tabela_rodadas.html' with matriz=matriz_a %}
+    {% include 'torneios/tabela_rodadas.html' with matriz=matriz_b %}
+    {% include 'torneios/tabela_rodadas.html' with matriz=matriz_c %}
 
-        <div class="box">
-            <h2>Ranking Categoria C</h2>
-
-            {% for r in ranking_c %}
-                <div class="ranking-item">
-                    <div class="ranking-left">
-                        <div class="posicao">{{ r.posicao }}</div>
-                        <strong>{{ r.jogador.nome }}</strong>
-                    </div>
-                    <strong>{{ r.pontos }} pts</strong>
-                </div>
-            {% empty %}
-                <p>Nenhum ranking encontrado.</p>
-            {% endfor %}
-        </div>
-
-        <div class="box">
-            <h2>Jogos por Rodada</h2>
-
-            {% for item in jogos_por_rodada %}
-                <div class="ranking-item">
-                    <strong>{{ item.rodada }}ª rodada</strong>
-                    <strong>{{ item.total }} jogos</strong>
-                </div>
-            {% empty %}
-                <p>Nenhuma rodada encontrada.</p>
-            {% endfor %}
-        </div>
-
-    </div>
-
-    <div class="box" style="margin-bottom:25px;">
+    <div class="box">
         <h2>Últimos jogos do torneio</h2>
 
         <table class="tabela">
@@ -294,6 +340,7 @@
                 {% for jogo in ultimos_jogos %}
                     <tr>
                         <td>{{ jogo.data_jogo|date:"d/m/Y" }}</td>
+
                         <td>
                             {% if jogo.fase %}
                                 {{ jogo.fase }}
@@ -303,6 +350,7 @@
                                 -
                             {% endif %}
                         </td>
+
                         <td>{{ jogo.descricao_confronto }}</td>
                         <td class="placar">{{ jogo.placar_resumido }}</td>
                     </tr>
@@ -325,6 +373,8 @@
                     • Atual
                 {% endif %}
             </a>
+        {% empty %}
+            <p>Nenhum torneio encontrado.</p>
         {% endfor %}
     </div>
 

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <style>
 .h2h-page{
     max-width:1500px;
@@ -41,13 +43,58 @@
 
 .h2h-selects select{
     width:100%;
-    padding:16px;
-    border-radius:14px;
-    border:2px solid #0ea5e9;
-    background:#071428;
-    color:white;
+}
+
+.select2-container--default .select2-selection--single{
+    height:58px !important;
+    border-radius:14px !important;
+    background:#071428 !important;
+    border:2px solid #0ea5e9 !important;
+}
+
+.select2-container--default .select2-selection__rendered{
+    color:white !important;
+    line-height:54px !important;
     font-size:17px;
-    font-weight:bold;
+    font-weight:800;
+    padding-left:16px !important;
+}
+
+.select2-container--default .select2-selection__placeholder{
+    color:white !important;
+}
+
+.select2-container--default .select2-selection__arrow{
+    height:54px !important;
+    right:10px !important;
+}
+
+.select2-container--default .select2-selection__arrow b{
+    border-color:white transparent transparent transparent !important;
+}
+
+.select2-dropdown{
+    border:2px solid #0ea5e9 !important;
+    border-radius:14px !important;
+    overflow:hidden;
+}
+
+.select2-search__field{
+    padding:12px !important;
+    font-size:16px !important;
+    border-radius:10px !important;
+    outline:none !important;
+}
+
+.select2-results__option{
+    padding:12px !important;
+    font-size:16px !important;
+    font-weight:700;
+}
+
+.select2-results__option--highlighted{
+    background:#0b4d91 !important;
+    color:white !important;
 }
 
 .h2h-grid{
@@ -275,9 +322,17 @@
         gap:12px;
     }
 
-    .h2h-selects select{
+    .select2-container--default .select2-selection--single{
+        height:52px !important;
+    }
+
+    .select2-container--default .select2-selection__rendered{
+        line-height:48px !important;
         font-size:15px;
-        padding:14px;
+    }
+
+    .select2-container--default .select2-selection__arrow{
+        height:48px !important;
     }
 
     .h2h-grid{
@@ -420,7 +475,7 @@
 
             <div class="h2h-selects">
 
-                <select name="j1" onchange="document.getElementById('h2hForm').submit()">
+                <select name="j1" id="jogador1">
                     <option value="">Selecione o Jogador 1</option>
                     {% for jogador in jogadores %}
                         <option value="{{ jogador.id }}" {% if jogador1 and jogador.id == jogador1.id %}selected{% endif %}>
@@ -429,7 +484,7 @@
                     {% endfor %}
                 </select>
 
-                <select name="j2" onchange="document.getElementById('h2hForm').submit()">
+                <select name="j2" id="jogador2">
                     <option value="">Selecione o Jogador 2</option>
                     {% for jogador in jogadores %}
                         <option value="{{ jogador.id }}" {% if jogador2 and jogador.id == jogador2.id %}selected{% endif %}>
@@ -731,11 +786,34 @@
 
 </div>
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
 function trocarModalidade(tipo){
     document.getElementById('modalidadeInput').value = tipo;
     document.getElementById('h2hForm').submit();
 }
+
+$(document).ready(function(){
+
+    $('#jogador1').select2({
+        placeholder: 'Selecione o Jogador 1',
+        width: '100%',
+        allowClear: true
+    });
+
+    $('#jogador2').select2({
+        placeholder: 'Selecione o Jogador 2',
+        width: '100%',
+        allowClear: true
+    });
+
+    $('#jogador1, #jogador2').on('change', function(){
+        document.getElementById('h2hForm').submit();
+    });
+
+});
 </script>
 
 {% endblock %}
