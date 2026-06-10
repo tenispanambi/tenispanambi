@@ -1124,11 +1124,30 @@ def meu_painel(request):
             1
         )
 
-    ranking = RankingJogador.objects.filter(
-        jogador=jogador
+    torneio_ativo = Torneio.objects.filter(
+        ativo=True
     ).order_by(
-        'posicao'
+        '-ano',
+        '-edicao',
+        '-id'
     ).first()
+
+    ranking = None
+
+    if torneio_ativo:
+        ranking = RankingJogador.objects.filter(
+            jogador=jogador,
+            torneio=torneio_ativo
+        ).order_by(
+            'posicao'
+        ).first()
+
+    if not ranking:
+        ranking = RankingJogador.objects.filter(
+            jogador=jogador
+        ).order_by(
+            'posicao'
+        ).first()
 
     jogos = ParticipanteJogo.objects.filter(
         jogador=jogador
@@ -1200,10 +1219,27 @@ def meu_painel(request):
     melhor_parceiro_detalhe = None
     pior_parceiro_detalhe = None
 
-    if adversarios:
+    # ==========================================
+    # MAIOR FREGUÊS
+    # Adversário contra quem o jogador mais venceu,
+    # mas somente se tiver saldo positivo.
+    # Exemplo: 2 vitórias e 4 derrotas NÃO é freguês.
+    # ==========================================
+    adversarios_com_saldo_positivo = {
+        nome: dados
+        for nome, dados in adversarios.items()
+        if dados['vitorias'] > dados['derrotas']
+    }
+
+    if adversarios_com_saldo_positivo:
+
         nome_fregues, dados_fregues = max(
-            adversarios.items(),
-            key=lambda x: x[1]['vitorias']
+            adversarios_com_saldo_positivo.items(),
+            key=lambda x: (
+                x[1]['vitorias'],
+                x[1]['vitorias'] - x[1]['derrotas'],
+                x[1]['jogos']
+            )
         )
 
         maior_fregues_detalhe = {
@@ -1213,9 +1249,19 @@ def meu_painel(request):
             'derrotas': dados_fregues['derrotas'],
         }
 
+    # ==========================================
+    # MAIOR RIVAL
+    # Adversário contra quem o jogador mais perdeu.
+    # ==========================================
+    if adversarios:
+
         nome_rival, dados_rival = max(
             adversarios.items(),
-            key=lambda x: x[1]['derrotas']
+            key=lambda x: (
+                x[1]['derrotas'],
+                x[1]['derrotas'] - x[1]['vitorias'],
+                x[1]['jogos']
+            )
         )
 
         maior_rival_detalhe = {
@@ -1225,22 +1271,43 @@ def meu_painel(request):
             'derrotas': dados_rival['derrotas'],
         }
 
+    # ==========================================
+    # MELHOR PARCEIRO
+    # Parceiro com mais vitórias junto.
+    # ==========================================
     if parceiros:
-        nome_melhor, dados_melhor = max(
-            parceiros.items(),
-            key=lambda x: x[1]['vitorias']
-        )
 
-        melhor_parceiro_detalhe = {
-            'nome': nome_melhor,
-            'jogos': dados_melhor['jogos'],
-            'vitorias': dados_melhor['vitorias'],
-            'derrotas': dados_melhor['derrotas'],
+        parceiros_com_vitoria = {
+            nome: dados
+            for nome, dados in parceiros.items()
+            if dados['vitorias'] > 0
         }
+
+        if parceiros_com_vitoria:
+
+            nome_melhor, dados_melhor = max(
+                parceiros_com_vitoria.items(),
+                key=lambda x: (
+                    x[1]['vitorias'],
+                    x[1]['vitorias'] - x[1]['derrotas'],
+                    x[1]['jogos']
+                )
+            )
+
+            melhor_parceiro_detalhe = {
+                'nome': nome_melhor,
+                'jogos': dados_melhor['jogos'],
+                'vitorias': dados_melhor['vitorias'],
+                'derrotas': dados_melhor['derrotas'],
+            }
 
         nome_pior, dados_pior = max(
             parceiros.items(),
-            key=lambda x: x[1]['derrotas']
+            key=lambda x: (
+                x[1]['derrotas'],
+                x[1]['derrotas'] - x[1]['vitorias'],
+                x[1]['jogos']
+            )
         )
 
         pior_parceiro_detalhe = {
@@ -1270,7 +1337,6 @@ def meu_painel(request):
             'melhor_parceiro_detalhe': melhor_parceiro_detalhe,
             'pior_parceiro_detalhe': pior_parceiro_detalhe,
 
-            # mantém compatibilidade caso ainda use em algum ponto
             'maior_fregues': maior_fregues_detalhe['nome'] if maior_fregues_detalhe else None,
             'maior_rival': maior_rival_detalhe['nome'] if maior_rival_detalhe else None,
         }
