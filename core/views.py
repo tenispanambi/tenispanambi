@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from django.db.models import Sum
 
 from .services.ranking import recalcular_ranking
 from .services.avanco import avancar_vencedor
@@ -35,6 +36,8 @@ from .models import (
     Quadra,
     ConfiguracaoHorarioQuadra,
     ReservaQuadra,
+    RegistroTorneio,
+    ResultadoTorneio,
 )
 
 def home(request):
@@ -2792,5 +2795,57 @@ def relatorio_quadras(request):
             'reservas_por_quadra': reservas_por_quadra,
             'top_jogadores': top_jogadores,
             'ultimas_reservas': ultimas_reservas,
+        }
+    )
+
+def torneios_historico(request):
+
+    torneios = RegistroTorneio.objects.filter(
+        ativo=True
+    ).order_by(
+        '-data_inicio',
+        '-id'
+    )
+
+    totais = torneios.aggregate(
+        total_inscritos_geral=Sum('total_inscritos'),
+        total_jogos_geral=Sum('total_jogos'),
+        total_categorias_geral=Sum('total_categorias'),
+    )
+
+    return render(
+        request,
+        'historico_torneios/lista.html',
+        {
+            'torneios': torneios,
+            'total_torneios_geral': torneios.count(),
+            'total_inscritos_geral': totais['total_inscritos_geral'] or 0,
+            'total_jogos_geral': totais['total_jogos_geral'] or 0,
+            'total_categorias_geral': totais['total_categorias_geral'] or 0,
+        }
+    )
+
+
+def detalhe_torneio_historico(request, torneio_id):
+
+    torneio = get_object_or_404(
+        RegistroTorneio,
+        id=torneio_id,
+        ativo=True
+    )
+
+    resultados = ResultadoTorneio.objects.filter(
+        torneio=torneio
+    ).order_by(
+        'ordem',
+        'categoria'
+    )
+
+    return render(
+        request,
+        'historico_torneios/detalhe.html',
+        {
+            'torneio': torneio,
+            'resultados': resultados
         }
     )

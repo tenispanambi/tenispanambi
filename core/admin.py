@@ -13,6 +13,8 @@ from .models import (
     Quadra,
     ConfiguracaoHorarioQuadra,
     ReservaQuadra,
+    RegistroTorneio,
+    ResultadoTorneio,
 )
 
 from .services.ranking import recalcular_ranking
@@ -516,3 +518,66 @@ class QuadraAdmin(admin.ModelAdmin):
     search_fields = (
         'nome',
     )    
+
+# ==========================================
+# HISTÓRICO DOS TORNEIOS
+# ==========================================
+
+class ResultadoTorneioInline(admin.TabularInline):
+    model = ResultadoTorneio
+    extra = 1
+
+
+@admin.register(RegistroTorneio)
+class RegistroTorneioAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'nome',
+        'tipo',
+        'data_inicio',
+        'data_fim',
+        'local',
+        'total_inscritos',
+        'total_jogos',
+        'total_categorias',
+        'ativo',
+    )
+
+    list_filter = (
+        'tipo',
+        'ativo',
+        'data_inicio',
+    )
+
+    search_fields = (
+        'nome',
+        'local',
+    )
+
+    inlines = [
+        ResultadoTorneioInline
+    ]
+
+
+@admin.register(ResultadoTorneio)
+class ResultadoTorneioAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'torneio',
+        'categoria',
+        'campeao',
+        'vice',
+        'ordem',
+    )
+
+    list_filter = (
+        'torneio',
+        'categoria',
+    )
+
+    search_fields = (
+        'torneio__nome',
+        'categoria',
+        'campeao',
+        'vice',
+    )

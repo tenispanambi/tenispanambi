@@ -169,4 +169,16 @@ path(
     name='detalhe_torneio'
 ),
 
+path(
+    'torneios-historico/',
+    views.torneios_historico,
+    name='torneios_historico'
+),
+
+path(
+    'torneios-historico/<int:torneio_id>/',
+    views.detalhe_torneio_historico,
+    name='detalhe_torneio_historico'
+),
+
 ]

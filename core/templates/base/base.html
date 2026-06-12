@@ -95,6 +95,10 @@
             flex-wrap:wrap;
         }
 
+        .menu-spacer{
+            flex:1;
+        }
+
         .menu a{
             color:white;
             text-decoration:none;
@@ -172,18 +176,34 @@
             height:18px;
         }
 
-        .usuario{
-            color:#d7ff00 !important;
-            font-weight:1000;
-            display:flex;
-            align-items:center;
-            gap:8px;
-            font-size:17px;
-            padding:10px 14px;
-            border-radius:14px;
-            text-decoration:none;
-            white-space:nowrap;
-        }
+       .usuario{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:linear-gradient(
+        135deg,
+        #facc15,
+        #eab308
+    );
+
+    color:#111827 !important;
+    font-size:22px;
+    font-weight:1000;
+
+    text-decoration:none;
+
+    box-shadow:0 8px 20px rgba(250,204,21,.35);
+
+    transition:.25s;
+}
+
+.usuario:hover{
+    transform:scale(1.08);
+}
 
         .usuario:hover{
             background:rgba(255,255,255,.08);
@@ -194,7 +214,7 @@
             top:48px;
             right:0;
             background:white;
-            min-width:210px;
+            min-width:220px;
             border-radius:16px;
             box-shadow:0 14px 35px rgba(0,0,0,.28);
             overflow:hidden;
@@ -215,6 +235,11 @@
             font-size:15px;
             border-bottom:1px solid #e5e7eb;
             background:white;
+        }
+
+        .dropdown-menu a i{
+            width:22px;
+            margin-right:8px;
         }
 
         .dropdown-menu a:hover{
@@ -274,6 +299,10 @@
             .menu{
                 grid-column:1 / -1;
                 justify-content:center;
+            }
+
+            .menu-spacer{
+                display:none;
             }
 
             .acoes-topo{
@@ -491,20 +520,16 @@
             <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
         </a>
 
+        <a href="/torneios-historico/">
+    <i class="fa-solid fa-trophy"></i> Torneios
+</a>
+
+        <span class="menu-spacer"></span>
+
         {% if user.is_authenticated %}
-
-            <a href="/meu-painel/">
-                <i class="fa-solid fa-user"></i> Meu Painel
-            </a>
-
-            <a href="/meus-jogos/">
-                <i class="fa-solid fa-calendar-days"></i> Meus Jogos
-            </a>
-
             <a href="/lancar-jogo/" class="btn-lancar">
                 <i class="fa-solid fa-plus"></i> Lançar Jogo
             </a>
-
         {% endif %}
 
     </nav>
@@ -515,14 +540,30 @@
 
             <div class="usuario-dropdown">
 
-                <a href="#" class="usuario">
-                    <i class="fa-solid fa-circle-user"></i> {{ user.username }}
-                </a>
+               <a href="#" class="usuario">
+    {{ user.username|first|upper }}
+</a>
 
                 <div class="dropdown-menu">
-                    <a href="/meu-perfil/">Meu Perfil</a>
-                    <a href="/password_change/">Trocar Senha</a>
-                    <a href="/logout/">Sair</a>
+                    <a href="/meu-painel/">
+                        <i class="fa-solid fa-user"></i> Meu Painel
+                    </a>
+
+                    <a href="/meus-jogos/">
+                        <i class="fa-solid fa-calendar-days"></i> Meus Jogos
+                    </a>
+
+                    <a href="/meu-perfil/">
+                        <i class="fa-solid fa-id-card"></i> Meu Perfil
+                    </a>
+
+                    <a href="/password_change/">
+                        <i class="fa-solid fa-key"></i> Trocar Senha
+                    </a>
+
+                    <a href="/logout/">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair
+                    </a>
                 </div>
 
             </div>

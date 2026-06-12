@@ -1,0 +1,667 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.torneios-page{
+    max-width:1550px;
+    margin:0 auto;
+    padding:10px 20px 50px;
+}
+
+.hero-historico{
+    position:relative;
+    overflow:hidden;
+    border-radius:36px;
+    padding:48px;
+    margin-bottom:28px;
+    color:white;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(14,165,233,.55), transparent 28%),
+        radial-gradient(circle at 12% 85%, rgba(215,255,0,.20), transparent 32%),
+        linear-gradient(135deg,#020617,#06245c 58%,#020617);
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+}
+
+.hero-historico::after{
+    content:"🎾";
+    position:absolute;
+    right:70px;
+    bottom:-45px;
+    font-size:210px;
+    opacity:.08;
+    transform:rotate(-18deg);
+}
+
+.hero-label{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:#d7ff00;
+    background:rgba(215,255,0,.12);
+    border:1px solid rgba(215,255,0,.7);
+    padding:9px 20px;
+    border-radius:999px;
+    font-weight:1000;
+    text-transform:uppercase;
+    margin-bottom:18px;
+}
+
+.hero-historico h1{
+    margin:0;
+    font-size:68px;
+    line-height:.9;
+    font-weight:1000;
+    text-transform:uppercase;
+    font-style:italic;
+    letter-spacing:-2px;
+}
+
+.hero-historico h1 span{
+    display:block;
+    color:#d7ff00;
+}
+
+.hero-historico p{
+    max-width:780px;
+    margin-top:20px;
+    color:#dbeafe;
+    font-size:19px;
+    line-height:1.55;
+    font-weight:700;
+}
+
+.hero-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-top:32px;
+    max-width:1050px;
+    position:relative;
+    z-index:2;
+}
+
+.hero-stat{
+    background:rgba(255,255,255,.09);
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:22px;
+    padding:20px;
+    backdrop-filter:blur(10px);
+    transition:.25s;
+}
+
+.hero-stat:hover{
+    transform:translateY(-5px);
+    background:rgba(255,255,255,.14);
+}
+
+.hero-stat i{
+    font-size:32px;
+    color:#d7ff00;
+    margin-bottom:12px;
+}
+
+.hero-stat strong{
+    display:block;
+    font-size:40px;
+    line-height:1;
+    font-weight:1000;
+}
+
+.hero-stat span{
+    display:block;
+    margin-top:8px;
+    font-size:12px;
+    text-transform:uppercase;
+    font-weight:1000;
+    color:#7dd3fc;
+}
+
+.filtros-torneios{
+    display:grid;
+    grid-template-columns:1fr 230px;
+    gap:18px;
+    margin-bottom:28px;
+}
+
+.filtro-box{
+    background:#020617;
+    border:1px solid rgba(14,165,233,.30);
+    border-radius:22px;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,.16);
+}
+
+.filtro-box i{
+    color:#d7ff00;
+    font-size:20px;
+}
+
+.filtro-box input,
+.filtro-box select{
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:white;
+    font-size:16px;
+    font-weight:900;
+}
+
+.filtro-box input::placeholder{
+    color:#94a3b8;
+}
+
+.filtro-box select option{
+    color:#111827;
+}
+
+.torneios-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:28px;
+}
+
+.torneio-card{
+    display:grid;
+    grid-template-columns:38% 1fr;
+    overflow:hidden;
+    border-radius:32px;
+    background:rgba(255,255,255,.95);
+    box-shadow:0 18px 45px rgba(0,0,0,.16);
+    transition:.28s;
+}
+
+.torneio-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 26px 60px rgba(0,0,0,.22);
+}
+
+.torneio-imagem{
+    position:relative;
+    min-height:320px;
+    background:#020617;
+    overflow:hidden;
+}
+
+.torneio-imagem img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.torneio-imagem::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(90deg,rgba(2,6,23,.05),rgba(2,6,23,.35)),
+        linear-gradient(0deg,rgba(2,6,23,.20),transparent);
+}
+
+.logo-placeholder{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:95px;
+    background:
+        radial-gradient(circle at top right, rgba(215,255,0,.30), transparent 28%),
+        linear-gradient(135deg,#020617,#063970);
+}
+
+.tipo-badge{
+    position:absolute;
+    top:20px;
+    left:20px;
+    z-index:2;
+    background:linear-gradient(135deg,#d7ff00,#84cc16);
+    color:#0f172a;
+    padding:9px 17px;
+    border-radius:999px;
+    font-weight:1000;
+    box-shadow:0 10px 24px rgba(215,255,0,.28);
+}
+
+.torneio-conteudo{
+    padding:38px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.torneio-conteudo h2{
+    margin:0 0 16px;
+    color:#06245c;
+    font-size:42px;
+    line-height:1.05;
+    font-weight:1000;
+    text-transform:uppercase;
+    font-style:italic;
+}
+
+.torneio-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    color:#475569;
+    font-size:17px;
+    font-weight:900;
+    margin-bottom:24px;
+}
+
+.torneio-meta i{
+    color:#0ea5e9;
+    margin-right:7px;
+}
+
+.numeros-card{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin:20px 0 24px;
+}
+
+.numero-box{
+    background:linear-gradient(180deg,#f8fafc,#eef2f7);
+    border-radius:20px;
+    padding:20px 14px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+}
+
+.numero-box i{
+    display:block;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.numero-box strong{
+    display:block;
+    color:#06245c;
+    font-size:36px;
+    line-height:1;
+    font-weight:1000;
+}
+
+.numero-box span{
+    display:block;
+    margin-top:7px;
+    color:#64748b;
+    font-size:12px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.numero-box.inscritos i{
+    color:#16a34a;
+}
+
+.numero-box.jogos i{
+    color:#0284c7;
+}
+
+.numero-box.categorias i{
+    color:#f59e0b;
+}
+
+.btn-ver-torneio{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    background:linear-gradient(135deg,#06245c,#0b4d91);
+    color:white;
+    text-decoration:none;
+    padding:18px 22px;
+    border-radius:18px;
+    font-weight:1000;
+    font-size:17px;
+    transition:.25s;
+}
+
+.btn-ver-torneio:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,#0b4d91,#0ea5e9);
+}
+
+.timeline{
+    margin-top:38px;
+    background:#020617;
+    border-radius:30px;
+    padding:30px;
+    color:white;
+    box-shadow:0 18px 45px rgba(0,0,0,.18);
+}
+
+.timeline h2{
+    margin:0 0 22px;
+    font-size:32px;
+    color:#d7ff00;
+}
+
+.timeline-list{
+    display:grid;
+    gap:14px;
+}
+
+.timeline-item{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:18px;
+    align-items:center;
+    padding:16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.10);
+}
+
+.timeline-ano{
+    color:#d7ff00;
+    font-size:24px;
+    font-weight:1000;
+}
+
+.timeline-nome{
+    font-weight:1000;
+    font-size:17px;
+}
+
+.sem-torneios{
+    background:white;
+    border-radius:24px;
+    padding:35px;
+    text-align:center;
+    color:#475569;
+    font-weight:900;
+}
+
+@media(max-width:1000px){
+    .hero-historico h1{
+        font-size:46px;
+    }
+
+    .hero-stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .torneio-card{
+        grid-template-columns:1fr;
+    }
+
+    .torneio-imagem{
+        min-height:260px;
+    }
+}
+
+@media(max-width:650px){
+    .torneios-page{
+        padding:5px 10px 35px;
+    }
+
+    .hero-historico{
+        padding:30px;
+        border-radius:26px;
+    }
+
+    .hero-historico h1{
+        font-size:34px;
+    }
+
+    .hero-stats,
+    .filtros-torneios,
+    .numeros-card{
+        grid-template-columns:1fr;
+    }
+
+    .torneio-conteudo{
+        padding:24px;
+    }
+
+    .torneio-conteudo h2{
+        font-size:30px;
+    }
+
+    .timeline-item{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="torneios-page">
+
+    <section class="hero-historico">
+
+        <div class="hero-label">
+            <i class="fa-solid fa-trophy"></i>
+            Histórico Oficial
+        </div>
+
+        <h1>
+            Torneios
+            <span>Tênis Panambi</span>
+        </h1>
+
+        <p>
+            Uma linha do tempo dos torneios realizados, com campeões,
+            vice-campeões, categorias e os principais números de cada edição.
+        </p>
+
+        <div class="hero-stats">
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-trophy"></i>
+                <strong>{{ total_torneios_geral }}</strong>
+                <span>Torneios realizados</span>
+            </div>
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-users"></i>
+                <strong>{{ total_inscritos_geral }}</strong>
+                <span>Atletas participantes</span>
+            </div>
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+                <strong>{{ total_jogos_geral }}</strong>
+                <span>Jogos disputados</span>
+            </div>
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-medal"></i>
+                <strong>{{ total_categorias_geral }}</strong>
+                <span>Categorias disputadas</span>
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="filtros-torneios">
+
+        <div class="filtro-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="buscaTorneio" placeholder="Buscar torneio pelo nome...">
+        </div>
+
+        <div class="filtro-box">
+            <i class="fa-solid fa-calendar"></i>
+            <select id="filtroAno">
+                <option value="">Todos os anos</option>
+
+                {% for torneio in torneios %}
+                    <option value="{{ torneio.data_inicio|date:'Y' }}">
+                        {{ torneio.data_inicio|date:'Y' }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+    </div>
+
+    <div class="torneios-grid" id="listaTorneios">
+
+        {% for torneio in torneios %}
+
+            <article
+                class="torneio-card"
+                data-nome="{{ torneio.nome|lower }}"
+                data-ano="{{ torneio.data_inicio|date:'Y' }}"
+            >
+
+                <div class="torneio-imagem">
+
+                    <div class="tipo-badge">
+                        {{ torneio.get_tipo_display }}
+                    </div>
+
+                    {% if torneio.logo %}
+                        <img src="{{ torneio.logo.url }}" alt="{{ torneio.nome }}">
+                    {% else %}
+                        <div class="logo-placeholder">🎾</div>
+                    {% endif %}
+
+                </div>
+
+                <div class="torneio-conteudo">
+
+                    <h2>{{ torneio.nome }}</h2>
+
+                    <div class="torneio-meta">
+
+                        <span>
+                            <i class="fa-solid fa-calendar-days"></i>
+                            {{ torneio.data_inicio|date:"d/m/Y" }}
+
+                            {% if torneio.data_fim %}
+                                até {{ torneio.data_fim|date:"d/m/Y" }}
+                            {% endif %}
+                        </span>
+
+                        <span>
+                            <i class="fa-solid fa-location-dot"></i>
+                            {{ torneio.local|default:"Tênis Panambi" }}
+                        </span>
+
+                    </div>
+
+                    <div class="numeros-card">
+
+                        <div class="numero-box inscritos">
+                            <i class="fa-solid fa-users"></i>
+                            <strong>{{ torneio.total_inscritos }}</strong>
+                            <span>Inscritos</span>
+                        </div>
+
+                        <div class="numero-box jogos">
+                            <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+                            <strong>{{ torneio.total_jogos }}</strong>
+                            <span>Jogos</span>
+                        </div>
+
+                        <div class="numero-box categorias">
+                            <i class="fa-solid fa-medal"></i>
+                            <strong>{{ torneio.total_categorias }}</strong>
+                            <span>Categorias</span>
+                        </div>
+
+                    </div>
+
+                    <a href="/torneios-historico/{{ torneio.id }}/" class="btn-ver-torneio">
+                        Ver campeões e resultados
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <div class="sem-torneios">
+                Nenhum torneio cadastrado ainda.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% if torneios %}
+        <section class="timeline">
+
+            <h2>
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Linha do Tempo
+            </h2>
+
+            <div class="timeline-list">
+
+                {% for torneio in torneios %}
+                    <div class="timeline-item">
+                        <div class="timeline-ano">
+                            {{ torneio.data_inicio|date:"Y" }}
+                        </div>
+
+                        <div>
+                            <div class="timeline-nome">
+                                {{ torneio.nome }}
+                            </div>
+
+                            <div style="color:#94a3b8;font-weight:800;margin-top:4px;">
+                                {{ torneio.data_inicio|date:"d/m/Y" }}
+                                {% if torneio.data_fim %}
+                                    até {{ torneio.data_fim|date:"d/m/Y" }}
+                                {% endif %}
+                                • {{ torneio.local|default:"Tênis Panambi" }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        </section>
+    {% endif %}
+
+</div>
+
+<script>
+const buscaTorneio = document.getElementById('buscaTorneio');
+const filtroAno = document.getElementById('filtroAno');
+const cards = document.querySelectorAll('.torneio-card');
+
+function filtrarTorneios(){
+    const busca = buscaTorneio.value.toLowerCase();
+    const ano = filtroAno.value;
+
+    cards.forEach(card => {
+        const nome = card.dataset.nome || '';
+        const anoCard = card.dataset.ano || '';
+
+        const passouBusca = nome.includes(busca);
+        const passouAno = !ano || anoCard === ano;
+
+        if(passouBusca && passouAno){
+            card.style.display = 'grid';
+        }else{
+            card.style.display = 'none';
+        }
+    });
+}
+
+if(buscaTorneio){
+    buscaTorneio.addEventListener('input', filtrarTorneios);
+}
+
+if(filtroAno){
+    filtroAno.addEventListener('change', filtrarTorneios);
+}
+</script>
+
+{% endblock %}

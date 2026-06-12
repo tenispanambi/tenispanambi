@@ -748,3 +748,84 @@ class ReservaQuadra(models.Model):
 
     def __str__(self):
         return f'{self.data} - {self.horario} - {self.reservado_por.nome}' 
+    
+class RegistroTorneio(models.Model):
+
+    TIPO_CHOICES = (
+        ('SIMPLES', 'Simples'),
+        ('DUPLAS', 'Duplas'),
+        ('SIMPLES_DUPLAS', 'Simples e Duplas'),
+        ('GERAL', 'Geral'),
+    )
+
+    nome = models.CharField(max_length=150)
+    edicao = models.CharField(max_length=50, blank=True, null=True)
+
+    tipo = models.CharField(
+        max_length=20,
+        choices=TIPO_CHOICES,
+        default='GERAL'
+    )
+
+    data_inicio = models.DateField()
+    data_fim = models.DateField(blank=True, null=True)
+
+    local = models.CharField(max_length=150, blank=True, null=True)
+
+    logo = models.ImageField(
+        upload_to='historico_torneios/logos/',
+        blank=True,
+        null=True
+    )
+
+    total_inscritos = models.IntegerField(default=0)
+    total_jogos = models.IntegerField(default=0)
+    total_categorias = models.IntegerField(default=0)
+
+    observacoes = models.TextField(blank=True, null=True)
+
+    ativo = models.BooleanField(default=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Histórico de Torneio'
+        verbose_name_plural = 'Histórico de Torneios'
+        ordering = ['-data_inicio', '-id']
+
+    def __str__(self):
+        return self.nome
+
+
+class ResultadoTorneio(models.Model):
+
+    torneio = models.ForeignKey(
+        RegistroTorneio,
+        on_delete=models.CASCADE,
+        related_name='resultados'
+    )
+
+    categoria = models.CharField(max_length=100)
+
+    campeao = models.CharField(
+        max_length=200,
+        help_text='Para duplas, informe: Jogador 1 / Jogador 2'
+    )
+
+    vice = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text='Para duplas, informe: Jogador 1 / Jogador 2'
+    )
+
+    ordem = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Resultado do Torneio'
+        verbose_name_plural = 'Resultados dos Torneios'
+        ordering = ['ordem', 'categoria']
+
+    def __str__(self):
+        return f'{self.torneio.nome} - {self.categoria}'
