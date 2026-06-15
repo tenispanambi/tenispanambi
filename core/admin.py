@@ -15,14 +15,11 @@ from .models import (
     ReservaQuadra,
     RegistroTorneio,
     ResultadoTorneio,
+    BannerSite,
 )
 
 from .services.ranking import recalcular_ranking
 
-
-# =========================
-# INLINES
-# =========================
 
 class ParticipanteInline(admin.TabularInline):
     model = ParticipanteJogo
@@ -34,70 +31,22 @@ class SetInline(admin.TabularInline):
     extra = 3
 
 
-# =========================
-# JOGADOR
-# =========================
-
 @admin.register(Jogador)
 class JogadorAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'categoria', 'nivel', 'cidade', 'ativo')
+    list_filter = ('categoria', 'nivel', 'ativo')
+    search_fields = ('nome', 'cidade', 'instagram')
 
-    list_display = (
-        'nome',
-        'categoria',
-        'nivel',
-        'cidade',
-        'ativo',
-    )
-
-    list_filter = (
-        'categoria',
-        'nivel',
-        'ativo',
-    )
-
-    search_fields = (
-        'nome',
-        'cidade',
-        'instagram',
-    )
-
-
-# =========================
-# TORNEIO
-# =========================
 
 @admin.register(Torneio)
 class TorneioAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'edicao', 'ano', 'tipo', 'disputa', 'status', 'ativo')
+    list_filter = ('tipo', 'disputa', 'status', 'ativo')
+    search_fields = ('nome',)
 
-    list_display = (
-        'nome',
-        'edicao',
-        'ano',
-        'tipo',
-        'disputa',
-        'status',
-        'ativo',
-    )
-
-    list_filter = (
-        'tipo',
-        'disputa',
-        'status',
-        'ativo',
-    )
-
-    search_fields = (
-        'nome',
-    )
-
-
-# =========================
-# CATEGORIA TORNEIO
-# =========================
 
 @admin.register(CategoriaTorneio)
 class CategoriaTorneioAdmin(admin.ModelAdmin):
-
     list_display = (
         'torneio',
         'categoria',
@@ -106,36 +55,24 @@ class CategoriaTorneioAdmin(admin.ModelAdmin):
         'melhores_resultados',
         'max_jogos_por_rodada',
     )
-
-    list_filter = (
-        'categoria',
-        'torneio',
-    )
-
-    actions = [
-        'importar_jogadores_ativos',
-    ]
+    list_filter = ('categoria', 'torneio')
+    actions = ['importar_jogadores_ativos']
 
     def importar_jogadores_ativos(self, request, queryset):
-
         total_criados = 0
 
         for categoria_torneio in queryset:
-
             jogadores = Jogador.objects.filter(
                 ativo=True,
                 categoria=categoria_torneio.categoria
             )
 
             for jogador in jogadores:
-
                 inscricao, criado = InscricaoTorneio.objects.get_or_create(
                     jogador=jogador,
                     torneio=categoria_torneio.torneio,
                     categoria=categoria_torneio,
-                    defaults={
-                        'ativo': True
-                    }
+                    defaults={'ativo': True}
                 )
 
                 if criado:
@@ -154,46 +91,23 @@ class CategoriaTorneioAdmin(admin.ModelAdmin):
     importar_jogadores_ativos.short_description = 'Importar jogadores ativos desta categoria'
 
 
-# =========================
-# INSCRIÇÃO
-# =========================
-
 @admin.register(InscricaoTorneio)
 class InscricaoTorneioAdmin(admin.ModelAdmin):
-
-    list_display = (
-        'jogador',
-        'torneio',
-        'categoria',
-        'ativo',
-    )
-
-    list_filter = (
-        'ativo',
-        'categoria',
-    )
-
-    search_fields = (
-        'jogador__nome',
-    )
+    list_display = ('jogador', 'torneio', 'categoria', 'ativo')
+    list_filter = ('ativo', 'categoria')
+    search_fields = ('jogador__nome',)
 
     def save_model(self, request, obj, form, change):
-
         super().save_model(request, obj, form, change)
 
         recalcular_ranking(
-    obj.torneio,
-    obj.categoria
-)
+            obj.torneio,
+            obj.categoria
+        )
 
-
-# =========================
-# JOGOS
-# =========================
 
 @admin.register(Jogo)
 class JogoAdmin(admin.ModelAdmin):
-
     list_display = (
         'descricao_confronto',
         'tipo_jogo',
@@ -221,14 +135,9 @@ class JogoAdmin(admin.ModelAdmin):
 
     list_per_page = 20
     ordering = ('-data_jogo', '-id')
-
-    inlines = [
-        ParticipanteInline,
-        SetInline,
-    ]
+    inlines = [ParticipanteInline, SetInline]
 
     def status_ranking(self, obj):
-
         if obj.status != 'CONFIRMADO':
             return 'Não confirmado'
 
@@ -238,14 +147,10 @@ class JogoAdmin(admin.ModelAdmin):
         if not obj.torneio or not obj.categoria:
             return 'Histórico'
 
-        participantes = ParticipanteJogo.objects.filter(
-            jogo=obj
-        )
-
+        participantes = ParticipanteJogo.objects.filter(jogo=obj)
         jogadores_contabilizados = []
 
         for p in participantes:
-
             inscrito = InscricaoTorneio.objects.filter(
                 torneio=obj.torneio,
                 categoria=obj.categoria,
@@ -262,23 +167,18 @@ class JogoAdmin(admin.ModelAdmin):
                 jogo__rodada=obj.rodada,
                 jogo__status='CONFIRMADO',
                 jogador=p.jogador
-            ).order_by(
-                'jogo__id'
-            )
+            ).order_by('jogo__id')
 
             posicao = 0
 
             for item in jogos_rodada:
-
                 posicao += 1
 
                 if item.jogo.id == obj.id:
                     break
 
             if posicao <= obj.categoria.max_jogos_por_rodada:
-                jogadores_contabilizados.append(
-                    p.jogador.id
-                )
+                jogadores_contabilizados.append(p.jogador.id)
 
         if len(jogadores_contabilizados) == 0:
             return 'Não computado'
@@ -293,64 +193,33 @@ class JogoAdmin(admin.ModelAdmin):
     status_ranking.short_description = 'Ranking'
 
     def save_model(self, request, obj, form, change):
-
-        super().save_model(
-            request,
-            obj,
-            form,
-            change
-        )
+        super().save_model(request, obj, form, change)
 
         if obj.status == 'CONFIRMADO' and obj.torneio and obj.categoria:
-            recalcular_ranking(
-                obj.torneio,
-                obj.categoria
-            )
+            recalcular_ranking(obj.torneio, obj.categoria)
 
     def delete_model(self, request, obj):
-
         torneio = obj.torneio
         categoria = obj.categoria
 
-        super().delete_model(
-            request,
-            obj
-        )
+        super().delete_model(request, obj)
 
         if torneio and categoria:
-            recalcular_ranking(
-                torneio,
-                categoria
-            )
+            recalcular_ranking(torneio, categoria)
 
     def delete_queryset(self, request, queryset):
-
         recalculos = []
 
         for obj in queryset:
             if obj.torneio and obj.categoria:
-                recalculos.append(
-                    (obj.torneio, obj.categoria)
-                )
+                recalculos.append((obj.torneio, obj.categoria))
 
-        super().delete_queryset(
-            request,
-            queryset
-        )
+        super().delete_queryset(request, queryset)
 
         for torneio, categoria in recalculos:
-            recalcular_ranking(
-                torneio,
-                categoria
-            )
+            recalcular_ranking(torneio, categoria)
 
-    def formfield_for_foreignkey(
-        self,
-        db_field,
-        request,
-        **kwargs
-    ):
-
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
         torneio_ativo = Torneio.objects.filter(
             ativo=True
         ).order_by(
@@ -360,7 +229,6 @@ class JogoAdmin(admin.ModelAdmin):
         ).first()
 
         if db_field.name == 'torneio':
-
             kwargs['queryset'] = Torneio.objects.filter(
                 ativo=True
             ).order_by(
@@ -370,12 +238,9 @@ class JogoAdmin(admin.ModelAdmin):
             )
 
         elif db_field.name == 'categoria' and torneio_ativo:
-
             kwargs['queryset'] = CategoriaTorneio.objects.filter(
                 torneio=torneio_ativo
-            ).order_by(
-                'categoria'
-            )
+            ).order_by('categoria')
 
         return super().formfield_for_foreignkey(
             db_field,
@@ -384,14 +249,8 @@ class JogoAdmin(admin.ModelAdmin):
         )
 
 
-
-# =========================
-# RANKING
-# =========================
-
 @admin.register(RankingJogador)
 class RankingJogadorAdmin(admin.ModelAdmin):
-
     list_display = (
         'jogador',
         'categoria',
@@ -403,23 +262,12 @@ class RankingJogadorAdmin(admin.ModelAdmin):
         'status_ranking',
     )
 
-    list_filter = (
-        'categoria',
-        'status_ranking',
-    )
+    list_filter = ('categoria', 'status_ranking')
+    search_fields = ('jogador__nome',)
 
-    search_fields = (
-        'jogador__nome',
-    )
-
-
-# =========================
-# MURAL DOS CAMPEÕES
-# =========================
 
 @admin.register(CampeaoTorneio)
 class CampeaoTorneioAdmin(admin.ModelAdmin):
-
     list_display = (
         'categoria',
         'edicao',
@@ -429,10 +277,7 @@ class CampeaoTorneioAdmin(admin.ModelAdmin):
         'placar',
     )
 
-    list_filter = (
-        'categoria',
-        'edicao',
-    )
+    list_filter = ('categoria', 'edicao')
 
     search_fields = (
         'campeao_1',
@@ -440,15 +285,10 @@ class CampeaoTorneioAdmin(admin.ModelAdmin):
         'finalista_1',
         'finalista_2',
     )
-    
 
-# =========================
-# ALUGUEL DA QUADRA
-# =========================
 
 @admin.register(ConfiguracaoHorarioQuadra)
 class ConfiguracaoHorarioQuadraAdmin(admin.ModelAdmin):
-
     list_display = (
         'quadra',
         'dia_semana',
@@ -457,31 +297,21 @@ class ConfiguracaoHorarioQuadraAdmin(admin.ModelAdmin):
         'ativo',
     )
 
-    list_filter = (
-        'quadra',
-        'dia_semana',
-        'ativo',
-    )
-
-    ordering = (
-        'quadra',
-        'dia_semana',
-        'hora_inicio',
-    )
+    list_filter = ('quadra', 'dia_semana', 'ativo')
+    ordering = ('quadra', 'dia_semana', 'hora_inicio')
 
 
 @admin.register(ReservaQuadra)
 class ReservaQuadraAdmin(admin.ModelAdmin):
-
     list_display = (
-    'data',
-    'horario',
-    'reservado_por',
-    'status',
-    'checkin_realizado',
-    'checkin_data_hora',
-    'checkin_distancia_metros',
-)
+        'data',
+        'horario',
+        'reservado_por',
+        'status',
+        'checkin_realizado',
+        'checkin_data_hora',
+        'checkin_distancia_metros',
+    )
 
     list_filter = (
         'data',
@@ -503,25 +333,13 @@ class ReservaQuadraAdmin(admin.ModelAdmin):
         'criado_em',
     )
 
+
 @admin.register(Quadra)
 class QuadraAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'ativa')
+    list_filter = ('ativa',)
+    search_fields = ('nome',)
 
-    list_display = (
-        'nome',
-        'ativa',
-    )
-
-    list_filter = (
-        'ativa',
-    )
-
-    search_fields = (
-        'nome',
-    )    
-
-# ==========================================
-# HISTÓRICO DOS TORNEIOS
-# ==========================================
 
 class ResultadoTorneioInline(admin.TabularInline):
     model = ResultadoTorneio
@@ -530,7 +348,6 @@ class ResultadoTorneioInline(admin.TabularInline):
 
 @admin.register(RegistroTorneio)
 class RegistroTorneioAdmin(admin.ModelAdmin):
-
     list_display = (
         'nome',
         'tipo',
@@ -554,14 +371,11 @@ class RegistroTorneioAdmin(admin.ModelAdmin):
         'local',
     )
 
-    inlines = [
-        ResultadoTorneioInline
-    ]
+    inlines = [ResultadoTorneioInline]
 
 
 @admin.register(ResultadoTorneio)
 class ResultadoTorneioAdmin(admin.ModelAdmin):
-
     list_display = (
         'torneio',
         'categoria',
@@ -580,4 +394,38 @@ class ResultadoTorneioAdmin(admin.ModelAdmin):
         'categoria',
         'campeao',
         'vice',
+    )
+
+
+@admin.register(BannerSite)
+class BannerSiteAdmin(admin.ModelAdmin):
+    list_display = (
+        'titulo',
+        'pagina',
+        'ativo',
+        'ordem',
+        'visualizacoes',
+        'cliques',
+        'criado_em',
+    )
+
+    list_filter = (
+        'ativo',
+        'pagina',
+    )
+
+    search_fields = (
+        'titulo',
+    )
+
+    ordering = (
+        'pagina',
+        'ordem',
+        '-criado_em',
+    )
+
+    readonly_fields = (
+        'visualizacoes',
+        'cliques',
+        'criado_em',
     )

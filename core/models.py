@@ -285,10 +285,11 @@ class InscricaoTorneio(models.Model):
 class Jogo(models.Model):
 
     TIPOS = [
-        ('CHAMPIONSHIP_DUPLAS', 'Championship Duplas'),
-        ('AMISTOSO_DUPLAS', 'Amistoso Duplas'),
-        ('SIMPLES', 'Simples'),
-    ]
+    ('SIMPLES', 'Simples Amistoso'),
+    ('AMISTOSO_DUPLAS', 'Duplas Amistoso'),
+    ('CHAMPIONSHIP_SIMPLES', 'Championship Simples'),
+    ('CHAMPIONSHIP_DUPLAS', 'Championship Duplas'),
+]
 
     STATUS_JOGO = [
         ('PENDENTE', 'Pendente'),
@@ -829,3 +830,61 @@ class ResultadoTorneio(models.Model):
 
     def __str__(self):
         return f'{self.torneio.nome} - {self.categoria}'
+    
+class BannerSite(models.Model):
+
+    PAGINAS = [
+        ('HOME', 'Home'),
+        ('RANKING', 'Ranking'),
+        ('TORNEIOS', 'Torneios'),
+        ('QUADRAS', 'Quadras'),
+        ('HEADTOHEAD', 'Head to Head'),
+    ]
+
+    titulo = models.CharField(max_length=150)
+
+    pagina = models.CharField(
+        max_length=30,
+        choices=PAGINAS,
+        default='HOME'
+    )
+
+    imagem_desktop = models.ImageField(
+        upload_to='banners/desktop/',
+        blank=True,
+        null=True
+    )
+
+    imagem_mobile = models.ImageField(
+        upload_to='banners/mobile/',
+        blank=True,
+        null=True
+    )
+
+    video = models.FileField(
+        upload_to='banners/videos/',
+        blank=True,
+        null=True
+    )
+
+    link = models.URLField(
+        blank=True,
+        null=True
+    )
+
+    ativo = models.BooleanField(default=True)
+
+    ordem = models.IntegerField(default=0)
+
+    visualizacoes = models.PositiveIntegerField(default=0)
+    cliques = models.PositiveIntegerField(default=0)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['pagina', 'ordem', '-criado_em']
+        verbose_name = 'Banner do Site'
+        verbose_name_plural = 'Banners do Site'
+
+    def __str__(self):
+        return f'{self.titulo} - {self.get_pagina_display()}'

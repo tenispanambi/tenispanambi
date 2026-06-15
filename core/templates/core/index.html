@@ -18,23 +18,6 @@ body{
     padding:35px 35px 60px 35px;
 }
 
-.titulo-home{
-    text-align:center;
-    margin:15px 0 35px 0;
-}
-
-.titulo-home h1{
-    font-size:48px;
-    color:#0b4d91;
-    margin-bottom:10px;
-}
-
-.titulo-home p{
-    font-size:23px;
-    color:#44546a;
-    margin-top:0;
-}
-
 .cards-status{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -80,21 +63,10 @@ body{
     flex-shrink:0;
 }
 
-.azul{
-    background:#e8f1ff;
-}
-
-.verde{
-    background:#e9fbe9;
-}
-
-.laranja{
-    background:#fff1df;
-}
-
-.roxo{
-    background:#f0e9ff;
-}
+.azul{ background:#e8f1ff; }
+.verde{ background:#e9fbe9; }
+.laranja{ background:#fff1df; }
+.roxo{ background:#f0e9ff; }
 
 .status-card h2{
     margin:0;
@@ -205,59 +177,6 @@ body{
     text-align:right;
 }
 
-.torneio-item{
-    display:flex;
-    align-items:center;
-    padding:20px 25px;
-    border-bottom:1px solid #edf0f4;
-    gap:18px;
-}
-
-.data-box{
-    width:72px;
-    height:72px;
-    background:#f1f4f8;
-    border-radius:14px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    color:#062b55;
-    font-weight:bold;
-    flex-shrink:0;
-}
-
-.data-box .dia{
-    font-size:27px;
-}
-
-.data-box .mes{
-    font-size:14px;
-}
-
-.torneio-info{
-    flex:1;
-}
-
-.torneio-info strong{
-    font-size:18px;
-    color:#062b55;
-}
-
-.torneio-info div{
-    margin-top:5px;
-    color:#44546a;
-}
-
-.status-torneio{
-    background:#d4edda;
-    color:#155724;
-    padding:7px 12px;
-    border-radius:14px;
-    font-weight:bold;
-    font-size:13px;
-}
-
 .ultimos-jogos{
     background:white;
     border-radius:22px;
@@ -293,8 +212,6 @@ body{
     padding:35px;
     color:#64748b;
 }
-
-/* MOBILE CARDS */
 
 .mobile-jogos{
     display:none;
@@ -337,87 +254,6 @@ body{
 
 .mobile-jogo-torneio{
     color:#16a34a;
-}
-
-/* RESPONSIVO */
-
-@media(max-width:1000px){
-
-    .container{
-        padding:15px;
-    }
-
-    .cards-status,
-    .grade-principal{
-        grid-template-columns:1fr;
-    }
-
-    .titulo-home{
-        margin-top:0;
-    }
-
-    .titulo-home h1{
-        font-size:28px;
-        line-height:1.2;
-    }
-
-    .titulo-home p{
-        font-size:18px;
-        line-height:1.4;
-    }
-
-    .status-card{
-        padding:22px;
-    }
-
-    .status-card h2{
-        font-size:28px;
-    }
-
-    .ranking-buttons{
-        flex-direction:column;
-    }
-
-    .ranking-buttons button{
-        width:100%;
-    }
-
-    .ranking-item{
-        padding:16px;
-        gap:12px;
-    }
-
-    .ranking-nome{
-        font-size:16px;
-    }
-
-    .ranking-pontos{
-        font-size:16px;
-    }
-
-    .card-header{
-        padding:22px 18px;
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
-    }
-
-    .card-header h2{
-        font-size:24px;
-    }
-
-    .torneio-item{
-        padding:18px;
-    }
-
-    .tabela-jogos{
-        display:none;
-    }
-
-    .mobile-jogos{
-        display:block;
-    }
-
 }
 
 .torneio-atual-card{
@@ -464,10 +300,6 @@ body{
     display:inline-block;
 }
 
-.btn-torneio-atual:hover{
-    transform:translateY(-2px);
-}
-
 .btn-torneio-secundario{
     background:#ffffff20;
     color:white;
@@ -484,23 +316,13 @@ body{
     background:#ffffff35;
 }
 
-@media(max-width:768px){
-
-    .torneio-atual-card{
-        flex-direction:column;
-        align-items:flex-start;
-    }
-
-    .torneio-atual-info h2{
-        font-size:26px;
-    }
-}
+/* BANNERS DO ADMIN */
 
 .banner-slider{
     position:relative;
     width:100%;
-    max-width:1330px;
-    height:300px;
+    max-width:1600px;
+    aspect-ratio:4/1;
     overflow:hidden;
     border-radius:28px;
     margin:0 auto 30px auto;
@@ -519,31 +341,17 @@ body{
     opacity:1;
 }
 
-.banner-slider{
-    position:relative;
-    width:100%;
-    max-width:1600px;
-    aspect-ratio:4/1;
-    overflow:hidden;
-    border-radius:28px;
-    margin:0 auto 30px auto;
-    box-shadow:0 12px 35px rgba(0,0,0,.18);
-}
-
-.banner-slide{
-    position:absolute;
-    inset:0;
-    opacity:0;
-    transition:.6s;
-}
-
-.banner-slide.ativo{
-    opacity:1;
-}
-
-.banner-slide img{
+.banner-slide a,
+.banner-slide picture{
+    display:block;
     width:100%;
     height:100%;
+}
+
+.banner-home{
+    width:100%;
+    height:100%;
+    display:block;
     object-fit:cover;
 }
 
@@ -574,10 +382,100 @@ body{
     right:18px;
 }
 
+.banner-vazio{
+    height:300px;
+    border-radius:28px;
+    background:linear-gradient(135deg,#020617,#0b4d91);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    font-weight:900;
+    margin-bottom:30px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1000px){
+
+    .container{
+        padding:15px;
+    }
+
+    .cards-status,
+    .grade-principal{
+        grid-template-columns:1fr;
+    }
+
+    .status-card{
+        padding:22px;
+    }
+
+    .status-card h2{
+        font-size:28px;
+    }
+
+    .ranking-buttons{
+        flex-direction:column;
+    }
+
+    .ranking-buttons button{
+        width:100%;
+    }
+
+    .ranking-item{
+        padding:16px;
+        gap:12px;
+    }
+
+    .ranking-nome{
+        font-size:16px;
+    }
+
+    .ranking-pontos{
+        font-size:16px;
+    }
+
+    .card-header{
+        padding:22px 18px;
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .card-header h2{
+        font-size:24px;
+    }
+
+    .tabela-jogos{
+        display:none;
+    }
+
+    .mobile-jogos{
+        display:block;
+    }
+}
+
 @media(max-width:768px){
+
+    .torneio-atual-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .torneio-atual-info h2{
+        font-size:26px;
+    }
+
+    .btn-torneio-secundario{
+        margin-left:0;
+        margin-top:10px;
+    }
+
     .banner-slider{
-        height:170px;
-        border-radius:18px;
+        aspect-ratio:4/5;
+        border-radius:20px;
     }
 
     .banner-btn{
@@ -591,60 +489,82 @@ body{
 
 <div class="container">
 
-    <div class="banner-slider">
+    {% if banners_home %}
+        <div class="banner-slider">
 
-    <div class="banner-slide ativo">
-        <img src="/static/banners/banner1.jpg">
-    </div>
+            {% for banner in banners_home %}
+                <div class="banner-slide {% if forloop.first %}ativo{% endif %}">
 
-    <div class="banner-slide">
-        <img src="/static/banners/banner2.jpg">
-    </div>
+                    {% if banner.link %}
+                        <a href="{{ banner.link }}">
+                    {% endif %}
 
-    <div class="banner-slide">
-        <img src="/static/banners/banner3.jpg">
-    </div>
+                    <picture>
+                        {% if banner.imagem_mobile %}
+                            <source media="(max-width:768px)" srcset="{{ banner.imagem_mobile.url }}">
+                        {% endif %}
 
-    <button class="banner-btn prev" onclick="bannerAnterior()">❮</button>
-<button class="banner-btn next" onclick="proximoBanner()">❯</button>
+                        <img
+                            src="{{ banner.imagem_desktop.url }}"
+                            alt="{{ banner.titulo }}"
+                            class="banner-home"
+                        >
+                    </picture>
 
-</div>
+                    {% if banner.link %}
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+            {% if banners_home|length > 1 %}
+                <button class="banner-btn prev" onclick="bannerAnterior()">❮</button>
+                <button class="banner-btn next" onclick="proximoBanner()">❯</button>
+            {% endif %}
+
+        </div>
+    {% else %}
+        <div class="banner-vazio">
+            Cadastre banners no painel administrativo
+        </div>
+    {% endif %}
 
     {% if torneio_ativo %}
 
-<div class="torneio-atual-card">
+        <div class="torneio-atual-card">
 
-    <div class="torneio-atual-info">
+            <div class="torneio-atual-info">
 
-        <span class="badge-atual">
-            TORNEIO ATUAL
-        </span>
+                <span class="badge-atual">
+                    TORNEIO ATUAL
+                </span>
 
-        <h2>
-            🎾 {{ torneio_ativo.nome }}
-        </h2>
+                <h2>
+                    🎾 {{ torneio_ativo.nome }}
+                </h2>
 
-        <p>
-            {{ torneio_ativo.edicao }}ª edição • {{ torneio_ativo.ano }} • {{ torneio_ativo.get_status_display }}
-        </p>
+                <p>
+                    {{ torneio_ativo.edicao }}ª edição • {{ torneio_ativo.ano }} • {{ torneio_ativo.get_status_display }}
+                </p>
 
-    </div>
+            </div>
 
-    <div class="torneio-atual-acoes">
+            <div class="torneio-atual-acoes">
 
-        <a href="/torneios/{{ torneio_ativo.id }}/" class="btn-torneio-atual">
-            Ver Torneio Completo →
-        </a>
+                <a href="/torneios/{{ torneio_ativo.id }}/" class="btn-torneio-atual">
+                    Ver Torneio Completo →
+                </a>
 
-        <a href="/ranking/" class="btn-torneio-secundario">
-            Ver Ranking
-        </a>
+                <a href="/ranking/" class="btn-torneio-secundario">
+                    Ver Ranking
+                </a>
 
-    </div>
+            </div>
 
-</div>
+        </div>
 
-{% endif %}
+    {% endif %}
 
     <div class="cards-status">
 
@@ -657,248 +577,272 @@ body{
         </div>
 
         <div class="status-card">
-    <div class="icone verde">🎾</div>
+            <div class="icone verde">🎾</div>
 
-    <div id="jogosSlider">
+            <div id="jogosSlider">
 
-        <div class="jogo-slide">
-            <h2>{{ total_jogos_geral }}</h2>
-            <p>Total de jogos</p>
+                <div class="jogo-slide">
+                    <h2>{{ total_jogos_geral }}</h2>
+                    <p>Total de jogos</p>
+                </div>
+
+                <div class="jogo-slide" style="display:none;">
+                    <h2>{{ total_jogos_duplas }}</h2>
+                    <p>Jogos de duplas</p>
+                </div>
+
+                <div class="jogo-slide" style="display:none;">
+                    <h2>{{ total_jogos_simples }}</h2>
+                    <p>Jogos simples</p>
+                </div>
+
+            </div>
         </div>
-
-        <div class="jogo-slide" style="display:none;">
-            <h2>{{ total_jogos_duplas }}</h2>
-            <p>Jogos de duplas</p>
-        </div>
-
-        <div class="jogo-slide" style="display:none;">
-            <h2>{{ total_jogos_simples }}</h2>
-            <p>Jogos simples</p>
-        </div>
-
-    </div>
-</div>
 
         <div class="status-card">
 
-    <div class="icone laranja">
-        🎯
-    </div>
+            <div class="icone laranja">
+                🎯
+            </div>
 
-    <div style="width:100%;">
+            <div style="width:100%;">
 
-        <p style="
-        margin:0 0 8px 0;
-        font-size:18px;
-        color:#44546a;
-        font-weight:700;
-        ">
-            Placar mais comum
-        </p>
+                <p style="
+                margin:0 0 8px 0;
+                font-size:18px;
+                color:#44546a;
+                font-weight:700;
+                ">
+                    Placar mais comum
+                </p>
 
-        <div id="placarSlider">
+                <div id="placarSlider">
 
-            {% for placar, qtd in placares_mais_comuns %}
+                    {% for placar, qtd in placares_mais_comuns %}
 
-                <div
-                    class="placar-slide"
-                    style="{% if not forloop.first %}display:none;{% endif %}"
-                >
+                        <div
+                            class="placar-slide"
+                            style="{% if not forloop.first %}display:none;{% endif %}"
+                        >
 
-                    <h2 style="
-                    margin:0;
-                    font-size:52px;
-                    color:#062b55;
-                    line-height:1;
-                    ">
-                        {{ placar }}
-                    </h2>
+                            <h2 style="
+                            margin:0;
+                            font-size:52px;
+                            color:#062b55;
+                            line-height:1;
+                            ">
+                                {{ placar }}
+                            </h2>
 
-                    <div style="
-                    margin-top:8px;
-                    font-size:16px;
-                    color:#64748b;
-                    font-weight:bold;
-                    ">
-                        {{ qtd }} vezes nas duplas
-                    </div>
+                            <div style="
+                            margin-top:8px;
+                            font-size:16px;
+                            color:#64748b;
+                            font-weight:bold;
+                            ">
+                                {{ qtd }} vezes nas duplas
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div>
+                            <h2 style="margin:0;font-size:52px;color:#062b55;line-height:1;">
+                                -
+                            </h2>
+
+                            <div style="margin-top:8px;font-size:16px;color:#64748b;font-weight:bold;">
+                                Sem dados ainda
+                            </div>
+                        </div>
+
+                    {% endfor %}
 
                 </div>
 
-            {% endfor %}
+            </div>
 
         </div>
-
-    </div>
-
-</div>
 
         <div class="status-card">
             <div class="icone roxo">🎾</div>
             <div>
                 <h2>{{ jogos_ultima_rodada }}</h2>
 
-<p>
-    Jogos da Última Rodada
-</p>
+                <p>
+                    Jogos da Última Rodada
+                </p>
 
-<div style="
-margin-top:8px;
-font-size:15px;
-color:#64748b;
-font-weight:bold;
-">
-    {{ ultima_rodada_geral }}ª rodada geral
-</div>
+                <div style="
+                margin-top:8px;
+                font-size:15px;
+                color:#64748b;
+                font-weight:bold;
+                ">
+                    {% if ultima_rodada_geral %}
+                        {{ ultima_rodada_geral }}ª rodada geral
+                    {% else %}
+                        Sem rodada registrada
+                    {% endif %}
+                </div>
             </div>
         </div>
 
     </div>
 
-   <div class="grade-principal">
+    <div class="grade-principal">
 
-    <!-- RANKING -->
-    <div class="card">
+        <div class="card">
 
-        <div class="card-header">
-            <h2>Ranking Atual</h2>
-            <a href="/ranking/">Ver ranking completo →</a>
-        </div>
-
-        <div class="ranking-buttons">
-            <button onclick="mostrarRanking('A')" id="btnA" style="background:#0b4d91;color:white;">Categoria A</button>
-            <button onclick="mostrarRanking('B')" id="btnB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
-            <button onclick="mostrarRanking('C')" id="btnC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
-        </div>
-
-        <div id="rankingA">
-            {% for r in ranking_a %}
-            <div class="ranking-item">
-                <div class="posicao">{{ r.posicao }}</div>
-                {% if r.jogador.foto %}
-                    <img class="avatar" src="{{ r.jogador.foto.url }}">
-                {% else %}
-                    <div class="avatar"></div>
-                {% endif %}
-                <div class="ranking-nome">{{ r.jogador.nome }}</div>
-                <div class="ranking-pontos">{{ r.pontos }} pts</div>
+            <div class="card-header">
+                <h2>Ranking Atual</h2>
+                <a href="/ranking/">Ver ranking completo →</a>
             </div>
-            {% endfor %}
+
+            <div class="ranking-buttons">
+                <button onclick="mostrarRanking('A')" id="btnA" style="background:#0b4d91;color:white;">Categoria A</button>
+                <button onclick="mostrarRanking('B')" id="btnB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
+                <button onclick="mostrarRanking('C')" id="btnC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
+            </div>
+
+            <div id="rankingA">
+                {% for r in ranking_a %}
+                    <div class="ranking-item">
+                        <div class="posicao">{{ r.posicao }}</div>
+
+                        {% if r.jogador.foto %}
+                            <img class="avatar" src="{{ r.jogador.foto.url }}">
+                        {% else %}
+                            <div class="avatar"></div>
+                        {% endif %}
+
+                        <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                        <div class="ranking-pontos">{{ r.pontos }} pts</div>
+                    </div>
+                {% empty %}
+                    <div style="padding:25px;color:#64748b;font-weight:bold;">Sem ranking cadastrado.</div>
+                {% endfor %}
+            </div>
+
+            <div id="rankingB" style="display:none;">
+                {% for r in ranking_b %}
+                    <div class="ranking-item">
+                        <div class="posicao">{{ r.posicao }}</div>
+
+                        {% if r.jogador.foto %}
+                            <img class="avatar" src="{{ r.jogador.foto.url }}">
+                        {% else %}
+                            <div class="avatar"></div>
+                        {% endif %}
+
+                        <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                        <div class="ranking-pontos">{{ r.pontos }} pts</div>
+                    </div>
+                {% empty %}
+                    <div style="padding:25px;color:#64748b;font-weight:bold;">Sem ranking cadastrado.</div>
+                {% endfor %}
+            </div>
+
+            <div id="rankingC" style="display:none;">
+                {% for r in ranking_c %}
+                    <div class="ranking-item">
+                        <div class="posicao">{{ r.posicao }}</div>
+
+                        {% if r.jogador.foto %}
+                            <img class="avatar" src="{{ r.jogador.foto.url }}">
+                        {% else %}
+                            <div class="avatar"></div>
+                        {% endif %}
+
+                        <div class="ranking-nome">{{ r.jogador.nome }}</div>
+                        <div class="ranking-pontos">{{ r.pontos }} pts</div>
+                    </div>
+                {% empty %}
+                    <div style="padding:25px;color:#64748b;font-weight:bold;">Sem ranking cadastrado.</div>
+                {% endfor %}
+            </div>
+
         </div>
 
-        <div id="rankingB" style="display:none;">
-            {% for r in ranking_b %}
-            <div class="ranking-item">
-                <div class="posicao">{{ r.posicao }}</div>
-                {% if r.jogador.foto %}
-                    <img class="avatar" src="{{ r.jogador.foto.url }}">
-                {% else %}
-                    <div class="avatar"></div>
-                {% endif %}
-                <div class="ranking-nome">{{ r.jogador.nome }}</div>
-                <div class="ranking-pontos">{{ r.pontos }} pts</div>
-            </div>
-            {% endfor %}
-        </div>
+        <div class="card">
 
-        <div id="rankingC" style="display:none;">
-            {% for r in ranking_c %}
-            <div class="ranking-item">
-                <div class="posicao">{{ r.posicao }}</div>
-                {% if r.jogador.foto %}
-                    <img class="avatar" src="{{ r.jogador.foto.url }}">
-                {% else %}
-                    <div class="avatar"></div>
-                {% endif %}
-                <div class="ranking-nome">{{ r.jogador.nome }}</div>
-                <div class="ranking-pontos">{{ r.pontos }} pts</div>
+            <div class="card-header">
+                <h2>🔥 Última Rodada</h2>
             </div>
-            {% endfor %}
+
+            <div class="ranking-buttons">
+                <button onclick="mostrarDestaque('A')" id="btnDestaqueA" style="background:#0b4d91;color:white;">Categoria A</button>
+                <button onclick="mostrarDestaque('B')" id="btnDestaqueB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
+                <button onclick="mostrarDestaque('C')" id="btnDestaqueC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
+            </div>
+
+            <div id="destaqueA" style="padding:22px 25px 25px 25px;">
+                <h3 style="color:#0b4d91;font-size:22px;">Categoria A • {{ destaques_a.rodada }}ª Rodada</h3>
+
+                {% for j in destaques_a.jogadores %}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                        <div>
+                            <strong style="font-size:18px;color:#062b55;">
+                                {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                                {{ j.nome }}
+                            </strong>
+                            <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                                {{ j.vitorias }}V / {{ j.derrotas }}D
+                            </div>
+                        </div>
+                        <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
+                    </div>
+                {% empty %}
+                    <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+                {% endfor %}
+            </div>
+
+            <div id="destaqueB" style="display:none;padding:22px 25px 25px 25px;">
+                <h3 style="color:#0b4d91;font-size:22px;">Categoria B • {{ destaques_b.rodada }}ª Rodada</h3>
+
+                {% for j in destaques_b.jogadores %}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                        <div>
+                            <strong style="font-size:18px;color:#062b55;">
+                                {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                                {{ j.nome }}
+                            </strong>
+                            <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                                {{ j.vitorias }}V / {{ j.derrotas }}D
+                            </div>
+                        </div>
+                        <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
+                    </div>
+                {% empty %}
+                    <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+                {% endfor %}
+            </div>
+
+            <div id="destaqueC" style="display:none;padding:22px 25px 25px 25px;">
+                <h3 style="color:#0b4d91;font-size:22px;">Categoria C • {{ destaques_c.rodada }}ª Rodada</h3>
+
+                {% for j in destaques_c.jogadores %}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
+                        <div>
+                            <strong style="font-size:18px;color:#062b55;">
+                                {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
+                                {{ j.nome }}
+                            </strong>
+                            <div style="color:#64748b;font-size:14px;margin-top:4px;">
+                                {{ j.vitorias }}V / {{ j.derrotas }}D
+                            </div>
+                        </div>
+                        <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
+                    </div>
+                {% empty %}
+                    <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
+                {% endfor %}
+            </div>
+
         </div>
 
     </div>
-
-    <!-- ÚLTIMA RODADA -->
-    <div class="card">
-
-        <div class="card-header">
-            <h2>🔥 Última Rodada</h2>
-        </div>
-
-        <div class="ranking-buttons">
-            <button onclick="mostrarDestaque('A')" id="btnDestaqueA" style="background:#0b4d91;color:white;">Categoria A</button>
-            <button onclick="mostrarDestaque('B')" id="btnDestaqueB" style="background:#d9e3f0;color:#0b4d91;">Categoria B</button>
-            <button onclick="mostrarDestaque('C')" id="btnDestaqueC" style="background:#d9e3f0;color:#0b4d91;">Categoria C</button>
-        </div>
-
-        <div id="destaqueA" style="padding:22px 25px 25px 25px;">
-            <h3 style="color:#0b4d91;font-size:22px;">Categoria A • {{ destaques_a.rodada }}ª Rodada</h3>
-
-            {% for j in destaques_a.jogadores %}
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
-                <div>
-                    <strong style="font-size:18px;color:#062b55;">
-                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
-                        {{ j.nome }}
-                    </strong>
-                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
-                        {{ j.vitorias }}V / {{ j.derrotas }}D
-                    </div>
-                </div>
-                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
-            </div>
-            {% empty %}
-            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
-            {% endfor %}
-        </div>
-
-        <div id="destaqueB" style="display:none;padding:22px 25px 25px 25px;">
-            <h3 style="color:#0b4d91;font-size:22px;">Categoria B • {{ destaques_b.rodada }}ª Rodada</h3>
-
-            {% for j in destaques_b.jogadores %}
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
-                <div>
-                    <strong style="font-size:18px;color:#062b55;">
-                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
-                        {{ j.nome }}
-                    </strong>
-                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
-                        {{ j.vitorias }}V / {{ j.derrotas }}D
-                    </div>
-                </div>
-                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
-            </div>
-            {% empty %}
-            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
-            {% endfor %}
-        </div>
-
-        <div id="destaqueC" style="display:none;padding:22px 25px 25px 25px;">
-            <h3 style="color:#0b4d91;font-size:22px;">Categoria C • {{ destaques_c.rodada }}ª Rodada</h3>
-
-            {% for j in destaques_c.jogadores %}
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #edf0f4;gap:15px;">
-                <div>
-                    <strong style="font-size:18px;color:#062b55;">
-                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% endif %}
-                        {{ j.nome }}
-                    </strong>
-                    <div style="color:#64748b;font-size:14px;margin-top:4px;">
-                        {{ j.vitorias }}V / {{ j.derrotas }}D
-                    </div>
-                </div>
-                <strong style="font-size:22px;color:#16a34a;">{{ j.pontos }} pts</strong>
-            </div>
-            {% empty %}
-            <div style="color:#64748b;">Nenhuma rodada encontrada.</div>
-            {% endfor %}
-        </div>
-
-    </div>
-
-</div>
-
-    <!-- ÚLTIMOS JOGOS -->
 
     <div class="ultimos-jogos">
 
@@ -918,38 +862,39 @@ font-weight:bold;
 
             {% for jogo in ultimos_jogos %}
 
-            <tr>
-                <td>{{ jogo.data_jogo|date:"d/m/Y" }}</td>
-                
-                <td>
-    {% if jogo.fase %}
-        <span style="
-        background:#8b5cf6;
-        color:white;
-        padding:5px 10px;
-        border-radius:8px;
-        font-size:12px;
-        font-weight:bold;
-        ">
-            {{ jogo.fase }}
-        </span>
-    {% else %}
-        -
-    {% endif %}
-</td>
-                
-                <td>
-    <strong>{{ jogo.descricao_confronto }}</strong>
-</td>
-                <td class="placar">{{ jogo.placar_resumido }}</td>
-                <td>
-                    {% if jogo.torneio %}
-                        {{ jogo.torneio.nome }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ jogo.data_jogo|date:"d/m/Y" }}</td>
+
+                    <td>
+                        {% if jogo.fase %}
+                            <span style="background:#8b5cf6;color:white;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:bold;">
+                                {{ jogo.fase }}
+                            </span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <strong>{{ jogo.descricao_confronto }}</strong>
+                    </td>
+
+                    <td class="placar">{{ jogo.placar_resumido }}</td>
+
+                    <td>
+                        {% if jogo.torneio %}
+                            {{ jogo.torneio.nome }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="5">Nenhum jogo encontrado.</td>
+                </tr>
 
             {% endfor %}
 
@@ -957,53 +902,49 @@ font-weight:bold;
 
         <div class="mobile-jogos">
 
-    {% for jogo in ultimos_jogos %}
+            {% for jogo in ultimos_jogos %}
 
-    <div class="mobile-jogo-card">
+                <div class="mobile-jogo-card">
 
-        <div class="mobile-jogo-data">
-            📅 {{ jogo.data_jogo|date:"d/m/Y" }}
-        </div>
-
-        <div class="mobile-jogo-confronto">
-
-            {% if jogo.fase %}
-                <span style="
-                background:#8b5cf6;
-                color:white;
-                padding:4px 8px;
-                border-radius:8px;
-                font-size:12px;
-                font-weight:bold;
-                margin-right:6px;
-                ">
-                    {{ jogo.fase }}
-                </span>
-            {% endif %}
-
-            {{ jogo.descricao_confronto }}
-
-        </div>
-
-                <div class="mobile-jogo-info">
-
-                    <div class="mobile-jogo-placar">
-                        📊 {{ jogo.placar_resumido }}
+                    <div class="mobile-jogo-data">
+                        📅 {{ jogo.data_jogo|date:"d/m/Y" }}
                     </div>
 
-                    <div class="mobile-jogo-torneio">
+                    <div class="mobile-jogo-confronto">
 
-    {% if jogo.torneio %}
-        🏆 {{ jogo.torneio.nome }}
-    {% else %}
-        -
-    {% endif %}
+                        {% if jogo.fase %}
+                            <span style="background:#8b5cf6;color:white;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:bold;margin-right:6px;">
+                                {{ jogo.fase }}
+                            </span>
+                        {% endif %}
 
-</div>
+                        {{ jogo.descricao_confronto }}
+
+                    </div>
+
+                    <div class="mobile-jogo-info">
+
+                        <div class="mobile-jogo-placar">
+                            📊 {{ jogo.placar_resumido }}
+                        </div>
+
+                        <div class="mobile-jogo-torneio">
+                            {% if jogo.torneio %}
+                                🏆 {{ jogo.torneio.nome }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
+            {% empty %}
+
+                <div style="padding:20px;color:#64748b;font-weight:bold;">
+                    Nenhum jogo encontrado.
+                </div>
 
             {% endfor %}
 
@@ -1111,9 +1052,6 @@ function trocarJogoCard(){
 
 setInterval(trocarJogoCard, 3500);
 
-</script>
-
-<script>
 let bannerAtual = 0;
 
 const banners = document.querySelectorAll('.banner-slide');
@@ -1147,7 +1085,10 @@ function bannerAnterior(){
     mostrarBanner(bannerAtual - 1);
 }
 
-setInterval(proximoBanner, 5000);
+if(banners.length > 1){
+    setInterval(proximoBanner, 5000);
+}
+
 </script>
 
 {% endblock %}

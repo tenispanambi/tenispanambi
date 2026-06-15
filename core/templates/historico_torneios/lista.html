@@ -1,4 +1,5 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -115,6 +116,22 @@
     text-transform:uppercase;
     font-weight:1000;
     color:#7dd3fc;
+}
+
+.icone-tenis{
+    width:46px;
+    height:46px;
+    display:block;
+    margin-bottom:12px;
+    filter:drop-shadow(0 0 10px rgba(215,255,0,.45));
+}
+
+.icone-tenis-card{
+    width:36px;
+    height:36px;
+    display:block;
+    margin:0 auto 8px;
+    filter:drop-shadow(0 0 8px rgba(14,165,233,.25));
 }
 
 .filtros-torneios{
@@ -468,7 +485,11 @@
             </div>
 
             <div class="hero-stat">
-                <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+                <img
+                    src="{% static 'img/icons/tennis-racket.svg' %}"
+                    class="icone-tenis"
+                    alt="Tênis"
+                >
                 <strong>{{ total_jogos_geral }}</strong>
                 <span>Jogos disputados</span>
             </div>
@@ -560,7 +581,11 @@
                         </div>
 
                         <div class="numero-box jogos">
-                            <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+                            <img
+                                src="{% static 'img/icons/tennis-racket.svg' %}"
+                                class="icone-tenis-card"
+                                alt="Tênis"
+                            >
                             <strong>{{ torneio.total_jogos }}</strong>
                             <span>Jogos</span>
                         </div>

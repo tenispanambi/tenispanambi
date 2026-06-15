@@ -1,30 +1,47 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Cadastro - TenisPanambi</title>
+<title>Cadastro - Tênis Panambi</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial;
-    background:#0f172a;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#020617,#0f172a,#06245c);
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
+    padding:20px;
 }
 
 .box{
     background:white;
-    width:420px;
-    padding:40px;
-    border-radius:20px;
+    width:450px;
+    padding:38px;
+    border-radius:24px;
+    box-shadow:0 20px 45px rgba(0,0,0,.25);
+}
+
+.logo-area{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.logo-area img{
+    max-width:150px;
+    max-height:95px;
+    object-fit:contain;
 }
 
 h1{
     text-align:center;
     color:#0b4d91;
+    margin:10px 0 25px;
+    font-size:32px;
 }
 
 input{
@@ -34,6 +51,7 @@ input{
     border-radius:10px;
     border:1px solid #ccc;
     box-sizing:border-box;
+    font-size:15px;
 }
 
 button{
@@ -44,7 +62,12 @@ button{
     background:#0b4d91;
     color:white;
     font-size:17px;
+    font-weight:bold;
     cursor:pointer;
+}
+
+button:hover{
+    background:#073b70;
 }
 
 .erro{
@@ -67,15 +90,39 @@ button{
     font-weight:bold;
 }
 
-.voltar{
+.links{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
     text-align:center;
-    margin-top:20px;
+    margin-top:22px;
 }
 
-.voltar a{
+.links a{
     color:#0b4d91;
     text-decoration:none;
     font-weight:bold;
+}
+
+.links a:hover{
+    text-decoration:underline;
+}
+
+.link-home{
+    background:#eef6ff;
+    padding:12px;
+    border-radius:10px;
+}
+
+.link-login{
+    padding:8px;
+}
+
+@media(max-width:520px){
+    .box{
+        width:100%;
+        padding:28px 22px;
+    }
 }
 </style>
 </head>
@@ -83,6 +130,10 @@ button{
 <body>
 
 <div class="box">
+
+    <div class="logo-area">
+        <img src="{% static 'img/logo.png' %}" alt="Tênis Panambi">
+    </div>
 
     <h1>Criar conta</h1>
 
@@ -121,12 +172,20 @@ button{
             type="email"
             name="email"
             placeholder="E-mail"
+            required
         >
 
         <input
             type="password"
             name="senha"
             placeholder="Senha"
+            required
+        >
+
+        <input
+            type="password"
+            name="confirmar_senha"
+            placeholder="Confirmar senha"
             required
         >
 
@@ -137,8 +196,9 @@ button{
 
     {% endif %}
 
-    <div class="voltar">
-        <a href="/login/">Voltar para o login</a>
+    <div class="links">
+        <a href="/" class="link-home">Ir para a página inicial</a>
+        <a href="/login/" class="link-login">Voltar para o login</a>
     </div>
 
 </div>

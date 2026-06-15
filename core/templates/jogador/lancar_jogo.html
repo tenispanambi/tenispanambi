@@ -3,7 +3,6 @@
 {% block content %}
 
 <style>
-
 .lancar-container{
     max-width:1400px;
     margin:30px auto;
@@ -11,18 +10,16 @@
 }
 
 .hero-lancar{
-    background:linear-gradient(
-        135deg,
-        #03132f,
-        #07346d,
-        #0b8d3d
-    );
+    background:
+        radial-gradient(circle at right, rgba(180,255,43,.25), transparent 35%),
+        linear-gradient(135deg,#020617,#07346d,#03132f);
     border-radius:30px;
     overflow:hidden;
     position:relative;
     color:white;
     padding:50px;
     margin-bottom:25px;
+    box-shadow:0 18px 45px rgba(0,0,0,.22);
 }
 
 .hero-lancar:before{
@@ -92,34 +89,54 @@
 
 .tipo-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(3,1fr);
     gap:20px;
 }
 
 .tipo-card{
     border:3px solid #dbe4ee;
     border-radius:22px;
-    padding:25px;
+    padding:26px;
     cursor:pointer;
     transition:.3s;
     text-align:center;
-    font-weight:800;
+    font-weight:900;
     font-size:22px;
+    background:linear-gradient(180deg,#ffffff,#f8fafc);
+}
+
+.tipo-card span{
+    display:block;
+    font-size:46px;
+    margin-bottom:8px;
+}
+
+.tipo-card small{
+    color:#64748b;
+    font-size:14px;
 }
 
 .tipo-card.ativo{
     border-color:#1fc94f;
     background:#eefdf3;
+    box-shadow:0 10px 24px rgba(31,201,79,.18);
 }
 
 .tipo-card:hover{
-    transform:translateY(-3px);
+    transform:translateY(-4px);
 }
 
 .dados-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:25px;
+}
+
+.dados-times{
+    display:grid;
+    grid-template-columns:1fr 110px 1fr;
+    gap:25px;
+    align-items:center;
 }
 
 .card-time{
@@ -136,19 +153,11 @@
 }
 
 .topo-time-a{
-    background:linear-gradient(
-        135deg,
-        #0d57d1,
-        #003a99
-    );
+    background:linear-gradient(135deg,#0d57d1,#003a99);
 }
 
 .topo-time-b{
-    background:linear-gradient(
-        135deg,
-        #ff8b00,
-        #ff5e00
-    );
+    background:linear-gradient(135deg,#ff8b00,#ff5e00);
 }
 
 .topo-time{
@@ -163,7 +172,8 @@
     background:white;
 }
 
-.corpo-time label{
+.corpo-time label,
+.etapa label{
     display:block;
     font-weight:800;
     margin-bottom:8px;
@@ -180,12 +190,21 @@ select{
 }
 
 .vs-centro{
-    text-align:center;
-    font-size:80px;
-    font-weight:900;
+    width:90px;
+    height:90px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:white;
+    border:4px solid #0b4d91;
     color:#0b4d91;
-    margin:25px 0;
+    font-size:44px;
+    font-weight:900;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
+
 .placar-opcoes{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -241,6 +260,16 @@ select{
     color:#0b4d91;
 }
 
+.aviso-placar{
+    margin-top:20px;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    color:#0b4d91;
+    padding:18px;
+    border-radius:16px;
+    font-weight:800;
+}
+
 .acoes{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -271,11 +300,10 @@ select{
 }
 
 .hidden{
-    display:none;
+    display:none !important;
 }
 
-@media(max-width:800px){
-
+@media(max-width:900px){
     .hero-titulo{
         font-size:44px;
     }
@@ -287,19 +315,22 @@ select{
     .tipo-grid,
     .dados-grid,
     .placar-opcoes,
-    .acoes{
+    .acoes,
+    .dados-times{
         grid-template-columns:1fr;
     }
 
     .vs-centro{
-        font-size:48px;
+        width:70px;
+        height:70px;
+        font-size:34px;
+        margin:10px auto;
     }
 
     .etapa-titulo h2{
         font-size:26px;
     }
 }
-
 </style>
 
 <div class="lancar-container">
@@ -311,7 +342,7 @@ select{
         </h1>
 
         <div class="hero-sub">
-            Preencha em sequência: tipo do jogo, jogadores e placar por set.
+            Escolha a modalidade, informe os jogadores e registre o placar.
         </div>
     </div>
 
@@ -337,30 +368,27 @@ select{
             <div class="tipo-grid">
 
                 <label class="tipo-card ativo" id="opcaoSimples">
-                    <input
-                        type="radio"
-                        name="tipo_jogo"
-                        value="SIMPLES"
-                        checked
-                        hidden
-                        onchange="alterarTipoJogo()"
-                    >
-                    🎾 Simples
+                    <input type="radio" name="tipo_jogo" value="SIMPLES" checked hidden onchange="alterarTipoJogo()">
+                    <span>🎾</span>
+                    Simples Amistoso
                     <br>
                     <small>Jogo individual</small>
                 </label>
 
-                <label class="tipo-card" id="opcaoDuplas">
-                    <input
-                        type="radio"
-                        name="tipo_jogo"
-                        value="DUPLAS"
-                        hidden
-                        onchange="alterarTipoJogo()"
-                    >
-                    🏆 Duplas
+                <label class="tipo-card" id="opcaoAmistosoDuplas">
+                    <input type="radio" name="tipo_jogo" value="AMISTOSO_DUPLAS" hidden onchange="alterarTipoJogo()">
+                    <span>👥</span>
+                    Duplas Amistoso
                     <br>
-                    <small>Championship Duplas</small>
+                    <small>Não vale ranking</small>
+                </label>
+
+                <label class="tipo-card" id="opcaoChampionshipDuplas">
+                    <input type="radio" name="tipo_jogo" value="CHAMPIONSHIP_DUPLAS" hidden onchange="alterarTipoJogo()">
+                    <span>🏆</span>
+                    Championship Duplas
+                    <br>
+                    <small>Vale ranking oficial</small>
                 </label>
 
             </div>
@@ -383,7 +411,7 @@ select{
 
                 <div id="campoRodada" class="hidden">
                     <label>Rodada</label>
-                    <input type="number" name="rodada" min="1" placeholder="Ex: 1">
+                    <input type="number" name="rodada" min="1">
                 </div>
 
             </div>
@@ -406,7 +434,7 @@ select{
                 <h2>Jogadores</h2>
             </div>
 
-            <div class="dados-grid">
+            <div class="dados-times">
 
                 <div class="card-time time-a">
 
@@ -417,18 +445,14 @@ select{
                     <div class="corpo-time">
 
                         <label>Jogador 1</label>
-                        <input
-                            type="text"
-                            value="{{ request.user.username }}"
-                            disabled
-                        >
+                        <input type="text" value="{{ request.user.username }}" disabled>
 
                         <div id="campoParceiro" class="hidden" style="margin-top:18px;">
                             <label>Parceiro</label>
                             <select name="parceiro_a">
                                 <option value="">Selecione o parceiro</option>
 
-                                {% for j in jogadores_categoria %}
+                                {% for j in jogadores_todos %}
                                     <option value="{{ j.id }}">
                                         {{ j.nome }}
                                     </option>
@@ -438,6 +462,10 @@ select{
 
                     </div>
 
+                </div>
+
+                <div class="vs-centro">
+                    VS
                 </div>
 
                 <div class="card-time time-b">
@@ -464,7 +492,7 @@ select{
                             <select name="adversario_2">
                                 <option value="">Selecione o adversário 2</option>
 
-                                {% for j in jogadores_categoria %}
+                                {% for j in jogadores_todos %}
                                     <option value="{{ j.id }}">
                                         {{ j.nome }}
                                     </option>
@@ -476,10 +504,6 @@ select{
 
                 </div>
 
-            </div>
-
-            <div class="vs-centro">
-                VS
             </div>
 
         </div>
@@ -494,27 +518,14 @@ select{
             <div class="placar-opcoes">
 
                 <label class="set-card ativo" id="opcao1Set">
-                    <input
-                        type="radio"
-                        name="quantidade_sets"
-                        value="1"
-                        checked
-                        hidden
-                        onchange="alterarSets()"
-                    >
+                    <input type="radio" name="quantidade_sets" value="1" checked hidden onchange="alterarSets()">
                     1 SET
                     <br>
                     <small>Definição em 1 set</small>
                 </label>
 
                 <label class="set-card" id="opcao3Sets">
-                    <input
-                        type="radio"
-                        name="quantidade_sets"
-                        value="3"
-                        hidden
-                        onchange="alterarSets()"
-                    >
+                    <input type="radio" name="quantidade_sets" value="3" hidden onchange="alterarSets()">
                     MELHOR DE 3 SETS
                     <br>
                     <small>Definição em até 3 sets</small>
@@ -536,37 +547,45 @@ select{
                     <tr>
                         <td>Set 1</td>
                         <td>
-                            <input type="number" name="set1_a" min="0" placeholder="6" required>
+                            <input type="number" name="set1_a" min="0" required>
                         </td>
                         <td class="x-set">X</td>
                         <td>
-                            <input type="number" name="set1_b" min="0" placeholder="4" required>
+                            <input type="number" name="set1_b" min="0" required>
                         </td>
                     </tr>
 
                     <tr class="set-extra hidden">
                         <td>Set 2</td>
                         <td>
-                            <input type="number" name="set2_a" min="0" placeholder="6">
+                            <input type="number" name="set2_a" min="0">
                         </td>
                         <td class="x-set">X</td>
                         <td>
-                            <input type="number" name="set2_b" min="0" placeholder="4">
+                            <input type="number" name="set2_b" min="0">
                         </td>
                     </tr>
 
-                    <tr class="set-extra hidden">
-                        <td>Set 3</td>
+                    <tr class="set-extra hidden" id="linhaSet3">
                         <td>
-                            <input type="number" name="set3_a" min="0" placeholder="10">
+                            Set 3
+                            <br>
+                            <small style="color:#0b4d91;">Opcional</small>
+                        </td>
+                        <td>
+                            <input type="number" name="set3_a" min="0">
                         </td>
                         <td class="x-set">X</td>
                         <td>
-                            <input type="number" name="set3_b" min="0" placeholder="8">
+                            <input type="number" name="set3_b" min="0">
                         </td>
                     </tr>
                 </tbody>
             </table>
+
+            <div id="avisoMelhor3" class="aviso-placar hidden">
+                ℹ️ No formato melhor de 3 sets, o 3º set é opcional. Preencha apenas se ele foi disputado.
+            </div>
 
         </div>
 
@@ -590,7 +609,8 @@ function alterarTipoJogo(){
     const tipo = document.querySelector('input[name="tipo_jogo"]:checked').value;
 
     const opcaoSimples = document.getElementById('opcaoSimples');
-    const opcaoDuplas = document.getElementById('opcaoDuplas');
+    const opcaoAmistosoDuplas = document.getElementById('opcaoAmistosoDuplas');
+    const opcaoChampionshipDuplas = document.getElementById('opcaoChampionshipDuplas');
 
     const campoRodada = document.getElementById('campoRodada');
     const campoFase = document.getElementById('campoFase');
@@ -598,25 +618,31 @@ function alterarTipoJogo(){
     const campoAdversario2 = document.getElementById('campoAdversario2');
 
     opcaoSimples.classList.remove('ativo');
-    opcaoDuplas.classList.remove('ativo');
+    opcaoAmistosoDuplas.classList.remove('ativo');
+    opcaoChampionshipDuplas.classList.remove('ativo');
 
-    if(tipo === 'DUPLAS'){
+    campoRodada.classList.add('hidden');
+    campoFase.classList.add('hidden');
+    campoParceiro.classList.add('hidden');
+    campoAdversario2.classList.add('hidden');
 
-        opcaoDuplas.classList.add('ativo');
+    if(tipo === 'SIMPLES'){
 
+        opcaoSimples.classList.add('ativo');
+
+    }else if(tipo === 'AMISTOSO_DUPLAS'){
+
+        opcaoAmistosoDuplas.classList.add('ativo');
+        campoParceiro.classList.remove('hidden');
+        campoAdversario2.classList.remove('hidden');
+
+    }else if(tipo === 'CHAMPIONSHIP_DUPLAS'){
+
+        opcaoChampionshipDuplas.classList.add('ativo');
         campoRodada.classList.remove('hidden');
         campoFase.classList.remove('hidden');
         campoParceiro.classList.remove('hidden');
         campoAdversario2.classList.remove('hidden');
-
-    }else{
-
-        opcaoSimples.classList.add('ativo');
-
-        campoRodada.classList.add('hidden');
-        campoFase.classList.add('hidden');
-        campoParceiro.classList.add('hidden');
-        campoAdversario2.classList.add('hidden');
     }
 }
 
@@ -628,6 +654,7 @@ function alterarSets(){
     const opcao3Sets = document.getElementById('opcao3Sets');
 
     const extras = document.querySelectorAll('.set-extra');
+    const avisoMelhor3 = document.getElementById('avisoMelhor3');
 
     opcao1Set.classList.remove('ativo');
     opcao3Sets.classList.remove('ativo');
@@ -638,7 +665,13 @@ function alterarSets(){
 
         extras.forEach(function(item){
             item.classList.remove('hidden');
+
+            item.querySelectorAll('input').forEach(function(input){
+                input.required = false;
+            });
         });
+
+        avisoMelhor3.classList.remove('hidden');
 
     }else{
 
@@ -646,7 +679,14 @@ function alterarSets(){
 
         extras.forEach(function(item){
             item.classList.add('hidden');
+
+            item.querySelectorAll('input').forEach(function(input){
+                input.value = '';
+                input.required = false;
+            });
         });
+
+        avisoMelhor3.classList.add('hidden');
     }
 }
 

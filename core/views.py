@@ -38,6 +38,7 @@ from .models import (
     ReservaQuadra,
     RegistroTorneio,
     ResultadoTorneio,
+    BannerSite,
 )
 
 def home(request):
@@ -306,6 +307,14 @@ def home(request):
         'data_inicio'
     )[:3]
 
+    banners_home = BannerSite.objects.filter(
+    ativo=True,
+    pagina='HOME'
+).order_by(
+    'ordem',
+    '-criado_em'
+)
+
     return render(
         request,
         'core/index.html',
@@ -328,6 +337,7 @@ def home(request):
             'total_jogos_geral': total_jogos_geral,
             'total_jogos_duplas': total_jogos_duplas,
             'total_jogos_simples': total_jogos_simples,
+            'banners_home': banners_home,
         }
     )
 
@@ -338,6 +348,16 @@ def cadastro(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         senha = request.POST.get('senha')
+        confirmar_senha = request.POST.get('confirmar_senha')
+
+        if senha != confirmar_senha:
+            return render(
+            request,
+            'registration/cadastro.html',
+            {    
+                'erro': 'As senhas não conferem.'
+            }
+    )
 
         if User.objects.filter(username=username).exists():
             return render(
@@ -348,6 +368,19 @@ def cadastro(request):
                 }
             )
 
+        if User.objects.filter(email=email).exists():
+            return render(
+                request,
+                'registration/cadastro.html',
+                {
+                    'erro': 'Já existe um usuário cadastrado com este e-mail.'
+                }
+            )
+
+        jogador_existente = Jogador.objects.filter(
+            email=email
+        ).first()
+
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -357,13 +390,32 @@ def cadastro(request):
         user.is_active = False
         user.save()
 
-        Jogador.objects.create(
-            usuario=user,
-            nome=nome,
-            email=email,
-            categoria='C',
-            ativo=False
-        )
+        if jogador_existente:
+
+            if jogador_existente.usuario:
+                user.delete()
+
+                return render(
+                    request,
+                    'registration/cadastro.html',
+                    {
+                        'erro': 'Este jogador já possui login cadastrado. Entre em contato com a organização.'
+                    }
+                )
+
+            jogador_existente.usuario = user
+            jogador_existente.ativo = False
+            jogador_existente.save()
+
+        else:
+
+            Jogador.objects.create(
+                usuario=user,
+                nome=nome,
+                email=email,
+                categoria='C',
+                ativo=False
+            )
 
         return render(
             request,
@@ -2000,7 +2052,13 @@ def lancar_jogo(request):
         categoria = None
         tipo_jogo_salvar = 'SIMPLES'
 
-        if tipo_jogo_form == 'DUPLAS':
+        parceiro = None
+        adversario_2 = None
+
+        # ==============================
+        # CHAMPIONSHIP DUPLAS
+        # ==============================
+        if tipo_jogo_form == 'CHAMPIONSHIP_DUPLAS':
 
             if not torneio_duplas_categoria:
                 messages.error(
@@ -2071,12 +2129,37 @@ def lancar_jogo(request):
                 if jogador.categoria != jogador_logado.categoria:
                     messages.error(
                         request,
-                        'Em jogos de duplas, todos os jogadores precisam ser da mesma categoria.'
+                        'Em jogos do Championship, todos os jogadores precisam ser da mesma categoria.'
                     )
                     return redirect('/lancar-jogo/')
 
             tipo_jogo_salvar = 'CHAMPIONSHIP_DUPLAS'
 
+        # ==============================
+        # DUPLAS AMISTOSO
+        # ==============================
+        elif tipo_jogo_form == 'AMISTOSO_DUPLAS':
+
+            rodada = None
+            fase = None
+            torneio = None
+            categoria = None
+            tipo_jogo_salvar = 'AMISTOSO_DUPLAS'
+
+            if not parceiro_a_id or not adversario_1_id or not adversario_2_id:
+                messages.error(
+                    request,
+                    'Para jogo de duplas amistoso, informe parceiro, adversário 1 e adversário 2.'
+                )
+                return redirect('/lancar-jogo/')
+
+            parceiro = Jogador.objects.get(id=parceiro_a_id)
+            adversario_1 = Jogador.objects.get(id=adversario_1_id)
+            adversario_2 = Jogador.objects.get(id=adversario_2_id)
+
+        # ==============================
+        # SIMPLES AMISTOSO
+        # ==============================
         else:
 
             rodada = None
@@ -2112,7 +2195,7 @@ def lancar_jogo(request):
             lado='A'
         )
 
-        if tipo_jogo_form == 'DUPLAS':
+        if tipo_jogo_form in ['AMISTOSO_DUPLAS', 'CHAMPIONSHIP_DUPLAS']:
 
             ParticipanteJogo.objects.create(
                 jogo=jogo,
@@ -2126,7 +2209,7 @@ def lancar_jogo(request):
             lado='B'
         )
 
-        if tipo_jogo_form == 'DUPLAS':
+        if tipo_jogo_form in ['AMISTOSO_DUPLAS', 'CHAMPIONSHIP_DUPLAS']:
 
             ParticipanteJogo.objects.create(
                 jogo=jogo,
