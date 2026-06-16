@@ -51,12 +51,38 @@ def corrigir_texto(texto):
         '├úo': 'ão',
         '├úes': 'ões',
         'þÒ': 'çã',
+
+        'Ç': 'C',
+'├®': 'é',
+'├íbio': 'ábio',
+'├®nio': 'ânio',
+'├®o': 'ão',
+'├¡': 'í',
+'├⌐': 'é',
+'Ãº': 'ú',
+'Ã©': 'é',
+'Ã£': 'ã',
+'Ã§': 'ç',
+'Ã´': 'ô',
     }
 
     novo = texto
 
     for errado, certo in trocas.items():
         novo = novo.replace(errado, certo)
+
+        correcoes_diretas = {
+    'C�cero Malheiros': 'Cícero Malheiros',
+    'Fernando Zampr�nio': 'Fernando Zamprônio',
+    'F�bio Schirmer': 'Fábio Schirmer',
+    'Jo�o Libreloff': 'João Libreloff',
+    'Jo�o Stamm': 'João Stamm',
+    'Jo�o Vitor': 'João Vitor',
+    'Lu�s Corr�a': 'Luís Corrêa',
+}
+
+for errado, certo in correcoes_diretas.items():
+    novo = novo.replace(errado, certo)
 
     return novo
 
