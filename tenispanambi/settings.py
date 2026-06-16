@@ -16,11 +16,15 @@ ALLOWED_HOSTS = [
     'localhost',
     'tenispanambi-production.up.railway.app',
     '.up.railway.app',
+    'tenispanambi.com.br',
+    'www.tenispanambi.com.br',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://tenispanambi-production.up.railway.app',
     'https://*.up.railway.app',
+    'https://tenispanambi.com.br',
+    'https://www.tenispanambi.com.br',
 ]
 
 INSTALLED_APPS = [
