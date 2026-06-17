@@ -459,6 +459,46 @@ body{
     }
 }
 
+/*=========================================
+PAINEL GERAL
+=========================================*/
+
+.painel-geral-header{
+    margin:35px 0 22px;
+    padding-bottom:18px;
+    border-bottom:4px solid #0b4d91;
+}
+
+.painel-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#0f3d91;
+    color:#fff;
+    padding:8px 18px;
+    border-radius:40px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    box-shadow:0 6px 18px rgba(15,61,145,.25);
+}
+
+.painel-geral-header h2{
+    margin:14px 0 6px;
+    color:#0f172a;
+    font-size:34px;
+    font-weight:900;
+}
+
+.painel-geral-header p{
+    margin:0;
+    color:#64748b;
+    font-size:17px;
+    max-width:700px;
+    line-height:1.6;
+}
+
 @media(max-width:768px){
 
     .torneio-atual-card{
@@ -497,6 +537,27 @@ body{
         width:36px;
         height:36px;
         font-size:22px;
+    }
+
+    .painel-geral-header{
+        margin:25px 0 18px;
+        padding-bottom:14px;
+        text-align:center;
+        border-bottom:3px solid #0b4d91;
+    }
+
+    .painel-badge{
+        font-size:11px;
+        padding:7px 14px;
+    }
+
+    .painel-geral-header h2{
+        font-size:26px;
+    }
+
+    .painel-geral-header p{
+        font-size:14px;
+        line-height:1.5;
     }
 
 }
@@ -582,7 +643,26 @@ body{
 
     {% endif %}
 
-    <div class="cards-status">
+    <!-- ========================================= -->
+    <!-- PAINEL GERAL -->
+    <!-- ========================================= -->
+
+<div class="painel-geral-header">
+    <div class="painel-texto">
+        <span class="painel-badge">
+            📊 ESTATÍSTICAS GERAIS
+        </span>
+
+        <h2>Painel Geral do Portal</h2>
+
+        <p>
+            Todos os indicadores abaixo são calculados automaticamente
+            com base nos jogos, jogadores e torneios cadastrados.
+        </p>
+    </div>
+</div>
+
+<div class="cards-status">
 
         <div class="status-card">
             <div class="icone azul">🏆</div>
