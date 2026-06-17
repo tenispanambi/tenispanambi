@@ -2015,7 +2015,7 @@ def lancar_jogo(request):
 
     if request.method == 'POST':
 
-        tipo_jogo_form = request.POST.get('tipo_jogo')
+               tipo_jogo_form = request.POST.get('tipo_jogo')
         data_jogo_str = request.POST.get('data_jogo')
         rodada = request.POST.get('rodada')
         fase = request.POST.get('fase')
@@ -2023,6 +2023,11 @@ def lancar_jogo(request):
         parceiro_a_id = request.POST.get('parceiro_a')
         adversario_1_id = request.POST.get('adversario_1')
         adversario_2_id = request.POST.get('adversario_2')
+
+        print("TIPO:", tipo_jogo_form)
+        print("USUARIO:", request.user.username)
+        print("STAFF:", request.user.is_staff)
+        print("SUPERUSER:", request.user.is_superuser)
 
         if not data_jogo_str:
             messages.error(
@@ -2078,14 +2083,27 @@ def lancar_jogo(request):
             categoria = torneio_duplas_categoria
             torneio = categoria.torneio
 
+            hoje = timezone.localdate()
+            controle = (torneio.controle_lancamento or '').strip().upper()
+
+            print("TORNEIO:", torneio.nome)
+            print("CONTROLE:", controle)
+            print("HOJE:", hoje)
+            print("DATA INICIO:", torneio.data_inicio)
+            print("WEEKDAY:", hoje.weekday())
+
             # =====================================
             # BLOQUEIO DE LANÇAMENTO DO TORNEIO
             # Usuário comum só lança no sábado.
             # Admin/staff pode lançar ou corrigir qualquer dia.
             # =====================================
-            hoje = timezone.localdate()
-
-            if torneio.controle_lancamento == 'SABADO' and not request.user.is_staff:
+            if controle in [
+                'SABADO',
+                'SÁBADO',
+                'SOMENTE_AOS_SABADOS',
+                'SOMENTE AOS SABADOS',
+                'SOMENTE AOS SÁBADOS'
+            ] and not request.user.is_staff:
 
                 if torneio.data_inicio and hoje < torneio.data_inicio:
                     messages.error(
@@ -2108,7 +2126,52 @@ def lancar_jogo(request):
                     )
                     return redirect('/lancar-jogo/')
 
-            if torneio.controle_lancamento == 'MANUAL' and not request.user.is_staff:
+            if controle in [
+                'MANUAL',
+                'BLOQUEADO',
+                'BLOQUEADO MANUALMENTE'
+            ] and not request.user.is_staff:
+                messages.error(
+                    request,
+                    'Os lançamentos deste torneio estão bloqueados pela organização.'
+                )
+                return redirect('/lancar-jogo/')
+
+            
+
+            # =====================================
+            # BLOQUEIO DE LANÇAMENTO DO TORNEIO
+            # Usuário comum só lança no sábado.
+            # Admin/staff pode lançar ou corrigir qualquer dia.
+            # =====================================
+            hoje = timezone.localdate()
+
+            controle = (torneio.controle_lancamento or '').strip().upper()
+
+            if controle in ['SABADO', 'SOMENTE_AOS_SABADOS', 'SOMENTE AOS SÁBADOS', 'SOMENTE AOS SABADOS'] and not request.user.is_staff:
+
+                if torneio.data_inicio and hoje < torneio.data_inicio:
+                    messages.error(
+                        request,
+                        f'Os lançamentos deste torneio serão liberados somente a partir de {torneio.data_inicio.strftime("%d/%m/%Y")}.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                if hoje.weekday() != 5:
+                    messages.error(
+                        request,
+                        'Os jogos do Championship Duplas só podem ser lançados aos sábados.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                if data_jogo != hoje:
+                    messages.error(
+                        request,
+                        'A data do jogo precisa ser a data de hoje. Não é permitido lançar jogo de outra data.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+            if controle in ['MANUAL', 'BLOQUEADO', 'BLOQUEADO MANUALMENTE'] and not request.user.is_staff:
                 messages.error(
                     request,
                     'Os lançamentos deste torneio estão bloqueados pela organização.'
