@@ -2015,7 +2015,7 @@ def lancar_jogo(request):
 
     if request.method == 'POST':
 
-               tipo_jogo_form = request.POST.get('tipo_jogo')
+        tipo_jogo_form = request.POST.get('tipo_jogo')
         data_jogo_str = request.POST.get('data_jogo')
         rodada = request.POST.get('rodada')
         fase = request.POST.get('fase')
@@ -2024,16 +2024,8 @@ def lancar_jogo(request):
         adversario_1_id = request.POST.get('adversario_1')
         adversario_2_id = request.POST.get('adversario_2')
 
-        print("TIPO:", tipo_jogo_form)
-        print("USUARIO:", request.user.username)
-        print("STAFF:", request.user.is_staff)
-        print("SUPERUSER:", request.user.is_superuser)
-
         if not data_jogo_str:
-            messages.error(
-                request,
-                'Informe a data do jogo.'
-            )
+            messages.error(request, 'Informe a data do jogo.')
             return redirect('/lancar-jogo/')
 
         data_jogo = date.fromisoformat(data_jogo_str)
@@ -2046,7 +2038,6 @@ def lancar_jogo(request):
             games_b = request.POST.get(f'set{numero}_b')
 
             if games_a not in [None, ''] and games_b not in [None, '']:
-
                 sets_recebidos.append({
                     'numero': numero,
                     'games_a': int(games_a),
@@ -2054,10 +2045,7 @@ def lancar_jogo(request):
                 })
 
         if not sets_recebidos:
-            messages.error(
-                request,
-                'Informe pelo menos o placar do Set 1.'
-            )
+            messages.error(request, 'Informe pelo menos o placar do Set 1.')
             return redirect('/lancar-jogo/')
 
         torneio = None
@@ -2068,9 +2056,6 @@ def lancar_jogo(request):
         adversario_1 = None
         adversario_2 = None
 
-        # ==============================
-        # CHAMPIONSHIP DUPLAS
-        # ==============================
         if tipo_jogo_form == 'CHAMPIONSHIP_DUPLAS':
 
             if not torneio_duplas_categoria:
@@ -2086,24 +2071,7 @@ def lancar_jogo(request):
             hoje = timezone.localdate()
             controle = (torneio.controle_lancamento or '').strip().upper()
 
-            print("TORNEIO:", torneio.nome)
-            print("CONTROLE:", controle)
-            print("HOJE:", hoje)
-            print("DATA INICIO:", torneio.data_inicio)
-            print("WEEKDAY:", hoje.weekday())
-
-            # =====================================
-            # BLOQUEIO DE LANÇAMENTO DO TORNEIO
-            # Usuário comum só lança no sábado.
-            # Admin/staff pode lançar ou corrigir qualquer dia.
-            # =====================================
-            if controle in [
-                'SABADO',
-                'SÁBADO',
-                'SOMENTE_AOS_SABADOS',
-                'SOMENTE AOS SABADOS',
-                'SOMENTE AOS SÁBADOS'
-            ] and not request.user.is_staff:
+            if controle in ['SABADO', 'SÁBADO'] and not request.user.is_staff:
 
                 if torneio.data_inicio and hoje < torneio.data_inicio:
                     messages.error(
@@ -2126,52 +2094,7 @@ def lancar_jogo(request):
                     )
                     return redirect('/lancar-jogo/')
 
-            if controle in [
-                'MANUAL',
-                'BLOQUEADO',
-                'BLOQUEADO MANUALMENTE'
-            ] and not request.user.is_staff:
-                messages.error(
-                    request,
-                    'Os lançamentos deste torneio estão bloqueados pela organização.'
-                )
-                return redirect('/lancar-jogo/')
-
-            
-
-            # =====================================
-            # BLOQUEIO DE LANÇAMENTO DO TORNEIO
-            # Usuário comum só lança no sábado.
-            # Admin/staff pode lançar ou corrigir qualquer dia.
-            # =====================================
-            hoje = timezone.localdate()
-
-            controle = (torneio.controle_lancamento or '').strip().upper()
-
-            if controle in ['SABADO', 'SOMENTE_AOS_SABADOS', 'SOMENTE AOS SÁBADOS', 'SOMENTE AOS SABADOS'] and not request.user.is_staff:
-
-                if torneio.data_inicio and hoje < torneio.data_inicio:
-                    messages.error(
-                        request,
-                        f'Os lançamentos deste torneio serão liberados somente a partir de {torneio.data_inicio.strftime("%d/%m/%Y")}.'
-                    )
-                    return redirect('/lancar-jogo/')
-
-                if hoje.weekday() != 5:
-                    messages.error(
-                        request,
-                        'Os jogos do Championship Duplas só podem ser lançados aos sábados.'
-                    )
-                    return redirect('/lancar-jogo/')
-
-                if data_jogo != hoje:
-                    messages.error(
-                        request,
-                        'A data do jogo precisa ser a data de hoje. Não é permitido lançar jogo de outra data.'
-                    )
-                    return redirect('/lancar-jogo/')
-
-            if controle in ['MANUAL', 'BLOQUEADO', 'BLOQUEADO MANUALMENTE'] and not request.user.is_staff:
+            if controle == 'MANUAL' and not request.user.is_staff:
                 messages.error(
                     request,
                     'Os lançamentos deste torneio estão bloqueados pela organização.'
@@ -2179,26 +2102,17 @@ def lancar_jogo(request):
                 return redirect('/lancar-jogo/')
 
             if torneio.status == 'ENCERRADO':
-                messages.error(
-                    request,
-                    'Este torneio está encerrado definitivamente.'
-                )
+                messages.error(request, 'Este torneio está encerrado definitivamente.')
                 return redirect('/lancar-jogo/')
 
             if torneio.status in ['ABERTO', 'EM_ANDAMENTO']:
 
                 if fase:
-                    messages.error(
-                        request,
-                        'As finais ainda não foram liberadas para este torneio.'
-                    )
+                    messages.error(request, 'As finais ainda não foram liberadas para este torneio.')
                     return redirect('/lancar-jogo/')
 
                 if not rodada:
-                    messages.error(
-                        request,
-                        'Informe a rodada do jogo classificatório.'
-                    )
+                    messages.error(request, 'Informe a rodada do jogo classificatório.')
                     return redirect('/lancar-jogo/')
 
                 rodada = int(rodada)
@@ -2243,9 +2157,6 @@ def lancar_jogo(request):
 
             tipo_jogo_salvar = 'CHAMPIONSHIP_DUPLAS'
 
-        # ==============================
-        # DUPLAS AMISTOSO
-        # ==============================
         elif tipo_jogo_form == 'AMISTOSO_DUPLAS':
 
             rodada = None
@@ -2265,9 +2176,6 @@ def lancar_jogo(request):
             adversario_1 = Jogador.objects.get(id=adversario_1_id)
             adversario_2 = Jogador.objects.get(id=adversario_2_id)
 
-        # ==============================
-        # SIMPLES AMISTOSO
-        # ==============================
         else:
 
             rodada = None
@@ -2277,15 +2185,10 @@ def lancar_jogo(request):
             tipo_jogo_salvar = 'SIMPLES'
 
             if not adversario_1_id:
-                messages.error(
-                    request,
-                    'Informe o adversário.'
-                )
+                messages.error(request, 'Informe o adversário.')
                 return redirect('/lancar-jogo/')
 
-            adversario_1 = Jogador.objects.get(
-                id=adversario_1_id
-            )
+            adversario_1 = Jogador.objects.get(id=adversario_1_id)
 
         jogo = Jogo.objects.create(
             tipo_jogo=tipo_jogo_salvar,
@@ -2304,7 +2207,6 @@ def lancar_jogo(request):
         )
 
         if tipo_jogo_form in ['AMISTOSO_DUPLAS', 'CHAMPIONSHIP_DUPLAS']:
-
             ParticipanteJogo.objects.create(
                 jogo=jogo,
                 jogador=parceiro,
@@ -2318,7 +2220,6 @@ def lancar_jogo(request):
         )
 
         if tipo_jogo_form in ['AMISTOSO_DUPLAS', 'CHAMPIONSHIP_DUPLAS']:
-
             ParticipanteJogo.objects.create(
                 jogo=jogo,
                 jogador=adversario_2,
