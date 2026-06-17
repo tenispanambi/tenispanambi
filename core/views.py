@@ -2024,6 +2024,15 @@ def lancar_jogo(request):
         adversario_1_id = request.POST.get('adversario_1')
         adversario_2_id = request.POST.get('adversario_2')
 
+        if not data_jogo_str:
+            messages.error(
+                request,
+                'Informe a data do jogo.'
+            )
+            return redirect('/lancar-jogo/')
+
+        data_jogo = date.fromisoformat(data_jogo_str)
+
         sets_recebidos = []
 
         for numero in [1, 2, 3]:
@@ -2046,13 +2055,12 @@ def lancar_jogo(request):
             )
             return redirect('/lancar-jogo/')
 
-        data_jogo = date.fromisoformat(data_jogo_str)
-
         torneio = None
         categoria = None
         tipo_jogo_salvar = 'SIMPLES'
 
         parceiro = None
+        adversario_1 = None
         adversario_2 = None
 
         # ==============================
@@ -2069,6 +2077,43 @@ def lancar_jogo(request):
 
             categoria = torneio_duplas_categoria
             torneio = categoria.torneio
+
+            # =====================================
+            # BLOQUEIO DE LANÇAMENTO DO TORNEIO
+            # Usuário comum só lança no sábado.
+            # Admin/staff pode lançar ou corrigir qualquer dia.
+            # =====================================
+            hoje = timezone.localdate()
+
+            if torneio.controle_lancamento == 'SABADO' and not request.user.is_staff:
+
+                if torneio.data_inicio and hoje < torneio.data_inicio:
+                    messages.error(
+                        request,
+                        f'Os lançamentos deste torneio serão liberados somente a partir de {torneio.data_inicio.strftime("%d/%m/%Y")}.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                if hoje.weekday() != 5:
+                    messages.error(
+                        request,
+                        'Os jogos do Championship Duplas só podem ser lançados aos sábados.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+                if data_jogo != hoje:
+                    messages.error(
+                        request,
+                        'A data do jogo precisa ser a data de hoje. Não é permitido lançar jogo de outra data.'
+                    )
+                    return redirect('/lancar-jogo/')
+
+            if torneio.controle_lancamento == 'MANUAL' and not request.user.is_staff:
+                messages.error(
+                    request,
+                    'Os lançamentos deste torneio estão bloqueados pela organização.'
+                )
+                return redirect('/lancar-jogo/')
 
             if torneio.status == 'ENCERRADO':
                 messages.error(
