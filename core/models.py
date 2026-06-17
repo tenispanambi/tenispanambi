@@ -214,6 +214,18 @@ class Torneio(models.Model):
         default='ABERTO'
     )
 
+    CONTROLE_LANCAMENTO = [
+    ('LIVRE', 'Livre'),
+    ('SABADO', 'Somente aos sábados'),
+    ('MANUAL', 'Bloqueado manualmente'),
+    ]
+
+    controle_lancamento = models.CharField(
+        max_length=20,
+        choices=CONTROLE_LANCAMENTO,
+        default='LIVRE'
+    )
+
     ativo = models.BooleanField(
     default=False
 )
