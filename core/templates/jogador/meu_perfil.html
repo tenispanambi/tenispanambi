@@ -5,335 +5,285 @@
 {% block content %}
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@600;700&display=swap');
-
-body {
-    background: #edf3f8;
-}
-
-.perfil-container {
-    max-width: 1180px;
-    margin: 35px auto;
-    padding: 0 15px;
-}
-
-.perfil-card-topo {
-    background:
-        radial-gradient(circle at 90% 25%, rgba(56,189,248,.35), transparent 32%),
-        linear-gradient(135deg, #061a33, #0b4d91 55%, #083763);
-    border-radius: 34px;
-    padding: 42px;
-    color: white;
-    box-shadow: 0 22px 50px rgba(0,0,0,.28);
-    margin-bottom: 28px;
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 38px;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.perfil-card-topo::before {
-    content: "TÊNIS PANAMBI";
-    position: absolute;
-    right: -15px;
-    top: 18px;
-    font-family: 'Bebas Neue', Arial, sans-serif;
-    font-size: 86px;
-    letter-spacing: 6px;
-    color: rgba(255,255,255,.055);
-    transform: rotate(-3deg);
-}
-
-.perfil-card-topo::after {
-    content: "";
-    position: absolute;
-    right: -70px;
-    bottom: -90px;
-    width: 290px;
-    height: 290px;
-    border-radius: 50%;
-    border: 36px solid rgba(255,255,255,.06);
-}
-
-.perfil-foto {
-    width: 215px;
-    height: 215px;
-    border-radius: 28px;
-    object-fit: cover;
-    border: 5px solid #fff;
-    background: #e5e7eb;
-    box-shadow: 0 18px 35px rgba(0,0,0,.35);
-    position: relative;
-    z-index: 2;
-}
-
-.perfil-foto-vazia {
-    width: 215px;
-    height: 215px;
-    border-radius: 28px;
-    background: rgba(255,255,255,.14);
-    border: 5px solid #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 72px;
-    box-shadow: 0 18px 35px rgba(0,0,0,.35);
-    position: relative;
-    z-index: 2;
-}
-
-.perfil-conteudo {
-    position: relative;
-    z-index: 2;
-}
-
-.perfil-nome {
-    font-family: 'Bebas Neue', 'Oswald', Arial, sans-serif;
-    font-size: 68px;
-    font-weight: 700;
-    margin: 0 0 6px 0;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    line-height: .95;
-    text-shadow: 4px 5px 0 rgba(0,0,0,.22);
-}
-
-.perfil-info {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 20px;
-}
-
-.perfil-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.perfil-badge {
-    background: rgba(255,255,255,.16);
-    border: 1px solid rgba(255,255,255,.35);
-    padding: 11px 18px;
-    border-radius: 999px;
-    font-weight: 900;
-    font-size: 15px;
-}
-
-.perfil-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-}
-
-.perfil-stat {
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.24);
-    border-radius: 22px;
-    padding: 18px;
-    text-align: center;
-    transition: .25s;
-}
-
-.perfil-stat:hover {
-    transform: translateY(-6px);
-    background: rgba(255,255,255,.20);
-}
-
-.perfil-stat strong {
-    display: block;
-    font-family: 'Oswald', Arial, sans-serif;
-    font-size: 36px;
-    margin-bottom: 4px;
-}
-
-.perfil-stat span {
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.frase-card {
-    margin-top: 20px;
-    font-size: 18px;
-    font-style: italic;
-    border-left: 5px solid #38bdf8;
-    padding-left: 14px;
-}
-
-.perfil-form-card {
-    background: white;
-    padding: 34px;
-    border-radius: 30px;
-    box-shadow: 0 12px 32px rgba(0,0,0,.08);
-}
-
-.perfil-titulo {
-    color: #073763;
-    font-family: 'Oswald', Arial, sans-serif;
-    font-size: 34px;
-    margin: 0 0 8px 0;
-    font-weight: 700;
-}
-
-.perfil-subtitulo {
-    margin: 0 0 28px 0;
-    color: #64748b;
-    font-size: 16px;
-}
-
-.secao-form {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.secao-form:first-of-type {
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
-}
-
-.secao-titulo {
-    font-size: 21px;
-    font-weight: 950;
-    color: #0b4d91;
-    margin-bottom: 18px;
-}
-
-.perfil-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 22px;
-}
-
-.campo-full {
-    grid-column: 1 / 3;
-}
-
-.campo label {
-    display: block;
-    font-size: 15px;
-    font-weight: 850;
-    color: #073763;
-    margin-bottom: 8px;
-}
-
-.campo input,
-.campo select,
-.campo textarea {
-    width: 100%;
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid #d1d5db;
-    font-size: 16px;
-    box-sizing: border-box;
-    background: #fff;
-}
-
-.campo textarea {
-    resize: vertical;
-}
-
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus {
-    outline: none;
-    border-color: #0b4d91;
-    box-shadow: 0 0 0 3px rgba(11,77,145,.12);
-}
-
-.campo-ajuda {
-    font-size: 13px;
-    color: #6b7280;
-    margin-top: 7px;
-}
-
-.upload-box {
-    border: 2px dashed #b7c6d8;
-    background: #f8fbff;
-    border-radius: 22px;
-    padding: 24px;
-    text-align: center;
-    transition: .25s;
-}
-
-.upload-box:hover {
-    border-color: #0b4d91;
-    background: #f1f7ff;
-}
-
-.upload-icone {
-    font-size: 38px;
-    margin-bottom: 8px;
-}
-
-.upload-box input {
-    margin-top: 12px;
-    border: none;
-    padding: 0;
-    background: transparent;
-}
-
-.btn-salvar {
-    margin-top: 32px;
-    width: 100%;
-    padding: 19px;
-    background: linear-gradient(135deg, #0b4d91, #063f78);
-    color: white;
-    border: none;
-    border-radius: 18px;
-    font-size: 20px;
-    font-weight: 950;
-    cursor: pointer;
-    box-shadow: 0 10px 22px rgba(11,77,145,.30);
-    transition: .25s;
-}
-
-.btn-salvar:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 28px rgba(11,77,145,.38);
-}
-
-@media (max-width: 850px) {
-    .perfil-card-topo {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: 26px;
+    .perfil-container {
+        max-width: 1150px;
+        margin: 35px auto;
+        padding: 0 15px;
     }
 
-    .perfil-foto,
+    .perfil-card-topo {
+        background:
+            radial-gradient(circle at 90% 20%, rgba(56,189,248,0.35), transparent 30%),
+            linear-gradient(135deg, #061a33, #0b4d91 55%, #062f5f);
+        border-radius: 30px;
+        padding: 38px;
+        color: white;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.26);
+        margin-bottom: 30px;
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        gap: 35px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .perfil-card-topo::before {
+        content: "TÊNIS PANAMBI";
+        position: absolute;
+        right: -18px;
+        top: 20px;
+        font-family: Impact, Arial Black, Arial, sans-serif;
+        font-size: 78px;
+        letter-spacing: 4px;
+        color: rgba(255,255,255,0.06);
+        transform: rotate(-3deg);
+    }
+
+    .perfil-card-topo::after {
+        content: "";
+        position: absolute;
+        right: -80px;
+        bottom: -90px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        border: 34px solid rgba(255,255,255,0.06);
+    }
+
+    .perfil-foto {
+        width: 205px;
+        height: 205px;
+        border-radius: 28px;
+        object-fit: cover;
+        border: 5px solid rgba(255,255,255,0.95);
+        background: #e5e7eb;
+        box-shadow: 0 18px 35px rgba(0,0,0,0.35);
+        position: relative;
+        z-index: 2;
+    }
+
     .perfil-foto-vazia {
-        margin: auto;
-        width: 185px;
-        height: 185px;
+        width: 205px;
+        height: 205px;
+        border-radius: 28px;
+        background: rgba(255,255,255,0.18);
+        border: 5px solid rgba(255,255,255,0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 70px;
+        font-weight: bold;
+        box-shadow: 0 18px 35px rgba(0,0,0,0.35);
+        position: relative;
+        z-index: 2;
+    }
+
+    .perfil-card-topo > div {
+        position: relative;
+        z-index: 2;
     }
 
     .perfil-nome {
-        font-size: 44px;
+        font-family: Impact, Arial Black, Arial, sans-serif;
+        font-size: 62px;
+        font-weight: 900;
+        margin: 0 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        line-height: 0.95;
+        text-shadow: 4px 5px 0 rgba(0,0,0,0.22);
+    }
+
+    .perfil-info {
+        font-size: 20px;
+        font-weight: 800;
+        opacity: 0.95;
+        margin-bottom: 18px;
     }
 
     .perfil-badges {
-        justify-content: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .perfil-badge {
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.34);
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 900;
+        font-size: 15px;
     }
 
     .perfil-stats {
-        grid-template-columns: 1fr 1fr;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
     }
 
-    .perfil-grid {
-        grid-template-columns: 1fr;
+    .perfil-stat {
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 20px;
+        padding: 17px;
+        text-align: center;
+        transition: 0.25s;
     }
 
-    .campo-full {
-        grid-column: 1;
+    .perfil-stat:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.20);
+    }
+
+    .perfil-stat strong {
+        display: block;
+        font-size: 34px;
+        margin-bottom: 4px;
+        font-weight: 900;
+    }
+
+    .perfil-stat span {
+        font-size: 14px;
+        opacity: 0.95;
+        font-weight: 800;
     }
 
     .perfil-form-card {
-        padding: 24px;
+        background: white;
+        padding: 35px;
+        border-radius: 28px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
-}
+
+    .perfil-titulo {
+        color: #0b4d91;
+        font-size: 32px;
+        margin: 0 0 25px 0;
+        font-weight: 900;
+    }
+
+    .perfil-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+    }
+
+    .campo-full {
+        grid-column: 1 / 3;
+    }
+
+    .campo label {
+        display: block;
+        font-size: 15px;
+        font-weight: 800;
+        color: #0b4d91;
+        margin-bottom: 8px;
+    }
+
+    .campo input,
+    .campo select,
+    .campo textarea {
+        width: 100%;
+        padding: 15px;
+        border-radius: 14px;
+        border: 1px solid #d1d5db;
+        font-size: 16px;
+        box-sizing: border-box;
+        background: #fff;
+    }
+
+    .campo textarea {
+        resize: vertical;
+    }
+
+    .campo input:focus,
+    .campo select:focus,
+    .campo textarea:focus {
+        outline: none;
+        border-color: #0b4d91;
+        box-shadow: 0 0 0 3px rgba(11,77,145,0.12);
+    }
+
+    .campo-ajuda {
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .perfil-upload {
+        margin-top: 15px;
+    }
+
+    .btn-salvar {
+        margin-top: 30px;
+        width: 100%;
+        padding: 18px;
+        background: linear-gradient(135deg, #0b4d91, #063f78);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 20px;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(11,77,145,0.28);
+        transition: 0.25s;
+    }
+
+    .btn-salvar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(11,77,145,0.36);
+    }
+
+    .frase-card {
+        margin-top: 18px;
+        font-size: 18px;
+        font-style: italic;
+        opacity: 0.95;
+        border-left: 5px solid #38bdf8;
+        padding-left: 14px;
+    }
+
+    @media (max-width: 850px) {
+        .perfil-card-topo {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .perfil-foto,
+        .perfil-foto-vazia {
+            margin: auto;
+            width: 185px;
+            height: 185px;
+        }
+
+        .perfil-nome {
+            font-size: 42px;
+        }
+
+        .perfil-badges {
+            justify-content: center;
+        }
+
+        .perfil-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .perfil-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .campo-full {
+            grid-column: 1;
+        }
+
+        .perfil-form-card {
+            padding: 25px;
+        }
+    }
 </style>
 
 <div class="perfil-container">
@@ -343,7 +293,7 @@ body {
         <div>
             {% if jogador.foto %}
                 <img
-                    src="{{ jogador.foto }}"
+                    src="{{ jogador.foto.url }}"
                     class="perfil-foto"
                     alt="{{ jogador.nome }}"
                 >
@@ -354,8 +304,7 @@ body {
             {% endif %}
         </div>
 
-        <div class="perfil-conteudo">
-
+        <div>
             <h1 class="perfil-nome">
                 {{ jogador.nome }}
             </h1>
@@ -370,7 +319,6 @@ body {
             </div>
 
             <div class="perfil-badges">
-
                 <div class="perfil-badge">
                     🎾 Categoria {{ jogador.categoria|default:"-" }}
                 </div>
@@ -380,11 +328,9 @@ body {
                         🔥 {{ jogador.get_estilo_jogo_display }}
                     </div>
                 {% endif %}
-
             </div>
 
             <div class="perfil-stats">
-
                 <div class="perfil-stat">
                     <strong>{{ jogador.titulos_cd }}</strong>
                     <span>🏆 Títulos</span>
@@ -404,7 +350,6 @@ body {
                     <strong>{{ aproveitamento }}%</strong>
                     <span>📈 Vitórias</span>
                 </div>
-
             </div>
 
             {% if jogador.frase_pessoal %}
@@ -412,7 +357,6 @@ body {
                     “{{ jogador.frase_pessoal }}”
                 </div>
             {% endif %}
-
         </div>
 
     </div>
@@ -423,143 +367,234 @@ body {
             Editar Perfil
         </h2>
 
-        <p class="perfil-subtitulo">
-            Atualize seus dados para deixar seu perfil de atleta mais completo.
-        </p>
-
         <form method="post" enctype="multipart/form-data">
 
             {% csrf_token %}
 
-            <div class="secao-form">
-                <div class="secao-titulo">📷 Foto do atleta</div>
+            <div class="perfil-grid">
 
-                <div class="perfil-grid">
-                    <div class="campo campo-full">
-                        <div class="upload-box">
-                            <div class="upload-icone">📸</div>
+                <div class="campo campo-full">
+                    <label>
+                        Foto do jogador
+                    </label>
 
-                            <label>Trocar foto do jogador</label>
+                    <input
+                        type="file"
+                        name="foto"
+                        accept="image/*"
+                    >
 
-                            <input type="file" name="foto" accept="image/*">
-
-                            <div class="campo-ajuda">
-                                A foto aparece no card do atleta e no perfil público.
-                            </div>
-                        </div>
+                    <div class="campo-ajuda">
+                        A foto aparece no seu card de atleta e no perfil público.
                     </div>
                 </div>
-            </div>
 
-            <div class="secao-form">
-                <div class="secao-titulo">👤 Dados pessoais</div>
+                <div class="campo">
+                    <label>
+                        Nome
+                    </label>
 
-                <div class="perfil-grid">
-
-                    <div class="campo">
-                        <label>Nome</label>
-                        <input type="text" name="nome" value="{{ jogador.nome }}" required>
-                    </div>
-
-                    <div class="campo">
-                        <label>Cidade</label>
-                        <input type="text" name="cidade" value="{{ jogador.cidade|default:'' }}" placeholder="Ex: Panambi">
-                    </div>
-
-                    <div class="campo">
-                        <label>Telefone</label>
-                        <input type="text" name="telefone" value="{{ jogador.telefone|default:'' }}" placeholder="Ex: (55) 99999-9999">
-                    </div>
-
-                    <div class="campo">
-                        <label>Instagram</label>
-                        <input type="text" name="instagram" value="{{ jogador.instagram|default:'' }}" placeholder="Ex: @marcioestula">
-                    </div>
-
+                    <input
+                        type="text"
+                        name="nome"
+                        value="{{ jogador.nome }}"
+                        required
+                    >
                 </div>
-            </div>
 
-            <div class="secao-form">
-                <div class="secao-titulo">🎾 Perfil de tenista</div>
+                <div class="campo">
+                    <label>
+                        Cidade
+                    </label>
 
-                <div class="perfil-grid">
-
-                    <div class="campo">
-                        <label>Mão dominante</label>
-                        <select name="mao_dominante">
-                            <option value="DIREITA" {% if jogador.mao_dominante == 'DIREITA' %}selected{% endif %}>Direita</option>
-                            <option value="ESQUERDA" {% if jogador.mao_dominante == 'ESQUERDA' %}selected{% endif %}>Esquerda</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label>Backhand</label>
-                        <select name="backhand">
-                            <option value="">Selecione</option>
-                            <option value="UMA_MAO" {% if jogador.backhand == 'UMA_MAO' %}selected{% endif %}>1 mão</option>
-                            <option value="DUAS_MAOS" {% if jogador.backhand == 'DUAS_MAOS' %}selected{% endif %}>2 mãos</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label>Raquete</label>
-                        <input type="text" name="raquete" value="{{ jogador.raquete|default:'' }}" placeholder="Ex: Babolat, Wilson, Head...">
-                    </div>
-
-                    <div class="campo">
-                        <label>Ano que começou a jogar</label>
-                        <input type="number" name="ano_inicio" value="{{ jogador.ano_inicio|default:'' }}" placeholder="Ex: 2018" min="1950" max="2030">
-                    </div>
-
-                    <div class="campo">
-                        <label>Clube / Local onde joga</label>
-                        <select name="clube">
-                            <option value="">Selecione</option>
-                            <option value="TENIS_PANAMBI" {% if jogador.clube == 'TENIS_PANAMBI' %}selected{% endif %}>Tênis Panambi</option>
-                            <option value="AABB" {% if jogador.clube == 'AABB' %}selected{% endif %}>AABB</option>
-                            <option value="AFUBRA" {% if jogador.clube == 'AFUBRA' %}selected{% endif %}>Afubra</option>
-                            <option value="OUTRO" {% if jogador.clube == 'OUTRO' %}selected{% endif %}>Outro</option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label>Estilo de jogo</label>
-                        <select name="estilo_jogo">
-                            <option value="">Selecione</option>
-                            <option value="OFENSIVO" {% if jogador.estilo_jogo == 'OFENSIVO' %}selected{% endif %}>Ofensivo</option>
-                            <option value="DEFENSIVO" {% if jogador.estilo_jogo == 'DEFENSIVO' %}selected{% endif %}>Defensivo</option>
-                            <option value="ALL_COURT" {% if jogador.estilo_jogo == 'ALL_COURT' %}selected{% endif %}>All Court</option>
-                            <option value="SAQUE_VOLEIO" {% if jogador.estilo_jogo == 'SAQUE_VOLEIO' %}selected{% endif %}>Saque e Voleio</option>
-                        </select>
-                    </div>
-
+                    <input
+                        type="text"
+                        name="cidade"
+                        value="{{ jogador.cidade|default:'' }}"
+                        placeholder="Ex: Panambi"
+                    >
                 </div>
-            </div>
 
-            <div class="secao-form">
-                <div class="secao-titulo">⭐ Preferências</div>
+                <div class="campo">
+                    <label>
+                        Telefone
+                    </label>
 
-                <div class="perfil-grid">
-
-                    <div class="campo campo-full">
-                        <label>Jogador favorito</label>
-                        <input type="text" name="jogador_favorito" value="{{ jogador.jogador_favorito|default:'' }}" placeholder="Ex: Roger Federer, Rafael Nadal, Novak Djokovic...">
-                    </div>
-
-                    <div class="campo campo-full">
-                        <label>Frase pessoal</label>
-                        <textarea name="frase_pessoal" rows="3" maxlength="200" placeholder="Ex: Nunca desista de uma bola.">{{ jogador.frase_pessoal|default:'' }}</textarea>
-
-                        <div class="campo-ajuda">
-                            Essa frase aparecerá no seu card de atleta.
-                        </div>
-                    </div>
-
+                    <input
+                        type="text"
+                        name="telefone"
+                        value="{{ jogador.telefone|default:'' }}"
+                        placeholder="Ex: (55) 99999-9999"
+                    >
                 </div>
+
+                <div class="campo">
+                    <label>
+                        Instagram
+                    </label>
+
+                    <input
+                        type="text"
+                        name="instagram"
+                        value="{{ jogador.instagram|default:'' }}"
+                        placeholder="Ex: @marcioestula"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Mão dominante
+                    </label>
+
+                    <select name="mao_dominante">
+                        <option value="DIREITA" {% if jogador.mao_dominante == 'DIREITA' %}selected{% endif %}>
+                            Direita
+                        </option>
+
+                        <option value="ESQUERDA" {% if jogador.mao_dominante == 'ESQUERDA' %}selected{% endif %}>
+                            Esquerda
+                        </option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Backhand
+                    </label>
+
+                    <select name="backhand">
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="UMA_MAO" {% if jogador.backhand == 'UMA_MAO' %}selected{% endif %}>
+                            1 mão
+                        </option>
+
+                        <option value="DUAS_MAOS" {% if jogador.backhand == 'DUAS_MAOS' %}selected{% endif %}>
+                            2 mãos
+                        </option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Raquete
+                    </label>
+
+                    <input
+                        type="text"
+                        name="raquete"
+                        value="{{ jogador.raquete|default:'' }}"
+                        placeholder="Ex: Babolat, Wilson, Head..."
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Ano que começou a jogar
+                    </label>
+
+                    <input
+                        type="number"
+                        name="ano_inicio"
+                        value="{{ jogador.ano_inicio|default:'' }}"
+                        placeholder="Ex: 2018"
+                        min="1950"
+                        max="2030"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Clube / Local onde joga
+                    </label>
+
+                    <select name="clube">
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="TENIS_PANAMBI" {% if jogador.clube == 'TENIS_PANAMBI' %}selected{% endif %}>
+                            Tênis Panambi
+                        </option>
+
+                        <option value="AABB" {% if jogador.clube == 'AABB' %}selected{% endif %}>
+                            AABB
+                        </option>
+
+                        <option value="AFUBRA" {% if jogador.clube == 'AFUBRA' %}selected{% endif %}>
+                            Afubra
+                        </option>
+
+                        <option value="OUTRO" {% if jogador.clube == 'OUTRO' %}selected{% endif %}>
+                            Outro
+                        </option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label>
+                        Estilo de jogo
+                    </label>
+
+                    <select name="estilo_jogo">
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="OFENSIVO" {% if jogador.estilo_jogo == 'OFENSIVO' %}selected{% endif %}>
+                            Ofensivo
+                        </option>
+
+                        <option value="DEFENSIVO" {% if jogador.estilo_jogo == 'DEFENSIVO' %}selected{% endif %}>
+                            Defensivo
+                        </option>
+
+                        <option value="ALL_COURT" {% if jogador.estilo_jogo == 'ALL_COURT' %}selected{% endif %}>
+                            All Court
+                        </option>
+
+                        <option value="SAQUE_VOLEIO" {% if jogador.estilo_jogo == 'SAQUE_VOLEIO' %}selected{% endif %}>
+                            Saque e Voleio
+                        </option>
+                    </select>
+                </div>
+
+                <div class="campo campo-full">
+                    <label>
+                        Jogador favorito
+                    </label>
+
+                    <input
+                        type="text"
+                        name="jogador_favorito"
+                        value="{{ jogador.jogador_favorito|default:'' }}"
+                        placeholder="Ex: Roger Federer, Rafael Nadal, Novak Djokovic..."
+                    >
+                </div>
+
+                <div class="campo campo-full">
+                    <label>
+                        Frase pessoal
+                    </label>
+
+                    <textarea
+                        name="frase_pessoal"
+                        rows="3"
+                        maxlength="200"
+                        placeholder="Ex: Nunca desista de uma bola."
+                    >{{ jogador.frase_pessoal|default:'' }}</textarea>
+
+                    <div class="campo-ajuda">
+                        Essa frase aparecerá no seu card de atleta.
+                    </div>
+                </div>
+
             </div>
 
             <button type="submit" class="btn-salvar">
-                💾 Salvar Alterações
+                Salvar Perfil
             </button>
 
         </form>
