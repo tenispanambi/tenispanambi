@@ -88,6 +88,10 @@
     border-radius:14px;
 }
 
+.player-info-item.full{
+    grid-column:1 / 3;
+}
+
 .player-info-item strong{
     color:white;
 }
@@ -393,9 +397,7 @@
                 <div class="player-photo"></div>
             {% endif %}
 
-            <div class="player-level">
-                {{ jogador.nivel|default:"INICIANTE" }}
-            </div>
+            
         </div>
 
         <div>
@@ -422,19 +424,15 @@
                     </strong>
                 </div>
 
-                <div class="player-info-item">
-                    📈 Nível:
-                    <strong>{{ jogador.nivel|default:"-" }}</strong>
-                </div>
-
+                
                 <div class="player-info-item">
                     📍 Cidade:
                     <strong>{{ jogador.cidade|default:"-" }}</strong>
                 </div>
 
-                <div class="player-info-item">
-                    🎾 Raquete:
-                    <strong>{{ jogador.raquete|default:"-" }}</strong>
+                <div class="player-info-item full">
+                   🎾 Raquete:
+                   <strong>{{ jogador.raquete|default:"Não informado" }}</strong>
                 </div>
 
                 <div class="player-info-item">
