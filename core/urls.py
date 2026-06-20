@@ -187,4 +187,10 @@ path(
     name='calendario'
 ),
 
+path(
+    'estatisticas-championship/',
+    views.estatisticas_championship,
+    name='estatisticas_championship'
+),
+
 ]

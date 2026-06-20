@@ -2959,3 +2959,122 @@ def calendario(request):
             'eventos': eventos,
         }
     )
+
+def estatisticas_championship(request):
+
+    jogadores_ids_sistema = ParticipanteJogo.objects.filter(
+        jogo__status='CONFIRMADO',
+        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    ).values_list(
+        'jogador_id',
+        flat=True
+    ).distinct()
+
+    jogadores = Jogador.objects.filter(
+        id__in=jogadores_ids_sistema
+    ) | Jogador.objects.filter(
+        jogos_historicos__gt=0
+    ) | Jogador.objects.filter(
+        vitorias_historicas__gt=0
+    ) | Jogador.objects.filter(
+        derrotas_historicas__gt=0
+    ) | Jogador.objects.filter(
+        titulos_cd__gt=0
+    ) | Jogador.objects.filter(
+        vice_cd__gt=0
+    )
+
+    jogadores = jogadores.distinct().exclude(
+        usuario__is_staff=True
+    ).exclude(
+        usuario__is_superuser=True
+    ).order_by('nome')
+
+    estatisticas = []
+
+    for jogador in jogadores:
+
+        participacoes = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO',
+            jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+        )
+
+        jogos_sistema = participacoes.count()
+        vitorias_sistema = participacoes.filter(vencedor=True).count()
+        derrotas_sistema = participacoes.filter(vencedor=False).count()
+
+        total_jogos = jogador.jogos_historicos + jogos_sistema
+        total_vitorias = jogador.vitorias_historicas + vitorias_sistema
+        total_derrotas = jogador.derrotas_historicas + derrotas_sistema
+
+        aproveitamento = 0
+
+        if total_jogos > 0:
+            aproveitamento = round(
+                (total_vitorias / total_jogos) * 100,
+                1
+            )
+
+        estatisticas.append({
+            'jogador': jogador,
+            'jogos': total_jogos,
+            'vitorias': total_vitorias,
+            'derrotas': total_derrotas,
+            'aproveitamento': aproveitamento,
+            'titulos': jogador.titulos_cd,
+            'vices': jogador.vice_cd,
+            'semifinais': jogador.semifinal_cd,
+        })
+
+    estatisticas = sorted(
+        estatisticas,
+        key=lambda item: (
+            item['titulos'],
+            item['jogos'],
+            item['vitorias'],
+            item['aproveitamento'],
+            item['jogador'].nome
+        ),
+        reverse=True
+    )
+
+    campeoes_diferentes = len([
+        item for item in estatisticas
+        if item['titulos'] > 0
+    ])
+
+    jogadores_mais_100_vitorias = len([
+        item for item in estatisticas
+        if item['vitorias'] >= 100
+    ])
+
+    jogadores_minimo_50 = [
+        item for item in estatisticas
+        if item['jogos'] >= 50
+    ]
+
+    melhor_aproveitamento = None
+
+    if jogadores_minimo_50:
+        melhor_aproveitamento = sorted(
+            jogadores_minimo_50,
+            key=lambda item: (
+                item['aproveitamento'],
+                item['vitorias'],
+                item['jogos']
+            ),
+            reverse=True
+        )[0]
+
+    return render(
+        request,
+        'estatisticas/championship.html',
+        {
+            'estatisticas': estatisticas,
+            'total_jogadores': len(estatisticas),
+            'campeoes_diferentes': campeoes_diferentes,
+            'jogadores_mais_100_vitorias': jogadores_mais_100_vitorias,
+            'melhor_aproveitamento': melhor_aproveitamento,
+        }
+    )

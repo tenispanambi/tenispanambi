@@ -1,0 +1,338 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.stats-page{
+    max-width:1350px;
+    margin:0 auto;
+    padding:25px;
+}
+
+.stats-hero{
+    background:linear-gradient(135deg, rgba(80,0,0,.95), rgba(160,15,15,.92), rgba(20,20,20,.95));
+    color:white;
+    border-radius:34px;
+    padding:45px;
+    margin-bottom:28px;
+    box-shadow:0 18px 45px rgba(0,0,0,.25);
+    position:relative;
+    overflow:hidden;
+}
+
+.stats-hero::after{
+    content:"🏆";
+    position:absolute;
+    right:40px;
+    top:25px;
+    font-size:130px;
+    opacity:.12;
+}
+
+.stats-hero h1{
+    font-size:48px;
+    margin:0;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.stats-hero p{
+    font-size:18px;
+    opacity:.9;
+    margin-top:10px;
+}
+
+.cards-resumo{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.card-resumo{
+    background:white;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 10px 28px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.card-numero{
+    font-size:36px;
+    font-weight:1000;
+    color:#b91c1c;
+}
+
+.card-label{
+    color:#475569;
+    font-weight:800;
+    margin-top:6px;
+}
+
+.filtro-box{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    margin-bottom:25px;
+    box-shadow:0 10px 28px rgba(0,0,0,.10);
+}
+
+.filtro-input{
+    width:100%;
+    padding:16px 20px;
+    border:2px solid #e5e7eb;
+    border-radius:16px;
+    font-size:17px;
+    transition:.3s;
+}
+
+.filtro-input:focus{
+    outline:none;
+    border-color:#b91c1c;
+    box-shadow:0 0 0 4px rgba(185,28,28,.12);
+}
+
+.tabela-card{
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 14px 36px rgba(0,0,0,.12);
+}
+
+.tabela-header{
+    background:#7f1d1d;
+    color:white;
+    padding:22px 26px;
+    font-size:24px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#111827;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:14px;
+    text-transform:uppercase;
+}
+
+td{
+    padding:15px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:center;
+    font-weight:800;
+    color:#0f172a;
+}
+
+td.nome{
+    text-align:left;
+    font-size:17px;
+}
+
+.posicao{
+    font-size:22px;
+}
+
+.badge-titulo{
+    background:#fef3c7;
+    color:#92400e;
+    padding:7px 12px;
+    border-radius:999px;
+    font-weight:1000;
+}
+
+.aproveitamento-bar{
+    background:#e5e7eb;
+    border-radius:999px;
+    height:12px;
+    overflow:hidden;
+    margin-top:6px;
+}
+
+.aproveitamento-fill{
+    background:linear-gradient(90deg,#ef4444,#facc15);
+    height:100%;
+}
+
+.percentual{
+    font-weight:1000;
+    color:#b91c1c;
+}
+
+@media(max-width:800px){
+    .stats-page{
+        padding:12px;
+    }
+
+    .stats-hero h1{
+        font-size:34px;
+    }
+
+    table{
+        font-size:13px;
+    }
+
+    th, td{
+        padding:10px 6px;
+    }
+
+    .hide-mobile{
+        display:none;
+    }
+}
+</style>
+
+<div class="stats-page">
+
+    <div class="stats-hero">
+        <h1>🏆 Championship Duplas</h1>
+        <p>Estatísticas históricas dos jogadores do Championship Duplas.</p>
+    </div>
+
+    <div class="cards-resumo">
+
+        <div class="card-resumo">
+            <div class="card-numero">{{ total_jogadores }}</div>
+            <div class="card-label">Jogadores</div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero">{{ campeoes_diferentes }}</div>
+            <div class="card-label">Campeões diferentes</div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero">{{ jogadores_mais_100_vitorias }}</div>
+            <div class="card-label">
+                Jogadores com<br>100+ vitórias
+            </div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero">
+                {% if melhor_aproveitamento %}
+                    {{ melhor_aproveitamento.aproveitamento }}%
+                {% else %}
+                    0%
+                {% endif %}
+            </div>
+            <div class="card-label">
+                Melhor aproveitamento
+                <br>mín. 50 jogos
+                {% if melhor_aproveitamento %}
+                    <br>{{ melhor_aproveitamento.jogador.nome }}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="filtro-box">
+        <input
+            type="text"
+            id="pesquisaJogador"
+            class="filtro-input"
+            placeholder="🔎 Procurar jogador..."
+        >
+    </div>
+
+    <div class="tabela-card">
+
+        <div class="tabela-header">
+            Ranking histórico dos jogadores
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Jogador</th>
+                    <th>J</th>
+                    <th>V</th>
+                    <th>D</th>
+                    <th>Aprov.</th>
+                    <th>Títulos</th>
+                    <th class="hide-mobile">Vices</th>
+                    <th class="hide-mobile">Semis</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelaJogadores">
+                {% for item in estatisticas %}
+                    <tr class="linha-jogador">
+                        <td class="posicao">
+                            {% if forloop.counter == 1 %}
+                                🥇
+                            {% elif forloop.counter == 2 %}
+                                🥈
+                            {% elif forloop.counter == 3 %}
+                                🥉
+                            {% else %}
+                                {{ forloop.counter }}
+                            {% endif %}
+                        </td>
+
+                        <td class="nome">
+                            {{ item.jogador.nome }}
+                        </td>
+
+                        <td>{{ item.jogos }}</td>
+                        <td>{{ item.vitorias }}</td>
+                        <td>{{ item.derrotas }}</td>
+
+                        <td>
+                            <span class="percentual">{{ item.aproveitamento }}%</span>
+                            <div class="aproveitamento-bar">
+                                <div class="aproveitamento-fill" style="width:{{ item.aproveitamento }}%"></div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="badge-titulo">
+                                🏆 {{ item.titulos }}
+                            </span>
+                        </td>
+
+                        <td class="hide-mobile">{{ item.vices }}</td>
+                        <td class="hide-mobile">{{ item.semifinais }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9">Nenhuma estatística encontrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+const pesquisa = document.getElementById("pesquisaJogador");
+
+if(pesquisa){
+    pesquisa.addEventListener("keyup", function(){
+        let texto = this.value.toLowerCase();
+        let linhas = document.querySelectorAll(".linha-jogador");
+
+        linhas.forEach(function(linha){
+            let jogador = linha.querySelector(".nome").innerText.toLowerCase();
+
+            if(jogador.indexOf(texto) > -1){
+                linha.style.display = "";
+            }else{
+                linha.style.display = "none";
+            }
+        });
+    });
+}
+</script>
+
+{% endblock %}
