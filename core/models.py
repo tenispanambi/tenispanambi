@@ -928,6 +928,14 @@ class EventoCalendario(models.Model):
         null=True
     )
 
+    mensagem_inscricao = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        default='Fique ligado, as inscrições abrirão em breve.',
+        help_text='Mensagem exibida no card de inscrições.'
+    )
+
     tipo_evento = models.CharField(
         max_length=30,
         choices=TIPOS_EVENTO,
