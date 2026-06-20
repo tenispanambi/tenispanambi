@@ -16,6 +16,7 @@ from .models import (
     RegistroTorneio,
     ResultadoTorneio,
     BannerSite,
+    EventoCalendario,
 )
 
 from .services.ranking import recalcular_ranking
@@ -428,4 +429,102 @@ class BannerSiteAdmin(admin.ModelAdmin):
         'visualizacoes',
         'cliques',
         'criado_em',
+    )
+
+@admin.register(EventoCalendario)
+class EventoCalendarioAdmin(admin.ModelAdmin):
+    list_display = (
+        'nome',
+        'tipo_evento',
+        'data_inicio',
+        'data_fim',
+        'status',
+        'ativo',
+        'destaque',
+    )
+
+    list_filter = (
+        'tipo_evento',
+        'status',
+        'ativo',
+        'destaque',
+        'data_inicio',
+    )
+
+    search_fields = (
+        'nome',
+        'subtitulo',
+        'categorias',
+        'local',
+        'endereco',
+    )
+
+    ordering = (
+        'data_inicio',
+    )
+
+    fieldsets = (
+        (
+            '🏆 Informações Gerais',
+            {
+                'fields': (
+                    'nome',
+                    'subtitulo',
+                    'tipo_evento',
+                    'descricao',
+                    'categorias',
+                )
+            }
+        ),
+        (
+            '📍 Local',
+            {
+                'fields': (
+                    'local',
+                    'endereco',
+                )
+            }
+        ),
+        (
+            '📅 Datas',
+            {
+                'fields': (
+                    'data_abertura_inscricoes',
+                    'data_fechamento_inscricoes',
+                    'data_inicio',
+                    'data_fim',
+                )
+            }
+        ),
+        (
+            '📝 Inscrições',
+            {
+                'fields': (
+                    'valor_inscricao',
+                    'limite_vagas',
+                    'link_inscricao',
+                )
+            }
+        ),
+        (
+            '🖼️ Imagens e Arquivos',
+            {
+                'fields': (
+                    'banner',
+                    'logo',
+                    'regulamento',
+                )
+            }
+        ),
+        (
+            '⚙️ Configurações',
+            {
+                'fields': (
+                    'status',
+                    'ativo',
+                    'destaque',
+                    'cor_evento',
+                )
+            }
+        ),
     )

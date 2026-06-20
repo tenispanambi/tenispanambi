@@ -181,4 +181,10 @@ path(
     name='detalhe_torneio_historico'
 ),
 
+path(
+    'calendario/',
+    views.calendario,
+    name='calendario'
+),
+
 ]

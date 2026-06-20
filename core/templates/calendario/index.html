@@ -1,0 +1,492 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.calendario-container{
+    max-width:1300px;
+    margin:0 auto;
+    padding:25px;
+}
+
+.calendario-hero{
+    background:
+        radial-gradient(circle at 90% 20%, rgba(250,204,21,.30), transparent 25%),
+        linear-gradient(135deg,#020617,#06264a,#0b4d91);
+    color:white;
+    border-radius:34px;
+    padding:45px;
+    margin-bottom:30px;
+    box-shadow:0 18px 45px rgba(0,0,0,.22);
+    position:relative;
+    overflow:hidden;
+}
+
+.calendario-hero::after{
+    content:"🎾";
+    position:absolute;
+    right:35px;
+    top:20px;
+    font-size:120px;
+    opacity:.12;
+    transform:rotate(-18deg);
+}
+
+.calendario-hero h1{
+    font-size:50px;
+    margin:0;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.calendario-hero p{
+    margin-top:12px;
+    font-size:19px;
+    opacity:.92;
+}
+
+.eventos-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:24px;
+}
+
+.evento-card{
+    background:white;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 14px 36px rgba(0,0,0,.12);
+    border:1px solid #e5e7eb;
+}
+
+.evento-banner{
+    height:205px;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(56,189,248,.35), transparent 25%),
+        linear-gradient(135deg,#031b2f,#0b4d91);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:58px;
+    position:relative;
+}
+
+.evento-banner img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.evento-logo{
+    position:absolute;
+    left:18px;
+    bottom:18px;
+    background:white;
+    border-radius:18px;
+    padding:10px;
+    max-width:92px;
+    max-height:72px;
+    object-fit:contain;
+    box-shadow:0 8px 22px rgba(0,0,0,.25);
+}
+
+.evento-body{
+    padding:26px;
+}
+
+.evento-status{
+    display:inline-block;
+    padding:9px 15px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:1000;
+    text-transform:uppercase;
+    margin-bottom:14px;
+}
+
+.status-EM_BREVE{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-INSCRICOES_ABERTAS{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-INSCRICOES_ENCERRADAS{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.status-EM_ANDAMENTO{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-FINALIZADO{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.evento-titulo{
+    font-size:29px;
+    font-weight:1000;
+    color:#062f5f;
+    margin:0 0 6px;
+    line-height:1.1;
+}
+
+.evento-subtitulo{
+    color:#64748b;
+    font-weight:800;
+    margin-bottom:14px;
+}
+
+.evento-info{
+    color:#475569;
+    line-height:1.8;
+    font-size:16px;
+}
+
+.evento-info strong{
+    color:#0f172a;
+}
+
+.categorias-box{
+    margin-top:16px;
+    background:#eef6ff;
+    border-radius:18px;
+    padding:15px;
+    color:#0b4d91;
+    font-weight:900;
+}
+
+.extra-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:16px;
+}
+
+.extra-card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+    padding:13px;
+    color:#334155;
+    font-weight:800;
+}
+
+.extra-card strong{
+    display:block;
+    color:#0f172a;
+    margin-top:4px;
+}
+
+.evento-descricao{
+    margin-top:16px;
+    color:#64748b;
+    line-height:1.6;
+}
+
+.timeline{
+    margin-top:18px;
+    border-left:4px solid #0b4d91;
+    padding-left:16px;
+}
+
+.timeline-item{
+    margin-bottom:12px;
+    color:#334155;
+}
+
+.timeline-item strong{
+    color:#0b4d91;
+}
+
+.evento-botoes{
+    margin-top:22px;
+}
+
+.letzplay-box{
+    width:100%;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:22px;
+    padding:18px;
+    text-align:center;
+}
+
+.letzplay-texto strong{
+    display:block;
+    color:#0f172a;
+    font-size:17px;
+    margin-bottom:4px;
+}
+
+.letzplay-texto span{
+    color:#64748b;
+    font-size:14px;
+}
+
+.letzplay-logo{
+    max-height:58px;
+    margin:16px auto;
+    display:block;
+    object-fit:contain;
+}
+
+.btn-inscricao{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:white;
+    text-decoration:none;
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:1000;
+    display:inline-block;
+    margin-top:8px;
+}
+
+.btn-regulamento{
+    background:#0b4d91;
+    color:white;
+    text-decoration:none;
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:1000;
+    display:inline-block;
+    margin-top:10px;
+}
+
+.btn-bloqueado{
+    background:#e5e7eb;
+    color:#64748b;
+    padding:14px 18px;
+    border-radius:14px;
+    font-weight:1000;
+    display:inline-block;
+}
+
+.empty-card{
+    background:white;
+    border-radius:28px;
+    padding:40px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 12px 32px rgba(0,0,0,.08);
+}
+
+@media(max-width:700px){
+    .calendario-container{
+        padding:12px;
+    }
+
+    .calendario-hero{
+        padding:28px;
+        border-radius:26px;
+    }
+
+    .calendario-hero h1{
+        font-size:34px;
+    }
+
+    .eventos-grid{
+        grid-template-columns:1fr;
+    }
+
+    .extra-info{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="calendario-container">
+
+    <div class="calendario-hero">
+        <h1>🏆 Eventos</h1>
+        <p>
+            Torneios, datas, categorias e inscrições oficiais do Tênis Panambi.
+        </p>
+    </div>
+
+    {% if eventos %}
+
+        <div class="eventos-grid">
+
+            {% for evento in eventos %}
+
+                <div class="evento-card">
+
+                    <div class="evento-banner">
+                        {% if evento.banner %}
+                            <img src="{{ evento.banner.url }}" alt="{{ evento.nome }}">
+                        {% else %}
+                            🏆
+                        {% endif %}
+
+                        {% if evento.logo %}
+                            <img src="{{ evento.logo.url }}" class="evento-logo" alt="{{ evento.nome }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="evento-body">
+
+                        <div class="evento-status status-{{ evento.status }}">
+                            {{ evento.get_status_display }}
+                        </div>
+
+                        <h2 class="evento-titulo">
+                            {{ evento.nome }}
+                        </h2>
+
+                        {% if evento.subtitulo %}
+                            <div class="evento-subtitulo">
+                                {{ evento.subtitulo }}
+                            </div>
+                        {% endif %}
+
+                        <div class="evento-info">
+                            📅
+                            <strong>
+                                {{ evento.data_inicio|date:"d/m/Y" }}
+                                {% if evento.data_fim %}
+                                    até {{ evento.data_fim|date:"d/m/Y" }}
+                                {% endif %}
+                            </strong>
+
+                            <br>
+
+                            📍
+                            <strong>
+                                {{ evento.local|default:"Local a definir" }}
+                            </strong>
+                        </div>
+
+                        {% if evento.categorias %}
+                            <div class="categorias-box">
+                                🎾 {{ evento.categorias }}
+                            </div>
+                        {% endif %}
+
+                        <div class="extra-info">
+
+                            {% if evento.valor_inscricao %}
+                                <div class="extra-card">
+                                    💰 Inscrição
+                                    <strong>{{ evento.valor_inscricao }}</strong>
+                                </div>
+                            {% endif %}
+
+                            {% if evento.limite_vagas %}
+                                <div class="extra-card">
+                                    👥 Vagas
+                                    <strong>{{ evento.limite_vagas }}</strong>
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        {% if evento.descricao %}
+                            <div class="evento-descricao">
+                                {{ evento.descricao }}
+                            </div>
+                        {% endif %}
+
+                        <div class="timeline">
+
+                            {% if evento.data_abertura_inscricoes %}
+                                <div class="timeline-item">
+                                    🟢 <strong>Abertura inscrições:</strong>
+                                    {{ evento.data_abertura_inscricoes|date:"d/m/Y" }}
+                                </div>
+                            {% endif %}
+
+                            {% if evento.data_fechamento_inscricoes %}
+                                <div class="timeline-item">
+                                    🔴 <strong>Fechamento inscrições:</strong>
+                                    {{ evento.data_fechamento_inscricoes|date:"d/m/Y" }}
+                                </div>
+                            {% endif %}
+
+                            <div class="timeline-item">
+                                🎾 <strong>Início do evento:</strong>
+                                {{ evento.data_inicio|date:"d/m/Y" }}
+                            </div>
+
+                            {% if evento.data_fim %}
+                                <div class="timeline-item">
+                                    🏆 <strong>Encerramento:</strong>
+                                    {{ evento.data_fim|date:"d/m/Y" }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="evento-botoes">
+
+                            {% if evento.link_inscricao %}
+
+                                <div class="letzplay-box">
+
+                                    <div class="letzplay-texto">
+                                        <strong>Inscrições oficiais</strong>
+                                        <span>
+                                            Realizadas pela plataforma {{ evento.plataforma_inscricao|default:"LetzPlay" }}
+                                        </span>
+                                    </div>
+
+                                    {% if evento.logo_plataforma_inscricao %}
+                                        <a href="{{ evento.link_inscricao }}" target="_blank">
+                                            <img
+                                                src="{{ evento.logo_plataforma_inscricao.url }}"
+                                                class="letzplay-logo"
+                                                alt="{{ evento.plataforma_inscricao|default:'LetzPlay' }}"
+                                            >
+                                        </a>
+                                    {% endif %}
+
+                                    <a href="{{ evento.link_inscricao }}" target="_blank" class="btn-inscricao">
+                                        📝 Inscrever-se no {{ evento.plataforma_inscricao|default:"LetzPlay" }}
+                                    </a>
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="btn-bloqueado">
+                                    Inscrições em breve
+                                </span>
+
+                            {% endif %}
+
+                            {% if evento.regulamento %}
+                                <br>
+                                <a href="{{ evento.regulamento.url }}" target="_blank" class="btn-regulamento">
+                                    📄 Regulamento
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-card">
+            <h2>Nenhum evento cadastrado ainda.</h2>
+            <p>Cadastre os eventos no painel administrativo.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

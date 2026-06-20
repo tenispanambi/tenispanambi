@@ -900,3 +900,154 @@ class BannerSite(models.Model):
 
     def __str__(self):
         return f'{self.titulo} - {self.get_pagina_display()}'
+    
+class EventoCalendario(models.Model):
+
+    STATUS = [
+        ('EM_BREVE', 'Em breve'),
+        ('INSCRICOES_ABERTAS', 'Inscrições abertas'),
+        ('INSCRICOES_ENCERRADAS', 'Inscrições encerradas'),
+        ('EM_ANDAMENTO', 'Em andamento'),
+        ('FINALIZADO', 'Finalizado'),
+    ]
+
+    TIPOS_EVENTO = [
+        ('TORNEIO', 'Torneio'),
+        ('CLINICA', 'Clínica'),
+        ('CURSO', 'Curso'),
+        ('SOCIAL', 'Evento Social'),
+        ('FESTIVAL', 'Festival'),
+        ('OUTRO', 'Outro'),
+    ]
+
+    nome = models.CharField(max_length=150)
+
+    subtitulo = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+
+    tipo_evento = models.CharField(
+        max_length=30,
+        choices=TIPOS_EVENTO,
+        default='TORNEIO'
+    )
+
+    descricao = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    categorias = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text='Ex: Categoria A, Categoria B, Infantil, Feminino'
+    )
+
+    local = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True
+    )
+
+    endereco = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+
+    data_inicio = models.DateField()
+
+    data_fim = models.DateField(
+        blank=True,
+        null=True
+    )
+
+    data_abertura_inscricoes = models.DateField(
+        blank=True,
+        null=True
+    )
+
+    data_fechamento_inscricoes = models.DateField(
+        blank=True,
+        null=True
+    )
+
+    plataforma_inscricao = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default='LetzPlay',
+        help_text='Ex: LetzPlay'
+    )
+
+    logo_plataforma_inscricao = models.ImageField(
+        upload_to='eventos_calendario/plataformas/',
+        blank=True,
+        null=True
+    )
+
+    link_inscricao = models.URLField(
+        blank=True,
+        null=True,
+        help_text='Cole aqui o link da inscrição no LetzPlay'
+    )
+
+    valor_inscricao = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text='Ex: R$ 50,00 ou Gratuito'
+    )
+
+    limite_vagas = models.PositiveIntegerField(
+        blank=True,
+        null=True
+    )
+
+    banner = models.ImageField(
+        upload_to='eventos_calendario/',
+        blank=True,
+        null=True
+    )
+
+    logo = models.ImageField(
+        upload_to='eventos_calendario/logos/',
+        blank=True,
+        null=True
+    )
+
+    regulamento = models.FileField(
+        upload_to='eventos_calendario/regulamentos/',
+        blank=True,
+        null=True
+    )
+
+    cor_evento = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        help_text='Ex: azul, verde, laranja'
+    )
+
+    status = models.CharField(
+        max_length=30,
+        choices=STATUS,
+        default='EM_BREVE'
+    )
+
+    destaque = models.BooleanField(default=False)
+
+    ativo = models.BooleanField(default=True)
+
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['data_inicio', 'nome']
+        verbose_name = 'Evento do Calendário'
+        verbose_name_plural = 'Eventos do Calendário'
+
+    def __str__(self):
+        return self.nome

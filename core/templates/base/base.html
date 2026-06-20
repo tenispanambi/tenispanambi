@@ -119,6 +119,48 @@
             color:#d7ff00;
         }
 
+        .menu-dropdown{
+    position:relative;
+}
+
+.menu-dropdown-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+}
+
+.menu-dropdown-content{
+    position:absolute;
+    top:48px;
+    left:0;
+    background:white;
+    min-width:250px;
+    border-radius:18px;
+    box-shadow:0 18px 40px rgba(0,0,0,.28);
+    overflow:hidden;
+    display:none;
+    z-index:9999;
+}
+
+.menu-dropdown:hover .menu-dropdown-content{
+    display:block;
+}
+
+.menu-dropdown-content a{
+    display:block;
+    color:#0b4d91 !important;
+    background:white;
+    padding:15px 18px;
+    border-bottom:1px solid #e5e7eb;
+    font-size:15px;
+    border-radius:0;
+}
+
+.menu-dropdown-content a:hover{
+    background:#eef2ff;
+    color:#062f5f !important;
+}
+
         .btn-lancar{
             background:linear-gradient(135deg,#facc15,#f59e0b) !important;
             color:#111827 !important;
@@ -512,16 +554,31 @@
             <i class="fa-solid fa-chart-simple"></i> Ranking
         </a>
 
-        <a href="/mural-campeoes/">
-            <i class="fa-solid fa-trophy"></i> Campeões
-        </a>
+        <div class="menu-dropdown">
 
-        <a href="/head-to-head/">
-            <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
+    <a href="#" class="menu-dropdown-btn">
+        <i class="fa-solid fa-trophy"></i> Torneios
+        <i class="fa-solid fa-chevron-down"></i>
+    </a>
+
+    <div class="menu-dropdown-content">
+        <a href="/calendario/">
+            <i class="fa-solid fa-calendar-days"></i> Calendário Oficial
         </a>
 
         <a href="/torneios-historico/">
-    <i class="fa-solid fa-trophy"></i> Torneios
+            <i class="fa-solid fa-trophy"></i> Histórico de Torneios
+        </a>
+
+        <a href="/mural-campeoes/">
+            <i class="fa-solid fa-medal"></i> Mural de Campeões
+        </a>
+    </div>
+
+</div>
+
+<a href="/head-to-head/">
+    <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
 </a>
 
         <span class="menu-spacer"></span>

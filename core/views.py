@@ -39,6 +39,7 @@ from .models import (
     RegistroTorneio,
     ResultadoTorneio,
     BannerSite,
+    EventoCalendario,
 )
 
 def home(request):
@@ -2939,5 +2940,22 @@ def detalhe_torneio_historico(request, torneio_id):
         {
             'torneio': torneio,
             'resultados': resultados
+        }
+    )
+
+def calendario(request):
+
+    eventos = EventoCalendario.objects.filter(
+        ativo=True
+    ).order_by(
+        'data_inicio',
+        'nome'
+    )
+
+    return render(
+        request,
+        'calendario/index.html',
+        {
+            'eventos': eventos,
         }
     )
