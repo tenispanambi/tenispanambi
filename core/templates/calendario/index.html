@@ -27,13 +27,6 @@
     overflow:hidden;
 }
 
-.hero-logo{
-    width:150px;
-    height:150px;
-    object-fit:contain;
-    filter:drop-shadow(0 12px 25px rgba(0,0,0,.45));
-}
-
 .hero-logo-fallback{
     width:150px;
     height:150px;
@@ -110,17 +103,6 @@
     border-radius:18px;
     font-weight:900;
     line-height:1.4;
-}
-
-.btn-inscricao{
-    display:inline-block;
-    margin-top:14px;
-    background:linear-gradient(135deg,#22c55e,#16a34a);
-    color:white;
-    text-decoration:none;
-    padding:14px 22px;
-    border-radius:14px;
-    font-weight:1000;
 }
 
 .agenda-card{
@@ -382,7 +364,6 @@
         font-size:38px;
     }
 
-    .hero-logo,
     .hero-logo-fallback{
         width:125px;
         height:125px;
@@ -401,94 +382,66 @@
 
 <div class="agenda-page">
 
-    {% if eventos %}
+    <div class="agenda-hero">
 
-        {% with destaque=eventos.0 %}
+        <div class="hero-logo-fallback">
+            📅
+        </div>
 
-            <div class="agenda-hero">
+        <div class="hero-title">
 
-                <div>
-                    {% if destaque.logo %}
-                        <img src="{{ destaque.logo.url }}" class="hero-logo" alt="{{ destaque.nome }}">
-                    {% else %}
-                        <div class="hero-logo-fallback">🏆</div>
-                    {% endif %}
-                </div>
+            <h1>
+                <span>Calendário</span> de Torneios
+            </h1>
 
-                <div class="hero-title">
+            <p>
+                Acompanhe todos os torneios, campeonatos, clínicas, festivais e eventos do
+                Tênis Panambi em um único lugar.
+            </p>
 
-                    <h1>
-                        {% if destaque.nome|slice:":3" == "11º" %}
-                            <span>11º</span> {{ destaque.nome|slice:"4:" }}
-                        {% else %}
-                            {{ destaque.nome }}
-                        {% endif %}
-                    </h1>
+            <div class="hero-info-grid">
 
-                    <p>
-                        {% if destaque.subtitulo %}
-                            {{ destaque.subtitulo }}
-                        {% else %}
-                            Agenda oficial de eventos e torneios do Tênis Panambi.
-                        {% endif %}
-                    </p>
-
-                    <div class="hero-info-grid">
-
-                        <div class="hero-info">
-                            <div>📅</div>
-                            <div>
-                                {{ destaque.data_inicio|date:"d/m/Y" }}
-                                {% if destaque.data_fim %}
-                                    até {{ destaque.data_fim|date:"d/m/Y" }}
-                                {% endif %}
-                                <small>Período</small>
-                            </div>
-                        </div>
-
-                        <div class="hero-info">
-                            <div>📍</div>
-                            <div>
-                                {{ destaque.local|default:"Local a definir" }}
-                                <small>Local</small>
-                            </div>
-                        </div>
-
-                        {% if destaque.categorias %}
-                            <div class="hero-info">
-                                <div>🎾</div>
-                                <div>
-                                    {{ destaque.categorias }}
-                                    <small>Categorias</small>
-                                </div>
-                            </div>
-                        {% endif %}
-
+                <div class="hero-info">
+                    <div>🏆</div>
+                    <div>
+                        Torneios Oficiais
+                        <small>Eventos cadastrados</small>
                     </div>
-
                 </div>
 
-                <div class="hero-inscricao">
-                    <h3>Inscrições</h3>
+                <div class="hero-info">
+                    <div>📅</div>
+                    <div>
+                        Agenda Atualizada
+                        <small>Datas e cronogramas</small>
+                    </div>
+                </div>
 
-                    {% if destaque.link_inscricao %}
-                        <div class="hero-inscricao-msg">
-                            Inscrições abertas pelo {{ destaque.plataforma_inscricao|default:"LetzPlay" }}
-                        </div>
-
-                        <a href="{{ destaque.link_inscricao }}" target="_blank" class="btn-inscricao">
-                            Fazer inscrição
-                        </a>
-                    {% else %}
-                        <div class="hero-inscricao-msg">
-                            {{ destaque.mensagem_inscricao|default:"Fique ligado, as inscrições abrirão em breve." }}
-                        </div>
-                    {% endif %}
+                <div class="hero-info">
+                    <div>🎾</div>
+                    <div>
+                        Todas as Categorias
+                        <small>Masculino • Feminino • Infantil</small>
+                    </div>
                 </div>
 
             </div>
 
-        {% endwith %}
+        </div>
+
+        <div class="hero-inscricao">
+
+            <h3>Próximos Eventos</h3>
+
+            <div class="hero-inscricao-msg">
+                Consulte abaixo todos os torneios e acompanhe as datas de inscrições.
+            </div>
+
+        </div>
+
+    </div>
+
+    {% if eventos %}
 
         <div class="agenda-card">
 
