@@ -3,269 +3,320 @@
 {% block content %}
 
 <style>
-.eventos-page{
+.agenda-page{
     max-width:1500px;
     margin:0 auto;
-    padding:24px;
+    padding:22px;
 }
 
-.evento-hero{
+.agenda-hero{
     background:
-        linear-gradient(90deg, rgba(2,6,23,.96), rgba(3,32,78,.92), rgba(3,105,161,.55)),
+        linear-gradient(90deg, rgba(2,6,23,.96), rgba(3,32,78,.88), rgba(3,105,161,.50)),
         url("https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=1800&q=80");
     background-size:cover;
     background-position:center;
     color:white;
-    border-radius:34px;
-    padding:46px;
-    min-height:390px;
+    border-radius:30px;
+    padding:34px;
+    min-height:270px;
     display:grid;
-    grid-template-columns:220px 1fr 310px;
-    gap:36px;
+    grid-template-columns:160px 1fr 300px;
+    gap:34px;
     align-items:center;
-    box-shadow:0 20px 45px rgba(0,0,0,.28);
+    box-shadow:0 18px 45px rgba(0,0,0,.25);
     overflow:hidden;
 }
 
-.evento-logo-box{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.evento-logo-principal{
-    width:210px;
-    height:210px;
+.hero-logo{
+    width:150px;
+    height:150px;
     object-fit:contain;
-    filter:drop-shadow(0 12px 28px rgba(0,0,0,.45));
+    filter:drop-shadow(0 12px 25px rgba(0,0,0,.45));
 }
 
-.evento-logo-fallback{
-    width:210px;
-    height:210px;
+.hero-logo-fallback{
+    width:150px;
+    height:150px;
     border-radius:24px;
     background:rgba(255,255,255,.12);
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:90px;
+    font-size:72px;
 }
 
-.evento-titulo-area h1{
-    font-size:64px;
-    line-height:.95;
+.hero-title h1{
+    font-size:54px;
+    line-height:1;
     margin:0;
     font-weight:1000;
     text-transform:uppercase;
     text-shadow:0 5px 20px rgba(0,0,0,.45);
 }
 
-.evento-titulo-area h1 span{
+.hero-title h1 span{
     color:#facc15;
-    display:block;
-    font-size:78px;
 }
 
-.evento-sub{
-    font-size:19px;
-    margin-top:18px;
-    max-width:620px;
+.hero-title p{
+    margin-top:14px;
+    font-size:18px;
     opacity:.94;
-    line-height:1.5;
 }
 
-.evento-dados-hero{
-    margin-top:20px;
+.hero-info-grid{
+    margin-top:24px;
     display:grid;
-    gap:14px;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
 }
 
 .hero-info{
     display:flex;
-    gap:14px;
+    gap:12px;
     align-items:flex-start;
-    font-size:18px;
     font-weight:900;
 }
 
 .hero-info small{
     display:block;
-    font-size:13px;
-    font-weight:700;
-    opacity:.75;
     margin-top:4px;
+    opacity:.75;
+    font-size:12px;
     text-transform:uppercase;
 }
 
-.inscricao-card{
-    background:white;
+.hero-inscricao{
+    background:rgba(255,255,255,.96);
     color:#0f172a;
     border-radius:24px;
-    padding:26px;
+    padding:24px;
     text-align:center;
-    box-shadow:0 18px 36px rgba(0,0,0,.26);
+    box-shadow:0 18px 36px rgba(0,0,0,.24);
 }
 
-.inscricao-card h3{
-    color:#063f78;
-    font-size:24px;
-    margin:0 0 18px;
+.hero-inscricao h3{
+    color:#073763;
+    font-size:22px;
+    margin:0 0 14px;
     text-transform:uppercase;
+    font-weight:1000;
 }
 
-.inscricao-status{
+.hero-inscricao-msg{
     background:#eef2ff;
-    border-radius:18px;
+    color:#073763;
     padding:16px;
+    border-radius:18px;
     font-weight:900;
-    color:#063f78;
-    margin-bottom:16px;
+    line-height:1.4;
 }
 
-.letz-logo{
-    max-height:70px;
-    max-width:210px;
-    object-fit:contain;
-    margin:10px auto 16px;
-    display:block;
-}
-
-.btn-letz{
-    display:block;
+.btn-inscricao{
+    display:inline-block;
+    margin-top:14px;
     background:linear-gradient(135deg,#22c55e,#16a34a);
     color:white;
     text-decoration:none;
-    border-radius:16px;
-    padding:16px 18px;
-    font-weight:1000;
-    font-size:17px;
-    box-shadow:0 10px 22px rgba(22,163,74,.28);
-}
-
-.btn-breve{
-    display:block;
-    background:#e5e7eb;
-    color:#64748b;
-    border-radius:16px;
-    padding:16px 18px;
+    padding:14px 22px;
+    border-radius:14px;
     font-weight:1000;
 }
 
-.evento-card-main{
+.agenda-card{
     background:white;
-    border-radius:30px;
-    margin-top:-28px;
-    padding:32px;
-    box-shadow:0 18px 45px rgba(0,0,0,.14);
-    position:relative;
-    z-index:3;
-}
-
-.section-title{
-    color:#073763;
-    font-size:24px;
-    font-weight:1000;
-    text-transform:uppercase;
-    margin:0 0 20px;
-}
-
-.evento-descricao{
-    color:#334155;
-    line-height:1.8;
-    font-size:17px;
-    margin-bottom:26px;
-}
-
-.cronograma{
-    margin-top:24px;
-    padding-top:24px;
-    border-top:1px solid #e2e8f0;
-}
-
-.timeline{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:16px;
-}
-
-.timeline-item{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:20px;
-    padding:18px;
-    text-align:center;
-}
-
-.timeline-bola{
-    width:58px;
-    height:58px;
-    border-radius:50%;
-    margin:0 auto 12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:26px;
-    color:white;
-    font-weight:1000;
-}
-
-.bola-verde{background:#22c55e;}
-.bola-vermelha{background:#ef4444;}
-.bola-azul{background:#0b4d91;}
-.bola-amarela{background:#facc15;color:#111827;}
-
-.timeline-item strong{
-    display:block;
-    color:#0f172a;
-    text-transform:uppercase;
-    font-size:14px;
-    margin-bottom:8px;
-}
-
-.timeline-item span{
-    color:#475569;
-    font-weight:800;
-}
-
-.regulamento-area{
+    border-radius:28px;
+    padding:34px;
     margin-top:22px;
+    box-shadow:0 16px 42px rgba(0,0,0,.10);
 }
 
-.regulamento-link{
-    display:inline-block;
-    background:#073763;
-    color:white;
-    text-align:center;
-    padding:15px 24px;
-    border-radius:16px;
-    text-decoration:none;
-    font-weight:1000;
-}
-
-.cta-final{
-    margin-top:26px;
-    background:linear-gradient(135deg,#020617,#063f78);
-    color:white;
-    border-radius:24px;
-    padding:26px;
+.agenda-header{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:20px;
+    gap:18px;
+    margin-bottom:26px;
+    padding-bottom:22px;
+    border-bottom:1px solid #e5e7eb;
 }
 
-.cta-final strong{
-    font-size:22px;
-    display:block;
+.agenda-header h2{
+    margin:0;
+    color:#073763;
+    font-size:30px;
+    font-weight:1000;
+    text-transform:uppercase;
 }
 
-.cta-final span{
-    opacity:.85;
+.agenda-header p{
+    margin:6px 0 0;
+    color:#64748b;
+    font-weight:700;
 }
 
-.lista-eventos{
+.agenda-search{
+    min-width:290px;
+}
+
+.agenda-search input{
+    width:100%;
+    padding:14px 18px;
+    border:2px solid #e5e7eb;
+    border-radius:16px;
+    font-size:16px;
+    font-weight:700;
+}
+
+.agenda-search input:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+.agenda-table{
+    width:100%;
+}
+
+.agenda-table-head,
+.evento-row{
     display:grid;
-    gap:36px;
+    grid-template-columns:2.2fr 1.3fr 1.3fr 1.4fr;
+    gap:20px;
+    align-items:center;
+}
+
+.agenda-table-head{
+    padding:14px 18px;
+    color:#073763;
+    font-size:13px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.evento-row{
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    box-shadow:0 7px 18px rgba(15,23,42,.06);
+    transition:.2s;
+}
+
+.evento-row:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 26px rgba(15,23,42,.10);
+}
+
+.evento-torneio{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.evento-logo{
+    width:74px;
+    height:74px;
+    object-fit:contain;
+    flex-shrink:0;
+}
+
+.evento-logo-placeholder{
+    width:74px;
+    height:74px;
+    border-radius:16px;
+    background:#eff6ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    flex-shrink:0;
+}
+
+.evento-nome{
+    font-size:20px;
+    font-weight:1000;
+    color:#073763;
+}
+
+.evento-local{
+    margin-top:4px;
+    color:#64748b;
+    font-weight:700;
+}
+
+.categorias-lista{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.cat-chip{
+    background:#e0f2fe;
+    color:#075985;
+    padding:7px 12px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:1000;
+}
+
+.evento-data{
+    color:#0f172a;
+    font-weight:900;
+    line-height:1.4;
+}
+
+.evento-data small{
+    display:block;
+    color:#64748b;
+    font-weight:700;
+}
+
+.status-box{
+    text-align:center;
+}
+
+.status-pill{
+    display:block;
+    padding:13px 16px;
+    border-radius:14px;
+    font-weight:1000;
+    text-decoration:none;
+}
+
+.status-EM_BREVE{
+    background:#eef2ff;
+    color:#1d4ed8;
+}
+
+.status-INSCRICOES_ABERTAS{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-INSCRICOES_ENCERRADAS{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.status-EM_ANDAMENTO{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-FINALIZADO{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.btn-detalhes{
+    display:inline-block;
+    margin-top:8px;
+    color:#073763;
+    font-weight:1000;
+    text-decoration:none;
+    font-size:14px;
 }
 
 .empty-card{
@@ -277,257 +328,247 @@
     box-shadow:0 12px 32px rgba(0,0,0,.08);
 }
 
-@media(max-width:1100px){
-    .evento-hero{
+@media(max-width:1000px){
+    .agenda-hero{
         grid-template-columns:1fr;
         text-align:center;
     }
 
-    .evento-dados-hero{
-        max-width:500px;
-        margin:22px auto 0;
+    .hero-info-grid{
+        grid-template-columns:1fr;
+        max-width:420px;
+        margin:24px auto 0;
     }
 
-    .timeline{
-        grid-template-columns:1fr 1fr;
+    .evento-torneio{
+        justify-content:center;
+    }
+
+    .agenda-table-head{
+        display:none;
+    }
+
+    .evento-row{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .categorias-lista{
+        justify-content:center;
+    }
+
+    .agenda-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .agenda-search{
+        width:100%;
+        min-width:0;
     }
 }
 
 @media(max-width:700px){
-    .eventos-page{
+    .agenda-page{
         padding:12px;
     }
 
-    .evento-hero{
-        padding:26px;
-        border-radius:26px;
+    .agenda-hero{
+        padding:24px;
+        border-radius:24px;
     }
 
-    .evento-titulo-area h1{
-        font-size:40px;
+    .hero-title h1{
+        font-size:38px;
     }
 
-    .evento-titulo-area h1 span{
-        font-size:52px;
+    .hero-logo,
+    .hero-logo-fallback{
+        width:125px;
+        height:125px;
+        margin:0 auto;
     }
 
-    .evento-logo-principal,
-    .evento-logo-fallback{
-        width:160px;
-        height:160px;
+    .agenda-card{
+        padding:20px;
     }
 
-    .timeline{
-        grid-template-columns:1fr;
-    }
-
-    .evento-card-main{
-        padding:22px;
-    }
-
-    .cta-final{
-        flex-direction:column;
-        text-align:center;
+    .agenda-header h2{
+        font-size:24px;
     }
 }
 </style>
 
-<div class="eventos-page">
+<div class="agenda-page">
 
     {% if eventos %}
 
-        <div class="lista-eventos">
+        {% with destaque=eventos.0 %}
 
-            {% for evento in eventos %}
+            <div class="agenda-hero">
 
-                <section>
+                <div>
+                    {% if destaque.logo %}
+                        <img src="{{ destaque.logo.url }}" class="hero-logo" alt="{{ destaque.nome }}">
+                    {% else %}
+                        <div class="hero-logo-fallback">🏆</div>
+                    {% endif %}
+                </div>
 
-                    <div class="evento-hero">
+                <div class="hero-title">
 
-                        <div class="evento-logo-box">
+                    <h1>
+                        {% if destaque.nome|slice:":3" == "11º" %}
+                            <span>11º</span> {{ destaque.nome|slice:"4:" }}
+                        {% else %}
+                            {{ destaque.nome }}
+                        {% endif %}
+                    </h1>
+
+                    <p>
+                        {% if destaque.subtitulo %}
+                            {{ destaque.subtitulo }}
+                        {% else %}
+                            Agenda oficial de eventos e torneios do Tênis Panambi.
+                        {% endif %}
+                    </p>
+
+                    <div class="hero-info-grid">
+
+                        <div class="hero-info">
+                            <div>📅</div>
+                            <div>
+                                {{ destaque.data_inicio|date:"d/m/Y" }}
+                                {% if destaque.data_fim %}
+                                    até {{ destaque.data_fim|date:"d/m/Y" }}
+                                {% endif %}
+                                <small>Período</small>
+                            </div>
+                        </div>
+
+                        <div class="hero-info">
+                            <div>📍</div>
+                            <div>
+                                {{ destaque.local|default:"Local a definir" }}
+                                <small>Local</small>
+                            </div>
+                        </div>
+
+                        {% if destaque.categorias %}
+                            <div class="hero-info">
+                                <div>🎾</div>
+                                <div>
+                                    {{ destaque.categorias }}
+                                    <small>Categorias</small>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="hero-inscricao">
+                    <h3>Inscrições</h3>
+
+                    {% if destaque.link_inscricao %}
+                        <div class="hero-inscricao-msg">
+                            Inscrições abertas pelo {{ destaque.plataforma_inscricao|default:"LetzPlay" }}
+                        </div>
+
+                        <a href="{{ destaque.link_inscricao }}" target="_blank" class="btn-inscricao">
+                            Fazer inscrição
+                        </a>
+                    {% else %}
+                        <div class="hero-inscricao-msg">
+                            {{ destaque.mensagem_inscricao|default:"Fique ligado, as inscrições abrirão em breve." }}
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        {% endwith %}
+
+        <div class="agenda-card">
+
+            <div class="agenda-header">
+                <div>
+                    <h2>📅 Agenda de Eventos</h2>
+                    <p>Acompanhe os próximos torneios, categorias, datas e inscrições.</p>
+                </div>
+
+                <div class="agenda-search">
+                    <input type="text" id="buscaEvento" placeholder="🔎 Buscar evento...">
+                </div>
+            </div>
+
+            <div class="agenda-table">
+
+                <div class="agenda-table-head">
+                    <div>Torneio</div>
+                    <div>Categorias</div>
+                    <div>Data</div>
+                    <div>Inscrições</div>
+                </div>
+
+                {% for evento in eventos %}
+
+                    <div class="evento-row linha-evento">
+
+                        <div class="evento-torneio">
                             {% if evento.logo %}
-                                <img src="{{ evento.logo.url }}" class="evento-logo-principal" alt="{{ evento.nome }}">
+                                <img src="{{ evento.logo.url }}" class="evento-logo" alt="{{ evento.nome }}">
                             {% else %}
-                                <div class="evento-logo-fallback">🏆</div>
+                                <div class="evento-logo-placeholder">🏆</div>
+                            {% endif %}
+
+                            <div>
+                                <div class="evento-nome">{{ evento.nome }}</div>
+                                <div class="evento-local">📍 {{ evento.local|default:"Local a definir" }}</div>
+                            </div>
+                        </div>
+
+                        <div class="categorias-lista">
+                            {% if evento.categorias %}
+                                <span class="cat-chip">{{ evento.categorias }}</span>
+                            {% else %}
+                                <span class="cat-chip">A definir</span>
                             {% endif %}
                         </div>
 
-                        <div class="evento-titulo-area">
-
-                            <h1>
-                                {% if evento.nome|slice:":3" == "11º" %}
-                                    <span>11º</span>
-                                    {{ evento.nome|slice:"4:" }}
-                                {% else %}
-                                    {{ evento.nome }}
-                                {% endif %}
-                            </h1>
-
-                            <div class="evento-sub">
-                                {% if evento.subtitulo %}
-                                    {{ evento.subtitulo }}
-                                {% else %}
-                                    Prepare-se e participe deste grande evento!
-                                {% endif %}
-                            </div>
-
-                            <div class="evento-dados-hero">
-
-                                <div class="hero-info">
-                                    <div>📅</div>
-                                    <div>
-                                        {{ evento.data_inicio|date:"d/m/Y" }}
-                                        {% if evento.data_fim %}
-                                            até {{ evento.data_fim|date:"d/m/Y" }}
-                                        {% endif %}
-                                        <small>Período do evento</small>
-                                    </div>
-                                </div>
-
-                                <div class="hero-info">
-                                    <div>📍</div>
-                                    <div>
-                                        {{ evento.local|default:"Local a definir" }}
-                                        <small>Local do evento</small>
-                                    </div>
-                                </div>
-
-                                {% if evento.categorias %}
-                                    <div class="hero-info">
-                                        <div>🎾</div>
-                                        <div>
-                                            {{ evento.categorias }}
-                                            <small>Categorias</small>
-                                        </div>
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
+                        <div class="evento-data">
+                            📅 {{ evento.data_inicio|date:"d/m/Y" }}
+                            {% if evento.data_fim %}
+                                <small>até {{ evento.data_fim|date:"d/m/Y" }}</small>
+                            {% endif %}
                         </div>
 
-                        <div class="inscricao-card">
-
-                            <h3>Inscrições</h3>
+                        <div class="status-box">
 
                             {% if evento.link_inscricao %}
-
-                                <div class="inscricao-status">
-                                    Inscrições oficiais pelo {{ evento.plataforma_inscricao|default:"LetzPlay" }}
-                                </div>
-
-                                {% if evento.logo_plataforma_inscricao %}
-                                    <img src="{{ evento.logo_plataforma_inscricao.url }}" class="letz-logo">
-                                {% endif %}
-
-                                <a href="{{ evento.link_inscricao }}" target="_blank" class="btn-letz">
-                                    Fazer inscrição
+                                <a href="{{ evento.link_inscricao }}" target="_blank" class="status-pill status-INSCRICOES_ABERTAS">
+                                    Inscrições abertas
                                 </a>
-
                             {% else %}
+                                <span class="status-pill status-{{ evento.status }}">
+                                    {{ evento.get_status_display }}
+                                </span>
+                            {% endif %}
 
-                                <div class="inscricao-status">
-    {{ evento.mensagem_inscricao }}
-</div>
-
+                            {% if evento.regulamento %}
+                                <a href="{{ evento.regulamento.url }}" target="_blank" class="btn-detalhes">
+                                    Regulamento
+                                </a>
                             {% endif %}
 
                         </div>
 
                     </div>
 
-                    <div class="evento-card-main">
+                {% endfor %}
 
-                        <h2 class="section-title">⭐ Sobre o Evento</h2>
-
-                        <div class="evento-descricao">
-                            {% if evento.descricao %}
-                                {{ evento.descricao }}
-                            {% else %}
-                                Informações completas do evento serão divulgadas em breve.
-                            {% endif %}
-                        </div>
-
-                        <div class="cronograma">
-
-                            <h2 class="section-title">📅 Cronograma do Evento</h2>
-
-                            <div class="timeline">
-
-                                <div class="timeline-item">
-                                    <div class="timeline-bola bola-verde">🎾</div>
-                                    <strong>Abertura das Inscrições</strong>
-                                    <span>
-                                        {% if evento.data_abertura_inscricoes %}
-                                            {{ evento.data_abertura_inscricoes|date:"d/m/Y" }}
-                                        {% else %}
-                                            Em breve
-                                        {% endif %}
-                                    </span>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <div class="timeline-bola bola-vermelha">📅</div>
-                                    <strong>Encerramento das Inscrições</strong>
-                                    <span>
-                                        {% if evento.data_fechamento_inscricoes %}
-                                            {{ evento.data_fechamento_inscricoes|date:"d/m/Y" }}
-                                        {% else %}
-                                            Em breve
-                                        {% endif %}
-                                    </span>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <div class="timeline-bola bola-azul">🚩</div>
-                                    <strong>Início do Evento</strong>
-                                    <span>{{ evento.data_inicio|date:"d/m/Y" }}</span>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <div class="timeline-bola bola-amarela">🏆</div>
-                                    <strong>Encerramento</strong>
-                                    <span>
-                                        {% if evento.data_fim %}
-                                            {{ evento.data_fim|date:"d/m/Y" }}
-                                        {% else %}
-                                            A definir
-                                        {% endif %}
-                                    </span>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        {% if evento.regulamento %}
-                            <div class="regulamento-area">
-                                <a href="{{ evento.regulamento.url }}" target="_blank" class="regulamento-link">
-                                    📄 Ver Regulamento
-                                </a>
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                    <div class="cta-final">
-                        <div>
-                            <strong>Faça parte dessa história!</strong>
-                            <span>
-                                Acompanhe as informações oficiais do {{ evento.nome }}.
-                            </span>
-                        </div>
-
-                        {% if evento.link_inscricao %}
-                            <a href="{{ evento.link_inscricao }}" target="_blank" class="btn-letz">
-                                Inscrever-se
-                            </a>
-                        {% endif %}
-                    </div>
-
-                </section>
-
-            {% endfor %}
+            </div>
 
         </div>
 
@@ -541,5 +582,26 @@
     {% endif %}
 
 </div>
+
+<script>
+const buscaEvento = document.getElementById("buscaEvento");
+
+if(buscaEvento){
+    buscaEvento.addEventListener("keyup", function(){
+        const texto = this.value.toLowerCase();
+        const linhas = document.querySelectorAll(".linha-evento");
+
+        linhas.forEach(function(linha){
+            const conteudo = linha.innerText.toLowerCase();
+
+            if(conteudo.indexOf(texto) > -1){
+                linha.style.display = "";
+            }else{
+                linha.style.display = "none";
+            }
+        });
+    });
+}
+</script>
 
 {% endblock %}
