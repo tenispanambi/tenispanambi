@@ -1,0 +1,425 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.selos-page{
+    max-width:1500px;
+    margin:0 auto;
+    padding:22px;
+}
+
+.selos-hero{
+    background:linear-gradient(135deg,#020617,#073763,#0f172a);
+    color:white;
+    border-radius:30px;
+    padding:38px;
+    margin-bottom:24px;
+    box-shadow:0 18px 45px rgba(0,0,0,.25);
+}
+
+.selos-hero h1{
+    font-size:46px;
+    margin:0;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.selos-hero h1 span{
+    color:#facc15;
+}
+
+.selos-hero p{
+    font-size:18px;
+    max-width:780px;
+    opacity:.9;
+}
+
+.conquistas-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+}
+
+.conquista-card{
+    background:white;
+    border-radius:22px;
+    padding:22px;
+    text-align:center;
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+}
+
+.conquista-icon{
+    font-size:42px;
+}
+
+.conquista-card h3{
+    margin:10px 0 6px;
+    color:#073763;
+    font-size:17px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.conquista-card p{
+    margin:0;
+    color:#64748b;
+    font-weight:700;
+    font-size:13px;
+}
+
+.conquista-num{
+    margin-top:12px;
+    font-size:26px;
+    font-weight:1000;
+    color:#b91c1c;
+}
+
+.jogadores-card{
+    background:white;
+    border-radius:28px;
+    padding:28px;
+    box-shadow:0 16px 42px rgba(0,0,0,.10);
+}
+
+.jogadores-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:18px;
+    margin-bottom:22px;
+    padding-bottom:18px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.jogadores-header h2{
+    margin:0;
+    color:#073763;
+    font-size:28px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.busca-selos{
+    min-width:280px;
+}
+
+.busca-selos input{
+    width:100%;
+    padding:14px 18px;
+    border:2px solid #e5e7eb;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:700;
+}
+
+.jogador-row{
+    display:grid;
+    grid-template-columns:2fr 3fr 2fr;
+    gap:18px;
+    align-items:center;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:0 7px 18px rgba(15,23,42,.05);
+}
+
+.jogador-info{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.avatar{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#e5e7eb;
+}
+
+.avatar-fallback{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    background:#eff6ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+}
+
+.jogador-nome{
+    font-size:20px;
+    font-weight:1000;
+    color:#073763;
+}
+
+.jogador-sub{
+    color:#64748b;
+    font-weight:700;
+    margin-top:4px;
+}
+
+.selos-lista{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.selo{
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:1000;
+    white-space:nowrap;
+}
+
+.selo-campeao{background:#fef3c7;color:#92400e;}
+.selo-bicampeao{background:#fee2e2;color:#991b1b;}
+.selo-tricampeao{background:#111827;color:#facc15;}
+.selo-v100{background:#dcfce7;color:#166534;}
+.selo-v200{background:#dbeafe;color:#1d4ed8;}
+.selo-v300{background:#ede9fe;color:#5b21b6;}
+.selo-j100{background:#ccfbf1;color:#0f766e;}
+.selo-j200{background:#ffedd5;color:#c2410c;}
+.selo-j300{background:#e0f2fe;color:#075985;}
+.selo-elite{background:#fce7f3;color:#be185d;}
+
+.stats-mini{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    text-align:center;
+}
+
+.stat-mini{
+    background:#f8fafc;
+    border-radius:14px;
+    padding:10px;
+}
+
+.stat-mini strong{
+    display:block;
+    color:#073763;
+    font-size:18px;
+}
+
+.stat-mini span{
+    color:#64748b;
+    font-size:12px;
+    font-weight:700;
+}
+
+@media(max-width:900px){
+    .jogador-row{
+        grid-template-columns:1fr;
+    }
+
+    .jogadores-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .busca-selos{
+        width:100%;
+        min-width:0;
+    }
+
+    .stats-mini{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .selos-page{
+        padding:12px;
+    }
+
+    .selos-hero h1{
+        font-size:34px;
+    }
+
+    .jogadores-card{
+        padding:18px;
+    }
+}
+</style>
+
+<div class="selos-page">
+
+    <div class="selos-hero">
+        <h1>🏆 Selos e <span>Conquistas</span></h1>
+        <p>
+            Conquistas automáticas dos jogadores no Championship Duplas, com base em jogos,
+            vitórias, títulos e aproveitamento.
+        </p>
+    </div>
+
+    <div class="conquistas-grid">
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🏆</div>
+            <h3>Campeão</h3>
+            <p>1 ou mais títulos</p>
+            <div class="conquista-num">{{ contadores.campeao }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">⭐</div>
+            <h3>Bicampeão</h3>
+            <p>2 ou mais títulos</p>
+            <div class="conquista-num">{{ contadores.bicampeao }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">👑</div>
+            <h3>Tricampeão</h3>
+            <p>3 ou mais títulos</p>
+            <div class="conquista-num">{{ contadores.tricampeao }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🔥</div>
+            <h3>100+ Vitórias</h3>
+            <p>100 vitórias ou mais</p>
+            <div class="conquista-num">{{ contadores.vitorias_100 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🔥🔥</div>
+            <h3>200+ Vitórias</h3>
+            <p>200 vitórias ou mais</p>
+            <div class="conquista-num">{{ contadores.vitorias_200 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🔥🔥🔥</div>
+            <h3>300+ Vitórias</h3>
+            <p>300 vitórias ou mais</p>
+            <div class="conquista-num">{{ contadores.vitorias_300 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🎾</div>
+            <h3>100+ Jogos</h3>
+            <p>100 jogos ou mais</p>
+            <div class="conquista-num">{{ contadores.jogos_100 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🎾🎾</div>
+            <h3>200+ Jogos</h3>
+            <p>200 jogos ou mais</p>
+            <div class="conquista-num">{{ contadores.jogos_200 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🏟️</div>
+            <h3>300+ Jogos</h3>
+            <p>300 jogos ou mais</p>
+            <div class="conquista-num">{{ contadores.jogos_300 }}</div>
+        </div>
+
+        <div class="conquista-card">
+            <div class="conquista-icon">🎯</div>
+            <h3>Elite</h3>
+            <p>70% aproveitamento, mín. 100 jogos</p>
+            <div class="conquista-num">{{ contadores.elite }}</div>
+        </div>
+
+    </div>
+
+    <div class="jogadores-card">
+
+        <div class="jogadores-header">
+            <h2>👥 Jogadores e suas conquistas</h2>
+
+            <div class="busca-selos">
+                <input type="text" id="buscaJogadorSelos" placeholder="🔎 Buscar jogador...">
+            </div>
+        </div>
+
+        {% for item in jogadores %}
+
+            <div class="jogador-row linha-jogador-selo">
+
+                <div class="jogador-info">
+
+                    {% if item.jogador.foto %}
+                        <img src="{{ item.jogador.foto.url }}" class="avatar" alt="{{ item.jogador.nome }}">
+                    {% else %}
+                        <div class="avatar-fallback">👤</div>
+                    {% endif %}
+
+                    <div>
+                        <div class="jogador-nome">{{ item.jogador.nome }}</div>
+                        <div class="jogador-sub">🏆 Tênis Panambi</div>
+                    </div>
+
+                </div>
+
+                <div class="selos-lista">
+                    {% for selo in item.selos %}
+                        <span class="selo {{ selo.classe }}">{{ selo.texto }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="stats-mini">
+                    <div class="stat-mini">
+                        <strong>{{ item.vitorias }}</strong>
+                        <span>Vitórias</span>
+                    </div>
+
+                    <div class="stat-mini">
+                        <strong>{{ item.jogos }}</strong>
+                        <span>Jogos</span>
+                    </div>
+
+                    <div class="stat-mini">
+                        <strong>{{ item.titulos }}</strong>
+                        <span>Títulos</span>
+                    </div>
+
+                    <div class="stat-mini">
+                        <strong>{{ item.aproveitamento }}%</strong>
+                        <span>Aprov.</span>
+                    </div>
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <p>Nenhuma conquista encontrada.</p>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+const buscaJogadorSelos = document.getElementById("buscaJogadorSelos");
+
+if(buscaJogadorSelos){
+    buscaJogadorSelos.addEventListener("keyup", function(){
+        const texto = this.value.toLowerCase();
+        const linhas = document.querySelectorAll(".linha-jogador-selo");
+
+        linhas.forEach(function(linha){
+            const conteudo = linha.innerText.toLowerCase();
+
+            if(conteudo.indexOf(texto) > -1){
+                linha.style.display = "";
+            }else{
+                linha.style.display = "none";
+            }
+        });
+    });
+}
+</script>
+
+{% endblock %}

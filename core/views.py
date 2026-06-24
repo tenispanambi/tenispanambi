@@ -3078,3 +3078,318 @@ def estatisticas_championship(request):
             'melhor_aproveitamento': melhor_aproveitamento,
         }
     )
+    
+def selos_championship(request):
+
+    jogadores_ids_sistema = ParticipanteJogo.objects.filter(
+        jogo__status='CONFIRMADO',
+        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    ).values_list(
+        'jogador_id',
+        flat=True
+    ).distinct()
+
+    jogadores = Jogador.objects.filter(
+        id__in=jogadores_ids_sistema
+    ) | Jogador.objects.filter(
+        jogos_historicos__gt=0
+    ) | Jogador.objects.filter(
+        vitorias_historicas__gt=0
+    ) | Jogador.objects.filter(
+        derrotas_historicas__gt=0
+    ) | Jogador.objects.filter(
+        titulos_cd__gt=0
+    ) | Jogador.objects.filter(
+        vice_cd__gt=0
+    )
+
+    jogadores = jogadores.distinct().exclude(
+        usuario__is_staff=True
+    ).exclude(
+        usuario__is_superuser=True
+    ).order_by('nome')
+
+    lista_jogadores = []
+
+    conquistas_contadores = {
+        'campeao': 0,
+        'bicampeao': 0,
+        'tricampeao': 0,
+        'vitorias_100': 0,
+        'vitorias_200': 0,
+        'vitorias_300': 0,
+        'jogos_100': 0,
+        'jogos_200': 0,
+        'jogos_300': 0,
+        'elite': 0,
+    }
+
+    for jogador in jogadores:
+
+        participacoes = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO',
+            jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+        )
+
+        jogos_sistema = participacoes.count()
+        vitorias_sistema = participacoes.filter(vencedor=True).count()
+        derrotas_sistema = participacoes.filter(vencedor=False).count()
+
+        total_jogos = jogador.jogos_historicos + jogos_sistema
+        total_vitorias = jogador.vitorias_historicas + vitorias_sistema
+        total_derrotas = jogador.derrotas_historicas + derrotas_sistema
+
+        aproveitamento = 0
+        if total_jogos > 0:
+            aproveitamento = round((total_vitorias / total_jogos) * 100, 1)
+
+        selos = []
+
+        if jogador.titulos_cd >= 1:
+            selos.append({'classe': 'selo-campeao', 'texto': '🏆 Campeão'})
+            conquistas_contadores['campeao'] += 1
+
+        if jogador.titulos_cd >= 2:
+            selos.append({'classe': 'selo-bicampeao', 'texto': '⭐ Bicampeão'})
+            conquistas_contadores['bicampeao'] += 1
+
+        if jogador.titulos_cd >= 3:
+            selos.append({'classe': 'selo-tricampeao', 'texto': '👑 Tricampeão'})
+            conquistas_contadores['tricampeao'] += 1
+
+        if total_vitorias >= 100:
+            selos.append({'classe': 'selo-v100', 'texto': '🔥 100+ Vitórias'})
+            conquistas_contadores['vitorias_100'] += 1
+
+        if total_vitorias >= 200:
+            selos.append({'classe': 'selo-v200', 'texto': '🔥 200+ Vitórias'})
+            conquistas_contadores['vitorias_200'] += 1
+
+        if total_vitorias >= 300:
+            selos.append({'classe': 'selo-v300', 'texto': '🔥 300+ Vitórias'})
+            conquistas_contadores['vitorias_300'] += 1
+
+        if total_jogos >= 100:
+            selos.append({'classe': 'selo-j100', 'texto': '🎾 100+ Jogos'})
+            conquistas_contadores['jogos_100'] += 1
+
+        if total_jogos >= 200:
+            selos.append({'classe': 'selo-j200', 'texto': '🎾 200+ Jogos'})
+            conquistas_contadores['jogos_200'] += 1
+
+        if total_jogos >= 300:
+            selos.append({'classe': 'selo-j300', 'texto': '🏟️ 300+ Jogos'})
+            conquistas_contadores['jogos_300'] += 1
+
+        if aproveitamento >= 70 and total_jogos >= 100:
+            selos.append({'classe': 'selo-elite', 'texto': '🎯 Elite'})
+            conquistas_contadores['elite'] += 1
+
+        if selos:
+            lista_jogadores.append({
+                'jogador': jogador,
+                'jogos': total_jogos,
+                'vitorias': total_vitorias,
+                'derrotas': total_derrotas,
+                'titulos': jogador.titulos_cd,
+                'aproveitamento': aproveitamento,
+                'selos': selos,
+                'total_selos': len(selos),
+            })
+
+    lista_jogadores = sorted(
+        lista_jogadores,
+        key=lambda item: (
+            item['total_selos'],
+            item['titulos'],
+            item['vitorias'],
+            item['jogos']
+        ),
+        reverse=True
+    )
+
+    return render(
+        request,
+        'estatisticas/selos_championship.html',
+        {
+            'jogadores': lista_jogadores,
+            'contadores': conquistas_contadores,
+        }
+    )    
+
+from django.db.models import Count
+
+
+def selos_championship(request):
+
+    jogadores_ids_sistema = ParticipanteJogo.objects.filter(
+        jogo__status='CONFIRMADO',
+        jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+    ).values_list(
+        'jogador_id',
+        flat=True
+    ).distinct()
+
+    jogadores = Jogador.objects.filter(
+        id__in=jogadores_ids_sistema
+    ) | Jogador.objects.filter(
+        jogos_historicos__gt=0
+    ) | Jogador.objects.filter(
+        vitorias_historicas__gt=0
+    ) | Jogador.objects.filter(
+        derrotas_historicas__gt=0
+    ) | Jogador.objects.filter(
+        titulos_cd__gt=0
+    ) | Jogador.objects.filter(
+        vice_cd__gt=0
+    )
+
+    jogadores = jogadores.distinct().exclude(
+        usuario__is_staff=True
+    ).exclude(
+        usuario__is_superuser=True
+    ).order_by('nome')
+
+    lista_jogadores = []
+
+    contadores = {
+        'campeao': 0,
+        'bicampeao': 0,
+        'tricampeao': 0,
+        'vitorias_100': 0,
+        'vitorias_200': 0,
+        'vitorias_300': 0,
+        'jogos_100': 0,
+        'jogos_200': 0,
+        'jogos_300': 0,
+        'elite': 0,
+    }
+
+    for jogador in jogadores:
+
+        participacoes = ParticipanteJogo.objects.filter(
+            jogador=jogador,
+            jogo__status='CONFIRMADO',
+            jogo__tipo_jogo='CHAMPIONSHIP_DUPLAS'
+        )
+
+        jogos_sistema = participacoes.count()
+        vitorias_sistema = participacoes.filter(vencedor=True).count()
+        derrotas_sistema = participacoes.filter(vencedor=False).count()
+
+        total_jogos = jogador.jogos_historicos + jogos_sistema
+        total_vitorias = jogador.vitorias_historicas + vitorias_sistema
+        total_derrotas = jogador.derrotas_historicas + derrotas_sistema
+
+        aproveitamento = 0
+
+        if total_jogos > 0:
+            aproveitamento = round(
+                (total_vitorias / total_jogos) * 100,
+                1
+            )
+
+        selos = []
+
+        if jogador.titulos_cd >= 1:
+            selos.append({
+                'texto': 'Campeão',
+                'imagem': 'img/patches/campeao.png'
+            })
+            contadores['campeao'] += 1
+
+        if jogador.titulos_cd >= 2:
+            selos.append({
+                'texto': 'Bicampeão',
+                'imagem': 'img/patches/bicampeao.png'
+            })
+            contadores['bicampeao'] += 1
+
+        if jogador.titulos_cd >= 3:
+            selos.append({
+                'texto': 'Tricampeão',
+                'imagem': 'img/patches/tricampeao.png'
+            })
+            contadores['tricampeao'] += 1
+
+        if total_vitorias >= 100:
+            selos.append({
+                'texto': '100+ Vitórias',
+                'imagem': 'img/patches/100_vitorias.png'
+            })
+            contadores['vitorias_100'] += 1
+
+        if total_vitorias >= 200:
+            selos.append({
+                'texto': '200+ Vitórias',
+                'imagem': 'img/patches/200_vitorias.png'
+            })
+            contadores['vitorias_200'] += 1
+
+        if total_vitorias >= 300:
+            selos.append({
+                'texto': '300+ Vitórias',
+                'imagem': 'img/patches/300_vitorias.png'
+            })
+            contadores['vitorias_300'] += 1
+
+        if total_jogos >= 100:
+            selos.append({
+                'texto': '100+ Jogos',
+                'imagem': 'img/patches/100_jogos.png'
+            })
+            contadores['jogos_100'] += 1
+
+        if total_jogos >= 200:
+            selos.append({
+                'texto': '200+ Jogos',
+                'imagem': 'img/patches/200_jogos.png'
+            })
+            contadores['jogos_200'] += 1
+
+        if total_jogos >= 300:
+            selos.append({
+                'texto': '300+ Jogos',
+                'imagem': 'img/patches/300_jogos.png'
+            })
+            contadores['jogos_300'] += 1
+
+        if aproveitamento >= 70 and total_jogos >= 100:
+            selos.append({
+                'texto': 'Elite',
+                'imagem': 'img/patches/elite.png'
+            })
+            contadores['elite'] += 1
+
+        if selos:
+            lista_jogadores.append({
+                'jogador': jogador,
+                'jogos': total_jogos,
+                'vitorias': total_vitorias,
+                'derrotas': total_derrotas,
+                'titulos': jogador.titulos_cd,
+                'aproveitamento': aproveitamento,
+                'selos': selos,
+                'total_selos': len(selos),
+            })
+
+    lista_jogadores = sorted(
+        lista_jogadores,
+        key=lambda item: (
+            item['total_selos'],
+            item['titulos'],
+            item['vitorias'],
+            item['jogos']
+        ),
+        reverse=True
+    )
+
+    return render(
+        request,
+        'championship/selos.html',
+        {
+            'jogadores': lista_jogadores,
+            'contadores': contadores,
+        }
+    )

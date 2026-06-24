@@ -193,4 +193,10 @@ path(
     name='estatisticas_championship'
 ),
 
+path(
+    'champ-duplas/selos/',
+    views.selos_championship,
+    name='selos_championship'
+),
+
 ]
