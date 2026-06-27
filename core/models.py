@@ -150,6 +150,7 @@ class Jogador(models.Model):
     semifinal_cd = models.IntegerField(default=0)
 
     ativo = models.BooleanField(default=False)
+    cadastro_revisado = models.BooleanField(default=False)
 
     criado_em = models.DateTimeField(auto_now_add=True)
 
@@ -158,6 +159,19 @@ class Jogador(models.Model):
 
     class Meta:
         ordering = ['categoria', 'nome']
+
+class NovoCadastroManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(cadastro_revisado=False)
+
+
+class NovoCadastro(Jogador):
+    objects = NovoCadastroManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "🟡 Novo Cadastro"
+        verbose_name_plural = "🟡 Novos Cadastros"        
 
 
 class Torneio(models.Model):

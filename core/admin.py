@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import (
     Jogador,
+    NovoCadastro,
     Torneio,
     CategoriaTorneio,
     InscricaoTorneio,
@@ -35,41 +36,86 @@ class SetInline(admin.TabularInline):
 @admin.register(Jogador)
 class JogadorAdmin(admin.ModelAdmin):
     list_display = (
+        'novo_cadastro',
         'nome',
         'categoria',
         'nivel',
         'cidade',
+        'criado_em',
         'ativo',
-        'novo_cadastro',
     )
 
     list_filter = (
+        'cadastro_revisado',
         'ativo',
         'categoria',
         'nivel',
+        'cidade',
     )
 
     search_fields = (
         'nome',
         'cidade',
+        'email',
         'instagram',
         'usuario__username',
     )
 
     ordering = (
-        'ativo',
-        '-id',
+        'cadastro_revisado',
+        '-criado_em',
     )
 
     list_per_page = 30
 
     def novo_cadastro(self, obj):
-        if not obj.ativo:
+        if not obj.cadastro_revisado:
             return "🟡 Novo cadastro"
-        return "✅ Ativo"
+        return "✅ Revisado"
 
     novo_cadastro.short_description = "Status"
 
+
+@admin.register(NovoCadastro)
+class NovoCadastroAdmin(admin.ModelAdmin):
+    list_display = (
+        'nome',
+        'categoria',
+        'nivel',
+        'cidade',
+        'email',
+        'criado_em',
+    )
+
+    list_filter = (
+        'categoria',
+        'nivel',
+        'cidade',
+    )
+
+    search_fields = (
+        'nome',
+        'email',
+        'cidade',
+        'usuario__username',
+    )
+
+    ordering = (
+        '-criado_em',
+    )
+
+    list_per_page = 30
+
+    actions = ['aprovar_jogadores']
+
+    @admin.action(description="✅ Marcar como revisado")
+    def aprovar_jogadores(self, request, queryset):
+        quantidade = queryset.update(cadastro_revisado=True)
+
+        self.message_user(
+            request,
+            f"{quantidade} cadastro(s) marcado(s) como revisado(s)."
+        )
 
 @admin.register(Torneio)
 class TorneioAdmin(admin.ModelAdmin):
