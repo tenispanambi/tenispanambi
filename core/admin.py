@@ -34,9 +34,41 @@ class SetInline(admin.TabularInline):
 
 @admin.register(Jogador)
 class JogadorAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'categoria', 'nivel', 'cidade', 'ativo')
-    list_filter = ('categoria', 'nivel', 'ativo')
-    search_fields = ('nome', 'cidade', 'instagram')
+    list_display = (
+        'nome',
+        'categoria',
+        'nivel',
+        'cidade',
+        'ativo',
+        'novo_cadastro',
+    )
+
+    list_filter = (
+        'ativo',
+        'categoria',
+        'nivel',
+    )
+
+    search_fields = (
+        'nome',
+        'cidade',
+        'instagram',
+        'usuario__username',
+    )
+
+    ordering = (
+        'ativo',
+        '-id',
+    )
+
+    list_per_page = 30
+
+    def novo_cadastro(self, obj):
+        if not obj.ativo:
+            return "🟡 Novo cadastro"
+        return "✅ Ativo"
+
+    novo_cadastro.short_description = "Status"
 
 
 @admin.register(Torneio)
