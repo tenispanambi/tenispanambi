@@ -697,16 +697,22 @@ alterarSets();
 </script>
 
 <script>
-document.querySelectorAll(".busca-select").forEach(function(el){
+document.addEventListener("DOMContentLoaded", function(){
 
-    new TomSelect(el,{
-        create:false,
-        sortField:{
-            field:"text",
-            direction:"asc"
-        },
-        placeholder:"Digite o nome do jogador...",
-        maxOptions:500
+    if (typeof TomSelect === "undefined") {
+        console.error("TomSelect não foi carregado.");
+        return;
+    }
+
+    document.querySelectorAll(".busca-select").forEach(function(el){
+
+        new TomSelect(el,{
+            create:false,
+            placeholder:"Digite o nome do jogador...",
+            maxOptions:500,
+            allowEmptyOption:true
+        });
+
     });
 
 });
