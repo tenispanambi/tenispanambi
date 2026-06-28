@@ -205,4 +205,6 @@ path('backup/download/', baixar_backup, name='baixar_backup'),
 
 path('sistema/', views.painel_sistema, name='painel_sistema'),
 
+path('notificacoes/', views.notificacoes, name='notificacoes'),
+
 ]

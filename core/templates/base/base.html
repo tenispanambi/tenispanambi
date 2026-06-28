@@ -793,6 +793,11 @@
 </a>
 
                 <div class="dropdown-menu">
+
+                    <a href="/notificacoes/">
+                        <i class="fa-solid fa-bell"></i> Notificações
+                    </a>
+                    
                     <a href="/meu-painel/">
                         <i class="fa-solid fa-user"></i> Meu Painel
                     </a>
@@ -808,6 +813,12 @@
                     <a href="/password_change/">
                         <i class="fa-solid fa-key"></i> Trocar Senha
                     </a>
+
+                    {% if user.is_staff %}
+                    <a href="/sistema/">
+                        <i class="fa-solid fa-gear"></i> Sistema
+                    </a>
+                    {% endif %}
 
                     <a href="/logout/">
                         <i class="fa-solid fa-right-from-bracket"></i> Sair

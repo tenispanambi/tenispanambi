@@ -3438,3 +3438,25 @@ def painel_sistema(request):
             'total_notificacoes': total_notificacoes,
         }
     )
+
+@login_required
+def notificacoes(request):
+
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador:
+        return redirect('/meu-perfil/')
+
+    lista = Notificacao.objects.filter(
+        jogador=jogador
+    ).order_by('-criada_em')
+
+    return render(
+        request,
+        'notificacoes/index.html',
+        {
+            'notificacoes': lista
+        }
+    )

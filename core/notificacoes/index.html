@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>🔔 Notificações</h1>
+
+{% for n in notificacoes %}
+<div style="background:white;padding:18px;border-radius:18px;margin-bottom:12px;">
+    <strong>{{ n.titulo }}</strong>
+    <p>{{ n.mensagem }}</p>
+
+    {% if n.link %}
+        <a href="{{ n.link }}" style="font-weight:bold;color:#073763;">
+            Abrir
+        </a>
+    {% endif %}
+</div>
+{% empty %}
+<p>Nenhuma notificação.</p>
+{% endfor %}
+
+{% endblock %}
