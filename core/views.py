@@ -2273,7 +2273,7 @@ def lancar_jogo(request):
                     f"{nome_lancador} lançou um resultado de jogo. "
                     "Acesse o portal para confirmar ou contestar o placar."
                 ),
-                link=f"/confirmar-resultado-usuario/{jogo.id}/"
+                link=f"/resultado-pendente/{jogo.id}/"
             )
 
         messages.success(
@@ -3460,3 +3460,49 @@ def notificacoes(request):
             'notificacoes': lista
         }
     )
+
+@login_required
+def detalhe_notificacao_resultado(request, jogo_id):
+
+    jogador_logado = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador_logado:
+        return redirect('/meu-perfil/')
+
+    jogo = get_object_or_404(
+        Jogo,
+        id=jogo_id
+    )
+
+    participacao = ParticipanteJogo.objects.filter(
+        jogo=jogo,
+        jogador=jogador_logado
+    ).first()
+
+    if not participacao:
+        messages.error(request, 'Você não participa deste jogo.')
+        return redirect('/notificacoes/')
+
+    participantes = ParticipanteJogo.objects.filter(
+        jogo=jogo
+    ).select_related('jogador')
+
+    notificacoes = Notificacao.objects.filter(
+        jogador=jogador_logado,
+        link=f'/resultado-pendente/{jogo.id}/'
+    )
+
+    notificacoes.update(lida=True)
+
+    return render(
+        request,
+        'notificacoes/resultado.html',
+        {
+            'jogo': jogo,
+            'participantes': participantes,
+            'participacao': participacao,
+        }
+    )
+

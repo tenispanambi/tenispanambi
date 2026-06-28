@@ -653,6 +653,100 @@
 
 }
 
+
+.notificacao-dropdown{
+    position:relative;
+}
+
+.btn-sino{
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:rgba(255,255,255,.12);
+    color:white !important;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    font-size:21px;
+    position:relative;
+}
+
+.btn-sino span{
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    background:#dc2626;
+    color:white;
+    width:23px;
+    height:23px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:900;
+}
+
+.notificacao-menu{
+    display:none;
+    position:absolute;
+    right:0;
+    top:58px;
+    width:320px;
+    background:white;
+    border-radius:18px;
+    box-shadow:0 18px 45px rgba(0,0,0,.28);
+    z-index:99999;
+    overflow:hidden;
+}
+
+.notificacao-dropdown:hover .notificacao-menu{
+    display:block;
+}
+
+.notificacao-menu strong{
+    display:block;
+    padding:16px;
+    color:#073763;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.notificacao-menu a{
+    display:block;
+    padding:14px 16px;
+    color:#111827 !important;
+    text-decoration:none;
+    border-bottom:1px solid #e5e7eb;
+    background:white;
+}
+
+.notificacao-menu a.nova{
+    background:#eff6ff;
+}
+
+.notificacao-menu a b{
+    display:block;
+    font-size:14px;
+}
+
+.notificacao-menu a small{
+    display:block;
+    margin-top:5px;
+    color:#64748b;
+}
+
+.notificacao-menu p{
+    padding:16px;
+    color:#64748b;
+}
+
+.ver-todas{
+    text-align:center;
+    font-weight:900;
+    color:#073763 !important;
+}
+
 @media(max-width:768px){
 
 .install-banner{
@@ -684,6 +778,7 @@
     width:100%;
 
 }
+
 
 }
 
@@ -784,13 +879,44 @@
 
     <div class="acoes-topo">
 
-        {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
-            <div class="usuario-dropdown">
+        <div class="notificacao-dropdown">
 
-               <a href="#" class="usuario">
-    {{ user.username|first|upper }}
-</a>
+    <a href="/notificacoes/" class="btn-sino">
+        <i class="fa-solid fa-bell"></i>
+
+        {% if notificacoes_nao_lidas > 0 %}
+            <span>{{ notificacoes_nao_lidas }}</span>
+        {% endif %}
+    </a>
+
+    <div class="notificacao-menu">
+
+        <strong>🔔 Notificações</strong>
+
+        {% for n in ultimas_notificacoes %}
+            <a href="{{ n.link|default:'/notificacoes/' }}" class="{% if not n.lida %}nova{% endif %}">
+                <b>{{ n.titulo }}</b>
+                <small>{{ n.mensagem|truncatechars:60 }}</small>
+            </a>
+        {% empty %}
+            <p>Nenhuma notificação.</p>
+        {% endfor %}
+
+        <a href="/notificacoes/" class="ver-todas">
+            Ver todas
+        </a>
+
+    </div>
+
+</div>
+
+        <div class="usuario-dropdown">
+
+            <a href="#" class="usuario">
+                {{ user.username|first|upper }}
+            </a>
 
                 <div class="dropdown-menu">
 

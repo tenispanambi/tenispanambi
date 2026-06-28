@@ -207,4 +207,11 @@ path('sistema/', views.painel_sistema, name='painel_sistema'),
 
 path('notificacoes/', views.notificacoes, name='notificacoes'),
 
+path(
+    'resultado-pendente/<int:jogo_id>/',
+    views.detalhe_notificacao_resultado,
+    name='detalhe_notificacao_resultado'
+),
+
+
 ]
