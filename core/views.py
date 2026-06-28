@@ -1981,17 +1981,21 @@ def lancar_jogo(request):
         return redirect('/meu-perfil/')
 
     jogadores_todos = Jogador.objects.filter(
-        ativo=True
-    ).exclude(
-        id=jogador_logado.id
-    ).order_by('nome')
+    ativo=True,
+    usuario__is_staff=False,
+    usuario__is_superuser=False
+).exclude(
+    id=jogador_logado.id
+).order_by('nome')
 
     jogadores_categoria = Jogador.objects.filter(
-        ativo=True,
-        categoria=jogador_logado.categoria
-    ).exclude(
-        id=jogador_logado.id
-    ).order_by('nome')
+    ativo=True,
+    categoria=jogador_logado.categoria,
+    usuario__is_staff=False,
+    usuario__is_superuser=False
+).exclude(
+    id=jogador_logado.id
+).order_by('nome')
 
     torneio_duplas_categoria = CategoriaTorneio.objects.filter(
         torneio__tipo='RANKING',

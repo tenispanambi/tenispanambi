@@ -449,7 +449,7 @@ select{
 
                         <div id="campoParceiro" class="hidden" style="margin-top:18px;">
                             <label>Parceiro</label>
-                            <select name="parceiro_a">
+                            <select name="parceiro_a" class="busca-select">
                                 <option value="">Selecione o parceiro</option>
 
                                 {% for j in jogadores_todos %}
@@ -477,7 +477,9 @@ select{
                     <div class="corpo-time">
 
                         <label>Adversário 1</label>
-                        <select name="adversario_1" required>
+                        <select name="adversario_1"
+        class="busca-select"
+        required>
                             <option value="">Selecione o adversário</option>
 
                             {% for j in jogadores_todos %}
@@ -489,7 +491,7 @@ select{
 
                         <div id="campoAdversario2" class="hidden" style="margin-top:18px;">
                             <label>Adversário 2</label>
-                            <select name="adversario_2">
+                            <select name="adversario_2" class="busca-select">
                                 <option value="">Selecione o adversário 2</option>
 
                                 {% for j in jogadores_todos %}
@@ -692,6 +694,22 @@ function alterarSets(){
 
 alterarTipoJogo();
 alterarSets();
+</script>
+
+<script>
+document.querySelectorAll(".busca-select").forEach(function(el){
+
+    new TomSelect(el,{
+        create:false,
+        sortField:{
+            field:"text",
+            direction:"asc"
+        },
+        placeholder:"Digite o nome do jogador...",
+        maxOptions:500
+    });
+
+});
 </script>
 
 {% endblock %}
