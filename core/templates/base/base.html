@@ -781,6 +781,26 @@
 
 }
 
+@media(max-width:768px){
+
+    .notificacao-dropdown{
+        position:absolute;
+        top:105px;
+        left:48px;
+        z-index:9999;
+    }
+
+    .btn-sino{
+        width:56px;
+        height:56px;
+        background:rgba(255,255,255,.12);
+    }
+
+    .usuario{
+        display:none !important;
+    }
+}
+
 
 }
 
@@ -810,6 +830,24 @@
     <label for="menu-toggle" class="menu-btn">
         <i class="fa-solid fa-bars"></i>
     </label>
+
+    <div class="notificacao-dropdown">
+
+
+
+    <a href="/notificacoes/" class="btn-sino">
+
+        <i class="fa-solid fa-bell"></i>
+
+
+
+        {% if notificacoes_nao_lidas > 0 %}
+
+            <span>{{ notificacoes_nao_lidas }}</span>
+
+        {% endif %}
+
+    </a>
 
     <nav class="menu">
 
@@ -883,16 +921,7 @@
 
     {% if user.is_authenticated %}
 
-        <div class="notificacao-dropdown">
-
-    <a href="/notificacoes/" class="btn-sino">
-        <i class="fa-solid fa-bell"></i>
-
-        {% if notificacoes_nao_lidas > 0 %}
-            <span>{{ notificacoes_nao_lidas }}</span>
-        {% endif %}
-    </a>
-
+        
     <div class="notificacao-menu">
 
         <strong>🔔 Notificações</strong>
