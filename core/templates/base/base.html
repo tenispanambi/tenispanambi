@@ -750,60 +750,23 @@
 }
 
 @media(max-width:768px){
-
-.install-banner{
-
-    flex-direction:column;
-
-    text-align:center;
-
-    padding:20px;
-
-}
-
-.install-left{
-
-    flex-direction:column;
-
-}
-
-.install-right{
-
-    width:100%;
-
-    justify-content:center;
-
-}
-
-#btnInstallApp{
-
-    width:100%;
-
-}
-
-@media(max-width:768px){
-
-    .notificacao-dropdown{
-        position:absolute;
-        top:105px;
-        left:48px;
-        z-index:9999;
-    }
-
-    .btn-sino{
-        width:56px;
-        height:56px;
-        background:rgba(255,255,255,.12);
-    }
-
-    .usuario{
+    .acoes-topo .usuario{
         display:none !important;
     }
+
+    .acoes-topo{
+        display:none;
+    }
+
+    .menu-toggle:checked ~ .acoes-topo{
+        display:grid;
+    }
+
+    .acoes-topo .notificacao-dropdown{
+        grid-column:1 / -1;
+        justify-self:center;
+    }
 }
-
-
-}
-
     </style>
 </head>
 
@@ -827,121 +790,104 @@
 
     <input type="checkbox" id="menu-toggle" class="menu-toggle">
 
-    <label for="menu-toggle" class="menu-btn">
-        <i class="fa-solid fa-bars"></i>
-    </label>
+<label for="menu-toggle" class="menu-btn">
+    <i class="fa-solid fa-bars"></i>
+</label>
 
-    <div class="notificacao-dropdown">
+<nav class="menu">
 
-
-
-    <a href="/notificacoes/" class="btn-sino">
-
-        <i class="fa-solid fa-bell"></i>
-
-
-
-        {% if notificacoes_nao_lidas > 0 %}
-
-            <span>{{ notificacoes_nao_lidas }}</span>
-
-        {% endif %}
-
+    <a href="/">
+        <i class="fa-solid fa-house"></i> Início
     </a>
 
-    <nav class="menu">
-
-        <a href="/">
-            <i class="fa-solid fa-house"></i> Início
-        </a>
-
-        <a href="/ranking/">
-            <i class="fa-solid fa-chart-simple"></i> Ranking
-        </a>
-
-        <div class="menu-dropdown">
-
-    <a href="#" class="menu-dropdown-btn">
-        <i class="fa-solid fa-trophy"></i> Champ Duplas
-        <i class="fa-solid fa-chevron-down"></i>
+    <a href="/ranking/">
+        <i class="fa-solid fa-chart-simple"></i> Ranking
     </a>
 
-    <div class="menu-dropdown-content">
-        <a href="/estatisticas-championship/">
-            <i class="fa-solid fa-chart-line"></i> Estatísticas
+    <div class="menu-dropdown">
+        <a href="#" class="menu-dropdown-btn">
+            <i class="fa-solid fa-trophy"></i> Champ Duplas
+            <i class="fa-solid fa-chevron-down"></i>
         </a>
 
-        <a href="/mural-campeoes/">
-            <i class="fa-solid fa-medal"></i> Campeões
-        </a>
-
-        <a href="/champ-duplas/selos/">
-            <i class="fa-solid fa-shield-halved"></i> Selos e Conquistas
-       </a>
-    </div>
-
-</div>
-
-<div class="menu-dropdown">
-
-    <a href="#" class="menu-dropdown-btn">
-        <i class="fa-solid fa-calendar-days"></i> Torneios
-        <i class="fa-solid fa-chevron-down"></i>
-    </a>
-
-    <div class="menu-dropdown-content">
-        <a href="/calendario/">
-            <i class="fa-solid fa-calendar-days"></i> Calendário Oficial
-        </a>
-
-        <a href="/torneios-historico/">
-            <i class="fa-solid fa-trophy"></i> Histórico de Torneios
-        </a>
-    </div>
-
-</div>
-
-</div>
-
-<a href="/head-to-head/">
-    <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
-</a>
-
-        <span class="menu-spacer"></span>
-
-        {% if user.is_authenticated %}
-            <a href="/lancar-jogo/" class="btn-lancar">
-                <i class="fa-solid fa-plus"></i> Lançar Jogo
+        <div class="menu-dropdown-content">
+            <a href="/estatisticas-championship/">
+                <i class="fa-solid fa-chart-line"></i> Estatísticas
             </a>
-        {% endif %}
 
-    </nav>
+            <a href="/mural-campeoes/">
+                <i class="fa-solid fa-medal"></i> Campeões
+            </a>
 
-    <div class="acoes-topo">
+            <a href="/champ-duplas/selos/">
+                <i class="fa-solid fa-shield-halved"></i> Selos e Conquistas
+            </a>
+        </div>
+    </div>
+
+    <div class="menu-dropdown">
+        <a href="#" class="menu-dropdown-btn">
+            <i class="fa-solid fa-calendar-days"></i> Torneios
+            <i class="fa-solid fa-chevron-down"></i>
+        </a>
+
+        <div class="menu-dropdown-content">
+            <a href="/calendario/">
+                <i class="fa-solid fa-calendar-days"></i> Calendário Oficial
+            </a>
+
+            <a href="/torneios-historico/">
+                <i class="fa-solid fa-trophy"></i> Histórico de Torneios
+            </a>
+        </div>
+    </div>
+
+    <a href="/head-to-head/">
+        <i class="fa-solid fa-circle-half-stroke"></i> Head to Head
+    </a>
+
+    <span class="menu-spacer"></span>
+
+    {% if user.is_authenticated %}
+        <a href="/lancar-jogo/" class="btn-lancar">
+            <i class="fa-solid fa-plus"></i> Lançar Jogo
+        </a>
+    {% endif %}
+
+</nav>
+
+<div class="acoes-topo">
 
     {% if user.is_authenticated %}
 
-        
-    <div class="notificacao-menu">
+        <div class="notificacao-dropdown">
 
-        <strong>🔔 Notificações</strong>
+            <a href="/notificacoes/" class="btn-sino">
+                <i class="fa-solid fa-bell"></i>
 
-        {% for n in ultimas_notificacoes %}
-            <a href="{{ n.link|default:'/notificacoes/' }}" class="{% if not n.lida %}nova{% endif %}">
-                <b>{{ n.titulo }}</b>
-                <small>{{ n.mensagem|truncatechars:60 }}</small>
+                {% if notificacoes_nao_lidas > 0 %}
+                    <span>{{ notificacoes_nao_lidas }}</span>
+                {% endif %}
             </a>
-        {% empty %}
-            <p>Nenhuma notificação.</p>
-        {% endfor %}
 
-        <a href="/notificacoes/" class="ver-todas">
-            Ver todas
-        </a>
+            <div class="notificacao-menu">
+                <strong>🔔 Notificações</strong>
 
-    </div>
+                {% for n in ultimas_notificacoes %}
+                    <a href="{{ n.link|default:'/notificacoes/' }}" class="{% if not n.lida %}nova{% endif %}">
+                        <b>{{ n.titulo }}</b>
+                        <small>{{ n.mensagem|truncatechars:60 }}</small>
+                    </a>
+                {% empty %}
+                    <p>Nenhuma notificação.</p>
+                {% endfor %}
 
-</div>
+                <a href="/notificacoes/" class="ver-todas">
+                    Ver todas
+                </a>
+            </div>
+
+        </div>
 
         <div class="usuario-dropdown">
 
@@ -949,75 +895,68 @@
                 {{ user.username|first|upper }}
             </a>
 
-                <div class="dropdown-menu">
+            <div class="dropdown-menu">
 
-                    <a href="/notificacoes/">
-                        <i class="fa-solid fa-bell"></i> Notificações
-                    </a>
-                    
-                    <a href="/meu-painel/">
-                        <i class="fa-solid fa-user"></i> Meu Painel
-                    </a>
+                <a href="/notificacoes/">
+                    <i class="fa-solid fa-bell"></i> Notificações
+                </a>
 
-                    <a href="/meus-jogos/">
-                        <i class="fa-solid fa-calendar-days"></i> Meus Jogos
-                    </a>
+                <a href="/meu-painel/">
+                    <i class="fa-solid fa-user"></i> Meu Painel
+                </a>
 
-                    <a href="/meu-perfil/">
-                        <i class="fa-solid fa-id-card"></i> Meu Perfil
-                    </a>
+                <a href="/meus-jogos/">
+                    <i class="fa-solid fa-calendar-days"></i> Meus Jogos
+                </a>
 
-                    <a href="/password_change/">
-                        <i class="fa-solid fa-key"></i> Trocar Senha
-                    </a>
+                <a href="/meu-perfil/">
+                    <i class="fa-solid fa-id-card"></i> Meu Perfil
+                </a>
 
-                    {% if user.is_staff %}
+                <a href="/password_change/">
+                    <i class="fa-solid fa-key"></i> Trocar Senha
+                </a>
+
+                {% if user.is_staff %}
                     <a href="/sistema/">
                         <i class="fa-solid fa-gear"></i> Sistema
                     </a>
-                    {% endif %}
+                {% endif %}
 
-                    <a href="/logout/">
-                        <i class="fa-solid fa-right-from-bracket"></i> Sair
-                    </a>
-                </div>
+                <a href="/logout/">
+                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+                </a>
 
             </div>
 
-        {% else %}
-
-            <a href="/login/" class="btn-lancar">
-                <i class="fa-solid fa-right-to-bracket"></i> Login
-            </a>
-
-            <a href="/cadastro/" class="btn-quadra">
-                <i class="fa-solid fa-user-plus"></i> Criar Conta
-            </a>
-
-        {% endif %}
-
-        <div class="social-topo">
-
-            <a
-                href="https://instagram.com/tenispanambi"
-                target="_blank"
-                class="social-link instagram"
-            >
-                <i class="fab fa-instagram"></i>
-            </a>
-
-            <a
-                href="https://youtube.com/@tenispanambi"
-                target="_blank"
-                class="social-link youtube"
-            >
-                <i class="fab fa-youtube"></i>
-            </a>
-
         </div>
+
+    {% else %}
+
+        <a href="/login/" class="btn-lancar">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+        </a>
+
+        <a href="/cadastro/" class="btn-quadra">
+            <i class="fa-solid fa-user-plus"></i> Criar Conta
+        </a>
+
+    {% endif %}
+
+    <div class="social-topo">
+
+        <a href="https://instagram.com/tenispanambi" target="_blank" class="social-link instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+
+        <a href="https://youtube.com/@tenispanambi" target="_blank" class="social-link youtube">
+            <i class="fab fa-youtube"></i>
+        </a>
 
     </div>
 
+</div>
+    
 </header>
 
 <div id="install-banner" style="display:none;">
