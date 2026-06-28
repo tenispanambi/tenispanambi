@@ -3,6 +3,8 @@ from django.contrib.auth import views as auth_views
 
 from . import views
 
+from core.views_backup import baixar_backup
+
 
 urlpatterns = [
 
@@ -198,5 +200,9 @@ path(
     views.selos_championship,
     name='selos_championship'
 ),
+
+path('backup/download/', baixar_backup, name='baixar_backup'),
+
+path('sistema/', views.painel_sistema, name='painel_sistema'),
 
 ]

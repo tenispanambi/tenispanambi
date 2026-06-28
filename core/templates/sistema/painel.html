@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.sistema-wrap{
+    max-width:1100px;
+    margin:auto;
+}
+
+.sistema-hero{
+    background:linear-gradient(135deg,#020617,#073763);
+    color:white;
+    padding:34px;
+    border-radius:26px;
+    margin-bottom:24px;
+}
+
+.sistema-hero h1{
+    font-size:34px;
+    margin-bottom:8px;
+}
+
+.grid-sistema{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:18px;
+}
+
+.card-sistema{
+    background:white;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+}
+
+.card-sistema h3{
+    color:#073763;
+    margin-bottom:12px;
+}
+
+.numero{
+    font-size:32px;
+    font-weight:1000;
+    color:#b91c1c;
+}
+
+.btn-backup{
+    display:inline-block;
+    margin-top:14px;
+    background:#facc15;
+    color:#111827;
+    padding:14px 22px;
+    border-radius:16px;
+    text-decoration:none;
+    font-weight:1000;
+}
+
+.info-linha{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:1px solid #e5e7eb;
+    padding:8px 0;
+}
+</style>
+
+<div class="sistema-wrap">
+
+    <div class="sistema-hero">
+        <h1>⚙ Administração do Sistema</h1>
+        <p>Painel administrativo do Portal Tênis Panambi.</p>
+    </div>
+
+    <div class="grid-sistema">
+
+        <div class="card-sistema">
+            <h3>💾 Backup do Banco</h3>
+            <p>Baixe um backup completo dos dados do site online.</p>
+
+            <a href="{% url 'baixar_backup' %}" class="btn-backup">
+                Fazer Backup Agora
+            </a>
+        </div>
+
+        <div class="card-sistema">
+            <h3>👥 Jogadores</h3>
+            <div class="numero">{{ total_jogadores }}</div>
+        </div>
+
+        <div class="card-sistema">
+            <h3>🎾 Jogos</h3>
+            <div class="numero">{{ total_jogos }}</div>
+        </div>
+
+        <div class="card-sistema">
+            <h3>🏆 Torneios</h3>
+            <div class="numero">{{ total_torneios }}</div>
+        </div>
+
+        <div class="card-sistema">
+            <h3>📅 Reservas</h3>
+            <div class="numero">{{ total_reservas }}</div>
+        </div>
+
+        <div class="card-sistema">
+            <h3>🔔 Notificações</h3>
+            <div class="numero">{{ total_notificacoes }}</div>
+        </div>
+
+        <div class="card-sistema">
+            <h3>🖥 Sistema</h3>
+
+            <div class="info-linha">
+                <span>Servidor</span>
+                <strong>Railway</strong>
+            </div>
+
+            <div class="info-linha">
+                <span>Banco</span>
+                <strong>PostgreSQL</strong>
+            </div>
+
+            <div class="info-linha">
+                <span>Status</span>
+                <strong>Online</strong>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

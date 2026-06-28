@@ -40,6 +40,7 @@ from .models import (
     ResultadoTorneio,
     BannerSite,
     EventoCalendario,
+    Notificacao,
 )
 
 def home(request):
@@ -2253,9 +2254,32 @@ def lancar_jogo(request):
             jogo=jogo
         )
 
+             
         for p in participantes:
             p.vencedor = p.lado == lado_vencedor
             p.save()
+
+        nome_lancador = jogador_logado.nome
+
+        for participante in participantes:
+
+            if participante.jogador == jogador_logado:
+                continue
+
+            Notificacao.objects.create(
+                jogador=participante.jogador,
+                titulo="🎾 Novo resultado aguardando confirmação",
+                mensagem=(
+                    f"{nome_lancador} lançou um resultado de jogo. "
+                    "Acesse o portal para confirmar ou contestar o placar."
+                ),
+                link=f"/confirmar-resultado-usuario/{jogo.id}/"
+            )
+
+        messages.success(
+            request,
+            "Jogo lançado com sucesso. Os participantes foram notificados."
+        )
 
         return redirect('/meus-jogos/')
 
@@ -3391,5 +3415,26 @@ def selos_championship(request):
         {
             'jogadores': lista_jogadores,
             'contadores': contadores,
+        }
+    )
+
+@staff_member_required
+def painel_sistema(request):
+
+    total_jogadores = Jogador.objects.count()
+    total_jogos = Jogo.objects.count()
+    total_torneios = Torneio.objects.count()
+    total_reservas = ReservaQuadra.objects.count()
+    total_notificacoes = Notificacao.objects.count()
+
+    return render(
+        request,
+        'sistema/painel.html',
+        {
+            'total_jogadores': total_jogadores,
+            'total_jogos': total_jogos,
+            'total_torneios': total_torneios,
+            'total_reservas': total_reservas,
+            'total_notificacoes': total_notificacoes,
         }
     )

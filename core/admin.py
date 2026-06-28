@@ -18,6 +18,7 @@ from .models import (
     ResultadoTorneio,
     BannerSite,
     EventoCalendario,
+    Notificacao,
 )
 
 from .services.ranking import recalcular_ranking
@@ -606,3 +607,27 @@ class EventoCalendarioAdmin(admin.ModelAdmin):
             }
         ),
     )
+
+@admin.register(Notificacao)
+class NotificacaoAdmin(admin.ModelAdmin):
+    list_display = (
+        'jogador',
+        'titulo',
+        'lida',
+        'criada_em',
+    )
+
+    list_filter = (
+        'lida',
+        'criada_em',
+    )
+
+    search_fields = (
+        'jogador__nome',
+        'titulo',
+        'mensagem',
+    )
+
+    ordering = (
+        '-criada_em',
+    )    

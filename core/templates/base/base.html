@@ -526,6 +526,167 @@
                 flex-wrap:wrap;
             }
         }
+
+.install-banner{
+
+    background:linear-gradient(135deg,#041b46,#0b5db3);
+
+    color:white;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:30px;
+
+    padding:18px 28px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
+
+}
+
+.install-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.install-icon{
+
+    width:62px;
+
+    height:62px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.15);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:30px;
+
+}
+
+.install-title{
+
+    font-size:22px;
+
+    font-weight:900;
+
+    margin-bottom:4px;
+
+}
+
+.install-text{
+
+    opacity:.9;
+
+    font-size:14px;
+
+}
+
+.install-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+#btnInstallApp{
+
+    background:#facc15;
+
+    color:#111827;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:14px 24px;
+
+    font-size:15px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+#btnInstallApp:hover{
+
+    transform:translateY(-2px);
+
+}
+
+#btnCloseInstall{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:rgba(255,255,255,.15);
+
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+}
+
+@media(max-width:768px){
+
+.install-banner{
+
+    flex-direction:column;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+.install-left{
+
+    flex-direction:column;
+
+}
+
+.install-right{
+
+    width:100%;
+
+    justify-content:center;
+
+}
+
+#btnInstallApp{
+
+    width:100%;
+
+}
+
+}
+
     </style>
 </head>
 
@@ -737,6 +898,64 @@
     {% endblock %}
 
 </div>
+
+<script>
+
+let deferredPrompt;
+
+const banner=document.getElementById("install-banner");
+
+const install=document.getElementById("btnInstallApp");
+
+const fechar=document.getElementById("btnCloseInstall");
+
+window.addEventListener("beforeinstallprompt",(e)=>{
+
+    e.preventDefault();
+
+    deferredPrompt=e;
+
+    if(!localStorage.getItem("fechouInstall")){
+
+        banner.style.display="block";
+
+    }
+
+});
+
+install.addEventListener("click",async()=>{
+
+    if(!deferredPrompt){
+
+        alert("Seu navegador não permite instalar o aplicativo neste momento.");
+
+        return;
+
+    }
+
+    deferredPrompt.prompt();
+
+    await deferredPrompt.userChoice;
+
+    banner.style.display="none";
+
+});
+
+fechar.addEventListener("click",()=>{
+
+    banner.style.display="none";
+
+    localStorage.setItem("fechouInstall","1");
+
+});
+
+window.addEventListener("appinstalled",()=>{
+
+    banner.style.display="none";
+
+});
+
+</script>
 
 <script>
 
