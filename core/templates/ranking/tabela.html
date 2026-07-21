@@ -226,7 +226,9 @@
         <tr
         {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
             style="background:#e8f1ff;"
-        {% elif r.posicao <= 8 %}
+        {% elif r.categoria.categoria == 'A' and r.posicao <= 8 %}
+            style="background:#edfdf1;"
+        {% elif r.categoria.categoria != 'A' and r.posicao <= 10 %}
             style="background:#edfdf1;"
         {% elif r.status_ranking == 'REBAIXADO' %}
             style="background:#fff1f1;"
@@ -313,7 +315,11 @@
                                     · 🔵 Acesso Cat. B
                                 {% endif %}
 
-                            {% elif r.posicao <= 8 %}
+                            {% elif r.categoria.categoria == 'A' and r.posicao <= 8 %}
+
+                                · 🟢 Classificado Finais
+
+                            {% elif r.categoria.categoria != 'A' and r.posicao <= 10 %}
 
                                 · 🟢 Classificado Finais
 
@@ -364,7 +370,9 @@
         class="mobile-ranking-card"
         {% if r.categoria.categoria != 'A' and r.posicao <= 2 %}
             style="background:#e8f1ff;"
-        {% elif r.posicao <= 8 %}
+        {% elif r.categoria.categoria == 'A' and r.posicao <= 8 %}
+            style="background:#edfdf1;"
+        {% elif r.categoria.categoria != 'A' and r.posicao <= 10 %}
             style="background:#edfdf1;"
         {% elif r.status_ranking == 'REBAIXADO' %}
             style="background:#fff1f1;"
