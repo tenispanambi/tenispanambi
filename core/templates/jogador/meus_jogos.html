@@ -240,6 +240,16 @@
     font-weight:1000;
 }
 
+.acao-revisao{
+    display:inline-block;
+    color:#dc2626;
+    border:1px solid #fecaca;
+    background:#fef2f2;
+    padding:9px 15px;
+    border-radius:999px;
+    font-weight:1000;
+}
+
 .mobile-jogos{
     display:none;
 }
@@ -421,11 +431,29 @@
                 <td style="text-align:center;">
 
                     {% if p.jogo.status == 'CONFIRMADO' %}
-                        <div class="status-ok">✅ Confirmado</div>
+
+                        <div class="status-ok">
+                            ✅ Resultado confirmado
+                        </div>
+
                     {% elif p.jogo.status == 'PENDENTE' %}
-                        <div class="status-pendente">⏳ Pendente</div>
-                    {% else %}
-                        <div class="status-erro">❌ Cancelado</div>
+
+                        {% if p.lado == 'B' %}
+                            <div class="status-pendente">
+                                ⚠️ Aguardando sua confirmação
+                            </div>
+                        {% else %}
+                            <div class="status-pendente">
+                                ⏳ Aguardando confirmação dos adversários
+                            </div>
+                        {% endif %}
+
+                    {% elif p.jogo.status == 'CONTESTADO' %}
+
+                        <div class="status-erro">
+                            ❌ Resultado contestado
+                        </div>
+
                     {% endif %}
 
                 </td>
@@ -471,22 +499,28 @@
                     {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
 
                         <a
-                            href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
+                            href="/resultado-pendente/{{ p.jogo.id }}/"
                             class="acao-confirmar"
                         >
-                            Confirmar
+                            Conferir resultado
                         </a>
 
                     {% elif p.jogo.status == 'PENDENTE' %}
 
                         <div class="acao-aguardando">
-                            Aguardando
+                            ⏳ Aguardando adversários
                         </div>
 
-                    {% else %}
+                    {% elif p.jogo.status == 'CONFIRMADO' %}
 
                         <div class="acao-finalizado">
-                            🏆 Finalizado
+                            ✅ Confirmado
+                        </div>
+
+                    {% elif p.jogo.status == 'CONTESTADO' %}
+
+                        <div class="acao-revisao">
+                            ⚠️ Precisa de revisão
                         </div>
 
                     {% endif %}
@@ -544,11 +578,29 @@
                     <div>
                         Status:
                         {% if p.jogo.status == 'CONFIRMADO' %}
-                            <span class="status-ok">✅ Confirmado</span>
+
+                            <span class="status-ok">
+                                ✅ Resultado confirmado
+                            </span>
+
                         {% elif p.jogo.status == 'PENDENTE' %}
-                            <span class="status-pendente">⏳ Pendente</span>
-                        {% else %}
-                            <span class="status-erro">❌ Cancelado</span>
+
+                            {% if p.lado == 'B' %}
+                                <span class="status-pendente">
+                                    ⚠️ Aguardando sua confirmação
+                                </span>
+                            {% else %}
+                                <span class="status-pendente">
+                                    ⏳ Aguardando confirmação dos adversários
+                                </span>
+                            {% endif %}
+
+                        {% elif p.jogo.status == 'CONTESTADO' %}
+
+                            <span class="status-erro">
+                                ❌ Resultado contestado
+                            </span>
+
                         {% endif %}
                     </div>
 
@@ -584,23 +636,29 @@
                     {% if p.jogo.status == 'PENDENTE' and p.lado == 'B' %}
 
                         <a
-                            href="/confirmar-resultado-usuario/{{ p.jogo.id }}/"
+                            href="/resultado-pendente/{{ p.jogo.id }}/"
                             class="acao-confirmar"
                             style="text-align:center;margin-top:10px;"
                         >
-                            Confirmar Resultado
+                            Conferir resultado
                         </a>
 
                     {% elif p.jogo.status == 'PENDENTE' %}
 
                         <div class="acao-aguardando" style="text-align:center;margin-top:10px;">
-                            Aguardando confirmação
+                            ⏳ Aguardando adversários
                         </div>
 
-                    {% else %}
+                    {% elif p.jogo.status == 'CONFIRMADO' %}
 
                         <div class="acao-finalizado" style="text-align:center;margin-top:10px;">
-                            🏆 Finalizado
+                            ✅ Confirmado
+                        </div>
+
+                    {% elif p.jogo.status == 'CONTESTADO' %}
+
+                        <div class="acao-revisao" style="text-align:center;margin-top:10px;">
+                            ⚠️ Precisa de revisão
                         </div>
 
                     {% endif %}

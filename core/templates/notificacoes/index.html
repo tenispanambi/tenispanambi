@@ -2,21 +2,170 @@
 
 {% block content %}
 
-<h1>🔔 Notificações</h1>
+<style>
+.notificacoes-pagina{
+    max-width:1000px;
+    margin:0 auto;
+    padding:24px;
+}
 
-{% for n in notificacoes %}
-<div style="background:white;padding:18px;border-radius:18px;margin-bottom:12px;">
-    <strong>{{ n.titulo }}</strong>
-    <p>{{ n.mensagem }}</p>
+.notificacoes-cabecalho{
+    background:linear-gradient(135deg,#020617,#073763);
+    color:white;
+    padding:32px;
+    border-radius:28px;
+    margin-bottom:22px;
+    box-shadow:0 16px 34px rgba(0,0,0,.15);
+}
 
-    {% if n.link %}
-        <a href="{{ n.link }}" style="font-weight:bold;color:#073763;">
-            Abrir
-        </a>
-    {% endif %}
+.notificacoes-cabecalho h1{
+    margin:0;
+    font-size:38px;
+}
+
+.notificacoes-cabecalho p{
+    margin:8px 0 0;
+    color:#dbeafe;
+}
+
+.notificacao-card{
+    background:white;
+    border-radius:22px;
+    padding:22px;
+    margin-bottom:14px;
+    box-shadow:0 10px 28px rgba(15,23,42,.08);
+    border-left:6px solid #0b4d91;
+}
+
+.notificacao-card.confirmada{
+    border-left-color:#16a34a;
+}
+
+.notificacao-card.contestada{
+    border-left-color:#dc2626;
+}
+
+.notificacao-titulo{
+    color:#0f172a;
+    font-size:20px;
+    font-weight:1000;
+    margin-bottom:10px;
+}
+
+.notificacao-mensagem{
+    color:#475569;
+    white-space:pre-line;
+    line-height:1.6;
+    margin-bottom:16px;
+}
+
+.notificacao-data{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:15px;
+}
+
+.notificacao-botao{
+    display:inline-block;
+    background:#0b4d91;
+    color:white;
+    text-decoration:none;
+    padding:11px 18px;
+    border-radius:999px;
+    font-weight:900;
+}
+
+.notificacao-card.confirmada .notificacao-botao{
+    background:#16a34a;
+}
+
+.notificacao-card.contestada .notificacao-botao{
+    background:#dc2626;
+}
+
+.sem-notificacoes{
+    background:white;
+    padding:45px 25px;
+    border-radius:24px;
+    text-align:center;
+    color:#64748b;
+    font-size:19px;
+}
+
+@media(max-width:700px){
+    .notificacoes-pagina{
+        padding:14px;
+    }
+
+    .notificacoes-cabecalho{
+        padding:25px 20px;
+    }
+
+    .notificacoes-cabecalho h1{
+        font-size:30px;
+    }
+}
+</style>
+
+<div class="notificacoes-pagina">
+
+    <div class="notificacoes-cabecalho">
+        <h1>🔔 Notificações</h1>
+        <p>
+            Resultados que precisam da sua atenção.
+        </p>
+    </div>
+
+    {% for n in notificacoes %}
+
+        <div class="
+            notificacao-card
+            {% if 'confirmado' in n.titulo|lower %}
+                confirmada
+            {% elif 'contestado' in n.titulo|lower %}
+                contestada
+            {% endif %}
+        ">
+
+            <div class="notificacao-titulo">
+                {{ n.titulo }}
+            </div>
+
+            <div class="notificacao-mensagem">
+                {{ n.mensagem }}
+            </div>
+
+            <div class="notificacao-data">
+                {{ n.criada_em|date:"d/m/Y H:i" }}
+            </div>
+
+            {% if n.link %}
+                <a href="{{ n.link }}" class="notificacao-botao">
+
+                    {% if 'aguardando confirmação' in n.titulo|lower %}
+                        Ver e responder
+                    {% elif 'confirmado' in n.titulo|lower %}
+                        Ver meus jogos
+                    {% elif 'contestado' in n.titulo|lower %}
+                        Ver meus jogos
+                    {% else %}
+                        Abrir
+                    {% endif %}
+
+                </a>
+            {% endif %}
+
+        </div>
+
+    {% empty %}
+
+        <div class="sem-notificacoes">
+            <div style="font-size:48px;margin-bottom:12px;">✅</div>
+            Você não possui notificações pendentes.
+        </div>
+
+    {% endfor %}
+
 </div>
-{% empty %}
-<p>Nenhuma notificação.</p>
-{% endfor %}
 
 {% endblock %}

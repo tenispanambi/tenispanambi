@@ -213,5 +213,29 @@ path(
     name='detalhe_notificacao_resultado'
 ),
 
+path(
+    'resultado-pendente/<int:jogo_id>/',
+    views.detalhe_notificacao_resultado,
+    name='detalhe_notificacao_resultado'
+),
+
+path(
+    'confirmar-resultado-usuario/<int:jogo_id>/',
+    views.confirmar_resultado_usuario,
+    name='confirmar_resultado_usuario'
+),
+
+path(
+    'contestar-resultado/<int:jogo_id>/',
+    views.contestar_resultado,
+    name='contestar_resultado'
+),
+
+path(
+    'abrir-notificacao/<int:notificacao_id>/',
+    views.abrir_notificacao,
+    name='abrir_notificacao'
+),
+
 
 ]

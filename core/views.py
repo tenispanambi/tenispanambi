@@ -1690,15 +1690,103 @@ def confirmar_resultado(request, jogo_id):
 
 @login_required
 def contestar_resultado(request, jogo_id):
+
+    jogador_logado = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador_logado:
+        messages.error(
+            request,
+            'Não foi encontrado um jogador vinculado ao seu usuário.'
+        )
+        return redirect('/meu-perfil/')
+
     jogo = get_object_or_404(
-        Jogo,
+        Jogo.objects.prefetch_related(
+            'participantes',
+            'participantes__jogador',
+            'sets'
+        ),
         id=jogo_id
     )
 
-    jogo.status = 'CONTESTADO'
-    jogo.save()
+    participacao = ParticipanteJogo.objects.filter(
+        jogo=jogo,
+        jogador=jogador_logado
+    ).first()
 
-    return redirect('resultados_pendentes')
+    if not participacao:
+        messages.error(
+            request,
+            'Você não participa deste jogo.'
+        )
+        return redirect('/meus-jogos/')
+
+    if jogo.status == 'CONFIRMADO':
+        messages.error(
+            request,
+            'Este jogo já foi confirmado e não pode mais ser contestado.'
+        )
+        return redirect('/meus-jogos/')
+
+    if jogo.status == 'CONTESTADO':
+        Notificacao.objects.filter(
+            jogador=jogador_logado,
+            link=f'/resultado-pendente/{jogo.id}/'
+        ).delete()
+
+        messages.info(
+            request,
+            'Este resultado já foi contestado.'
+        )
+        return redirect('/meus-jogos/')
+
+    if participacao.lado != 'B':
+        messages.error(
+            request,
+            'A contestação deve ser realizada por um dos adversários.'
+        )
+        return redirect('/meus-jogos/')
+
+    jogo.status = 'CONTESTADO'
+    jogo.save(update_fields=['status'])
+
+    Notificacao.objects.filter(
+        link=f'/resultado-pendente/{jogo.id}/'
+    ).delete()
+
+    confronto = jogo.descricao_confronto()
+    placar = jogo.placar_resumido()
+
+    jogadores_lado_a = ParticipanteJogo.objects.filter(
+        jogo=jogo,
+        lado='A'
+    ).select_related(
+        'jogador'
+    )
+
+    for participante_a in jogadores_lado_a:
+        notificacao = Notificacao.objects.create(
+            jogador=participante_a.jogador,
+            titulo='❌ Resultado contestado',
+            mensagem=(
+                f'{jogador_logado.nome} contestou o resultado lançado.\n\n'
+                f'{confronto}\n'
+                f'Placar informado: {placar}\n\n'
+                'O resultado precisa ser revisado antes de ser contabilizado.'
+            )
+        )
+
+        notificacao.link = f'/abrir-notificacao/{notificacao.id}/'
+        notificacao.save(update_fields=['link'])
+
+    messages.warning(
+        request,
+        'Resultado contestado. Os responsáveis pelo lançamento foram avisados.'
+    )
+
+    return redirect('/meus-jogos/')
 
 
 @login_required
@@ -2263,26 +2351,37 @@ def lancar_jogo(request):
             p.vencedor = p.lado == lado_vencedor
             p.save()
 
+        # ==========================================================
+        # NOTIFICA OS ADVERSÁRIOS
+        # Apenas jogadores do lado B precisam confirmar
+        # ==========================================================
+
         nome_lancador = jogador_logado.nome
+        confronto = jogo.descricao_confronto()
+        placar = jogo.placar_resumido()
 
-        for participante in participantes:
+        adversarios = participantes.filter(
+            lado='B'
+        ).select_related(
+            'jogador'
+        )
 
-            if participante.jogador == jogador_logado:
-                continue
-
+        for participante in adversarios:
             Notificacao.objects.create(
                 jogador=participante.jogador,
-                titulo="🎾 Novo resultado aguardando confirmação",
+                titulo='🎾 Novo resultado aguardando confirmação',
                 mensagem=(
-                    f"{nome_lancador} lançou um resultado de jogo. "
-                    "Acesse o portal para confirmar ou contestar o placar."
+                    f'{nome_lancador} lançou o resultado do jogo.\n\n'
+                    f'{confronto}\n'
+                    f'Placar: {placar}\n\n'
+                    'Confira o resultado e confirme ou conteste.'
                 ),
-                link=f"/resultado-pendente/{jogo.id}/"
+                link=f'/resultado-pendente/{jogo.id}/'
             )
 
         messages.success(
             request,
-            "Jogo lançado com sucesso. Os participantes foram notificados."
+            'Jogo lançado com sucesso. Os adversários foram notificados.'
         )
 
         return redirect('/meus-jogos/')
@@ -2328,10 +2427,18 @@ def confirmar_resultado_usuario(request, jogo_id):
     ).first()
 
     if not jogador_logado:
+        messages.error(
+            request,
+            'Não foi encontrado um jogador vinculado ao seu usuário.'
+        )
         return redirect('/meu-perfil/')
 
     jogo = get_object_or_404(
-        Jogo,
+        Jogo.objects.prefetch_related(
+            'participantes',
+            'participantes__jogador',
+            'sets'
+        ),
         id=jogo_id
     )
 
@@ -2347,32 +2454,105 @@ def confirmar_resultado_usuario(request, jogo_id):
         )
         return redirect('/meus-jogos/')
 
-    if jogo.status != 'PENDENTE':
-        messages.error(
+    if jogo.status == 'CONFIRMADO':
+
+        # Remove uma eventual notificação antiga que tenha ficado salva
+        Notificacao.objects.filter(
+            jogador=jogador_logado,
+            link=f'/resultado-pendente/{jogo.id}/'
+        ).delete()
+
+        messages.info(
             request,
-            'Este jogo já foi confirmado ou contestado.'
+            'Este resultado já foi confirmado.'
+        )
+        return redirect('/meus-jogos/')
+
+    if jogo.status == 'CONTESTADO':
+
+        Notificacao.objects.filter(
+            jogador=jogador_logado,
+            link=f'/resultado-pendente/{jogo.id}/'
+        ).delete()
+
+        messages.warning(
+            request,
+            'Este resultado já foi contestado.'
         )
         return redirect('/meus-jogos/')
 
     if participacao.lado != 'B':
         messages.error(
             request,
-            'A confirmação deve ser feita pelo adversário.'
+            'A confirmação deve ser realizada por um dos adversários.'
         )
         return redirect('/meus-jogos/')
 
-    jogo.status = 'CONFIRMADO'
-    jogo.save()
+    # ======================================================
+    # CONFIRMA O RESULTADO
+    # ======================================================
 
-    if jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS':
+    jogo.status = 'CONFIRMADO'
+    jogo.save(update_fields=['status'])
+
+    jogo.atualizar_participantes()
+
+    if (
+        jogo.tipo_jogo == 'CHAMPIONSHIP_DUPLAS'
+        and jogo.torneio
+        and jogo.categoria
+    ):
         recalcular_ranking(
             jogo.torneio,
             jogo.categoria
         )
 
+    # ======================================================
+    # REMOVE TODAS AS NOTIFICAÇÕES PENDENTES DESTE JOGO
+    # Dessa forma, em duplas, a notificação desaparece
+    # para os dois adversários quando um deles confirma.
+    # ======================================================
+
+    Notificacao.objects.filter(
+        link=f'/resultado-pendente/{jogo.id}/'
+    ).delete()
+
+    confronto = jogo.descricao_confronto()
+    placar = jogo.placar_resumido()
+
+    # ======================================================
+    # AVISA OS JOGADORES DO LADO A
+    # Quem lançou e seu parceiro recebem a confirmação.
+    # ======================================================
+
+    jogadores_lado_a = ParticipanteJogo.objects.filter(
+        jogo=jogo,
+        lado='A'
+    ).select_related(
+        'jogador'
+    )
+
+    for participante_a in jogadores_lado_a:
+
+        notificacao = Notificacao.objects.create(
+            jogador=participante_a.jogador,
+            titulo='✅ Resultado confirmado',
+            mensagem=(
+                f'{jogador_logado.nome} confirmou o resultado.\n\n'
+                f'{confronto}\n'
+                f'Placar: {placar}\n\n'
+                'O jogo já está confirmado e contabilizado.'
+            )
+        )
+
+        notificacao.link = (
+            f'/abrir-notificacao/{notificacao.id}/'
+        )
+        notificacao.save(update_fields=['link'])
+
     messages.success(
         request,
-        'Resultado confirmado com sucesso.'
+        'Resultado confirmado com sucesso. O jogo já foi contabilizado.'
     )
 
     return redirect('/meus-jogos/')
@@ -3454,8 +3634,11 @@ def notificacoes(request):
         return redirect('/meu-perfil/')
 
     lista = Notificacao.objects.filter(
-        jogador=jogador
-    ).order_by('-criada_em')
+        jogador=jogador,
+        lida=False
+    ).order_by(
+        '-criada_em'
+    )
 
     return render(
         request,
@@ -3464,6 +3647,7 @@ def notificacoes(request):
             'notificacoes': lista
         }
     )
+
 
 @login_required
 def detalhe_notificacao_resultado(request, jogo_id):
@@ -3476,7 +3660,11 @@ def detalhe_notificacao_resultado(request, jogo_id):
         return redirect('/meu-perfil/')
 
     jogo = get_object_or_404(
-        Jogo,
+        Jogo.objects.prefetch_related(
+            'participantes',
+            'participantes__jogador',
+            'sets'
+        ),
         id=jogo_id
     )
 
@@ -3486,19 +3674,39 @@ def detalhe_notificacao_resultado(request, jogo_id):
     ).first()
 
     if not participacao:
-        messages.error(request, 'Você não participa deste jogo.')
+        messages.error(
+            request,
+            'Você não participa deste jogo.'
+        )
         return redirect('/notificacoes/')
+
+    if jogo.status != 'PENDENTE':
+        Notificacao.objects.filter(
+            jogador=jogador_logado,
+            link=f'/resultado-pendente/{jogo.id}/'
+        ).delete()
+
+        if jogo.status == 'CONFIRMADO':
+            messages.info(
+                request,
+                'Este resultado já foi confirmado.'
+            )
+        else:
+            messages.info(
+                request,
+                'Este resultado já foi contestado.'
+            )
+
+        return redirect('/meus-jogos/')
 
     participantes = ParticipanteJogo.objects.filter(
         jogo=jogo
-    ).select_related('jogador')
-
-    notificacoes = Notificacao.objects.filter(
-        jogador=jogador_logado,
-        link=f'/resultado-pendente/{jogo.id}/'
+    ).select_related(
+        'jogador'
+    ).order_by(
+        'lado',
+        'id'
     )
-
-    notificacoes.update(lida=True)
 
     return render(
         request,
@@ -3510,3 +3718,24 @@ def detalhe_notificacao_resultado(request, jogo_id):
         }
     )
 
+
+@login_required
+def abrir_notificacao(request, notificacao_id):
+
+    jogador = Jogador.objects.filter(
+        usuario=request.user
+    ).first()
+
+    if not jogador:
+        return redirect('/meu-perfil/')
+
+    notificacao = get_object_or_404(
+        Notificacao,
+        id=notificacao_id,
+        jogador=jogador
+    )
+
+    notificacao.lida = True
+    notificacao.save(update_fields=['lida'])
+
+    return redirect('/meus-jogos/')
