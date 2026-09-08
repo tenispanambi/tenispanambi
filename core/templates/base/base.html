@@ -917,15 +917,13 @@
                     <i class="fa-solid fa-id-card"></i> Meu Perfil
                 </a>
 
+                <a href="#" id="btnInstallMenu">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Instalar App
+                </a>
+
                 <a href="/password_change/">
                     <i class="fa-solid fa-key"></i> Trocar Senha
                 </a>
-
-                {% if user.is_staff %}
-                    <a href="/sistema/">
-                        <i class="fa-solid fa-gear"></i> Sistema
-                    </a>
-                {% endif %}
 
                 <a href="/logout/">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
@@ -1015,55 +1013,77 @@
 let deferredPrompt;
 
 const banner=document.getElementById("install-banner");
-
 const install=document.getElementById("btnInstallApp");
-
 const fechar=document.getElementById("btnCloseInstall");
+const installMenu=document.getElementById("btnInstallMenu");
+
+function appJaInstalado(){
+    return window.matchMedia("(display-mode: standalone)").matches ||
+           window.navigator.standalone === true;
+}
+
+async function instalarApp(){
+
+    if(appJaInstalado()){
+        alert("O App Tênis Panambi já está instalado neste dispositivo.");
+        return;
+    }
+
+    if(deferredPrompt){
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        if(banner){
+            banner.style.display="none";
+        }
+        return;
+    }
+
+    const ehIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+    if(ehIOS){
+        alert("No iPhone/iPad: toque no botão Compartilhar do Safari e depois em ‘Adicionar à Tela de Início’. ");
+    }else{
+        alert("A instalação automática não está disponível neste navegador agora. Abra o site pelo Chrome ou Edge e tente novamente.");
+    }
+}
 
 window.addEventListener("beforeinstallprompt",(e)=>{
-
     e.preventDefault();
-
     deferredPrompt=e;
 
-    if(!localStorage.getItem("fechouInstall")){
-
+    if(banner && !localStorage.getItem("fechouInstall")){
         banner.style.display="block";
-
     }
-
 });
 
-install.addEventListener("click",async()=>{
+if(install){
+    install.addEventListener("click",async()=>{
+        await instalarApp();
+    });
+}
 
-    if(!deferredPrompt){
+if(installMenu){
+    installMenu.addEventListener("click",async(e)=>{
+        e.preventDefault();
+        await instalarApp();
+    });
+}
 
-        alert("Seu navegador não permite instalar o aplicativo neste momento.");
-
-        return;
-
-    }
-
-    deferredPrompt.prompt();
-
-    await deferredPrompt.userChoice;
-
-    banner.style.display="none";
-
-});
-
-fechar.addEventListener("click",()=>{
-
-    banner.style.display="none";
-
-    localStorage.setItem("fechouInstall","1");
-
-});
+if(fechar){
+    fechar.addEventListener("click",()=>{
+        if(banner){
+            banner.style.display="none";
+        }
+        localStorage.setItem("fechouInstall","1");
+    });
+}
 
 window.addEventListener("appinstalled",()=>{
-
-    banner.style.display="none";
-
+    deferredPrompt = null;
+    if(banner){
+        banner.style.display="none";
+    }
 });
 
 </script>
