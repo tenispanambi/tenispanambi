@@ -202,6 +202,14 @@ path(
     name='estatisticas_simples'
 ),
 
+
+path(
+    'estatisticas-simples/jogador/<int:jogador_id>/',
+    views.historico_simples_jogador,
+    name='historico_simples_jogador'
+),
+
+
 path(
     'champ-duplas/selos/',
     views.selos_championship,

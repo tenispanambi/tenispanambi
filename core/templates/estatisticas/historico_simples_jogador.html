@@ -1,0 +1,388 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.hist-page{
+    max-width:1200px;
+    margin:0 auto;
+    padding:25px;
+}
+
+.hist-topo{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.btn-voltar{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:white;
+    color:#0b4d91;
+    text-decoration:none;
+    font-weight:900;
+    padding:12px 17px;
+    border-radius:14px;
+    box-shadow:0 7px 20px rgba(0,0,0,.08);
+}
+
+.btn-voltar:hover{
+    background:#073763;
+    color:white;
+}
+
+.hist-hero{
+    background:
+        radial-gradient(circle at 88% 18%, rgba(163,230,53,.28), transparent 24%),
+        linear-gradient(135deg,#020617,#06345d,#064e3b);
+    color:white;
+    border-radius:30px;
+    padding:36px;
+    box-shadow:0 18px 45px rgba(0,0,0,.22);
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+}
+
+.hist-hero::after{
+    content:"🎾";
+    position:absolute;
+    right:35px;
+    top:10px;
+    font-size:120px;
+    opacity:.13;
+    transform:rotate(-18deg);
+}
+
+.hist-hero h1{
+    position:relative;
+    z-index:2;
+    margin:0;
+    font-size:40px;
+    font-weight:1000;
+}
+
+.hist-hero p{
+    position:relative;
+    z-index:2;
+    margin:8px 0 0;
+    opacity:.88;
+    font-size:16px;
+}
+
+.resumo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+    margin-bottom:25px;
+}
+
+.resumo-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 10px 27px rgba(0,0,0,.09);
+}
+
+.resumo-num{
+    font-size:30px;
+    font-weight:1000;
+    color:#0b4d91;
+}
+
+.resumo-label{
+    color:#64748b;
+    font-size:13px;
+    font-weight:900;
+    margin-top:5px;
+    text-transform:uppercase;
+}
+
+.vitoria-num{
+    color:#16a34a;
+}
+
+.derrota-num{
+    color:#dc2626;
+}
+
+.historico-titulo{
+    margin:0 0 15px;
+    color:#0f172a;
+    font-size:25px;
+    font-weight:1000;
+}
+
+.jogos-lista{
+    display:grid;
+    gap:14px;
+}
+
+.jogo-card{
+    background:white;
+    border-radius:22px;
+    box-shadow:0 10px 28px rgba(0,0,0,.09);
+    padding:20px;
+    border-left:6px solid #94a3b8;
+}
+
+.jogo-card.vitoria{
+    border-left-color:#16a34a;
+}
+
+.jogo-card.derrota{
+    border-left-color:#dc2626;
+}
+
+.jogo-cabecalho{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+}
+
+.jogo-data{
+    color:#64748b;
+    font-size:14px;
+    font-weight:800;
+}
+
+.resultado-badge{
+    display:inline-flex;
+    align-items:center;
+    border-radius:999px;
+    padding:7px 12px;
+    font-size:12px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.resultado-badge.vitoria{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.resultado-badge.derrota{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.confronto{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    flex-wrap:wrap;
+    font-size:20px;
+    font-weight:1000;
+    color:#0f172a;
+    margin-bottom:12px;
+}
+
+.jogador-atual{
+    color:#0b4d91;
+}
+
+.vs{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.placar{
+    background:#f8fafc;
+    border-radius:14px;
+    padding:13px 15px;
+    font-weight:1000;
+    color:#111827;
+    display:inline-block;
+    margin-bottom:12px;
+}
+
+.jogo-detalhes{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.mini-info{
+    background:#eef2f7;
+    color:#475569;
+    border-radius:10px;
+    padding:7px 10px;
+    font-size:12px;
+    font-weight:900;
+}
+
+.sem-jogos{
+    background:white;
+    border-radius:22px;
+    padding:35px;
+    text-align:center;
+    color:#64748b;
+    font-weight:800;
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+}
+
+@media(max-width:700px){
+    .hist-page{
+        padding:12px;
+    }
+
+    .hist-hero{
+        padding:28px 20px;
+        border-radius:24px;
+    }
+
+    .hist-hero h1{
+        font-size:30px;
+    }
+
+    .hist-hero::after{
+        font-size:90px;
+        right:10px;
+    }
+
+    .confronto{
+        font-size:17px;
+    }
+
+    .jogo-card{
+        padding:16px;
+    }
+}
+</style>
+
+<div class="hist-page">
+
+    <div class="hist-topo">
+        <a href="{% url 'estatisticas_simples' %}" class="btn-voltar">
+            ← Voltar às estatísticas
+        </a>
+    </div>
+
+    <div class="hist-hero">
+        <h1>{{ jogador.nome }}</h1>
+        <p>Histórico completo dos jogos de simples confirmados.</p>
+    </div>
+
+    <div class="resumo-grid">
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ total_jogos }}</div>
+            <div class="resumo-label">Jogos</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num vitoria-num">{{ total_vitorias }}</div>
+            <div class="resumo-label">Vitórias</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num derrota-num">{{ total_derrotas }}</div>
+            <div class="resumo-label">Derrotas</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ aproveitamento }}%</div>
+            <div class="resumo-label">Aproveitamento</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ sets_vencidos_total }}</div>
+            <div class="resumo-label">Sets vencidos</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ sets_perdidos_total }}</div>
+            <div class="resumo-label">Sets perdidos</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ games_feitos_total }}</div>
+            <div class="resumo-label">Games feitos</div>
+        </div>
+
+        <div class="resumo-card">
+            <div class="resumo-num">{{ saldo_games_total }}</div>
+            <div class="resumo-label">Saldo de games</div>
+        </div>
+
+    </div>
+
+    <h2 class="historico-titulo">Partidas</h2>
+
+    <div class="jogos-lista">
+
+        {% for item in historico %}
+
+            <div class="jogo-card {% if item.vitoria %}vitoria{% else %}derrota{% endif %}">
+
+                <div class="jogo-cabecalho">
+
+                    <div class="jogo-data">
+                        📅 {{ item.jogo.data_jogo|date:"d/m/Y" }}
+                    </div>
+
+                    {% if item.vitoria %}
+                        <span class="resultado-badge vitoria">
+                            ✓ Vitória
+                        </span>
+                    {% else %}
+                        <span class="resultado-badge derrota">
+                            ✕ Derrota
+                        </span>
+                    {% endif %}
+
+                </div>
+
+                <div class="confronto">
+                    <span class="jogador-atual">{{ jogador.nome }}</span>
+                    <span class="vs">X</span>
+
+                    {% if item.adversario %}
+                        <span>{{ item.adversario.nome }}</span>
+                    {% else %}
+                        <span>Adversário não identificado</span>
+                    {% endif %}
+                </div>
+
+                <div class="placar">
+                    {% if item.placar %}
+                        {{ item.placar }}
+                    {% else %}
+                        Placar não informado
+                    {% endif %}
+                </div>
+
+                <div class="jogo-detalhes">
+                    <span class="mini-info">
+                        Sets: {{ item.sets_vencidos }} × {{ item.sets_perdidos }}
+                    </span>
+
+                    <span class="mini-info">
+                        Games: {{ item.games_feitos }} × {{ item.games_sofridos }}
+                    </span>
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="sem-jogos">
+                Este jogador ainda não possui jogos de simples confirmados.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

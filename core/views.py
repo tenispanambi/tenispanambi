@@ -3441,6 +3441,140 @@ def estatisticas_simples(request):
         }
     )
 
+
+def historico_simples_jogador(request, jogador_id):
+
+    jogador = get_object_or_404(
+        Jogador.objects.exclude(
+            usuario__is_staff=True
+        ).exclude(
+            usuario__is_superuser=True
+        ),
+        id=jogador_id
+    )
+
+    participacoes = ParticipanteJogo.objects.filter(
+        jogador=jogador,
+        jogo__status='CONFIRMADO',
+        jogo__tipo_jogo='SIMPLES'
+    ).select_related(
+        'jogo'
+    ).prefetch_related(
+        'jogo__participantes',
+        'jogo__participantes__jogador',
+        'jogo__sets'
+    ).order_by(
+        '-jogo__data_jogo',
+        '-jogo__id'
+    )
+
+    historico = []
+
+    total_jogos = participacoes.count()
+    total_vitorias = participacoes.filter(
+        vencedor=True
+    ).count()
+    total_derrotas = total_jogos - total_vitorias
+
+    aproveitamento = 0
+
+    if total_jogos > 0:
+        aproveitamento = round(
+            (total_vitorias / total_jogos) * 100,
+            1
+        )
+
+    sets_vencidos_total = 0
+    sets_perdidos_total = 0
+    games_feitos_total = 0
+    games_sofridos_total = 0
+
+    for participacao in participacoes:
+
+        jogo = participacao.jogo
+
+        adversario = None
+
+        for outro in jogo.participantes.all():
+            if (
+                outro.jogador_id != jogador.id
+                and outro.lado != participacao.lado
+            ):
+                adversario = outro.jogador
+                break
+
+        placares = []
+        sets_vencidos = 0
+        sets_perdidos = 0
+        games_feitos = 0
+        games_sofridos = 0
+
+        for set_jogo in jogo.sets.all().order_by('numero_set'):
+
+            if participacao.lado == 'A':
+                games_jogador = set_jogo.games_lado_a
+                games_adversario = set_jogo.games_lado_b
+                tb_jogador = set_jogo.tiebreak_lado_a
+                tb_adversario = set_jogo.tiebreak_lado_b
+            else:
+                games_jogador = set_jogo.games_lado_b
+                games_adversario = set_jogo.games_lado_a
+                tb_jogador = set_jogo.tiebreak_lado_b
+                tb_adversario = set_jogo.tiebreak_lado_a
+
+            games_feitos += games_jogador
+            games_sofridos += games_adversario
+
+            if games_jogador > games_adversario:
+                sets_vencidos += 1
+            elif games_adversario > games_jogador:
+                sets_perdidos += 1
+
+            placar_set = f'{games_jogador}x{games_adversario}'
+
+            if (
+                set_jogo.teve_tiebreak
+                and tb_jogador is not None
+                and tb_adversario is not None
+            ):
+                placar_set += f' ({tb_jogador}x{tb_adversario})'
+
+            placares.append(placar_set)
+
+        sets_vencidos_total += sets_vencidos
+        sets_perdidos_total += sets_perdidos
+        games_feitos_total += games_feitos
+        games_sofridos_total += games_sofridos
+
+        historico.append({
+            'jogo': jogo,
+            'adversario': adversario,
+            'vitoria': participacao.vencedor,
+            'placar': ' / '.join(placares),
+            'sets_vencidos': sets_vencidos,
+            'sets_perdidos': sets_perdidos,
+            'games_feitos': games_feitos,
+            'games_sofridos': games_sofridos,
+        })
+
+    return render(
+        request,
+        'estatisticas/historico_simples_jogador.html',
+        {
+            'jogador': jogador,
+            'historico': historico,
+            'total_jogos': total_jogos,
+            'total_vitorias': total_vitorias,
+            'total_derrotas': total_derrotas,
+            'aproveitamento': aproveitamento,
+            'sets_vencidos_total': sets_vencidos_total,
+            'sets_perdidos_total': sets_perdidos_total,
+            'games_feitos_total': games_feitos_total,
+            'games_sofridos_total': games_sofridos_total,
+            'saldo_games_total': games_feitos_total - games_sofridos_total,
+        }
+    )
+
 def selos_championship(request):
 
     jogadores_ids_sistema = ParticipanteJogo.objects.filter(

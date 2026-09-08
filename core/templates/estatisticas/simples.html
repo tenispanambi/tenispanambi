@@ -167,6 +167,27 @@ td.nome{
     font-size:22px;
 }
 
+
+.jogador-link{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    color:#0b4d91;
+    text-decoration:none;
+    font-weight:1000;
+    transition:.2s;
+}
+
+.jogador-link:hover{
+    color:#16a34a;
+    transform:translateX(2px);
+}
+
+.jogador-link-seta{
+    font-size:18px;
+    opacity:.75;
+}
+
 .aproveitamento-bar{
     background:#e5e7eb;
     border-radius:999px;
@@ -344,7 +365,14 @@ td.nome{
                             </td>
 
                             <td class="nome">
-                                {{ item.jogador.nome }}
+                                <a
+                                    href="{% url 'historico_simples_jogador' item.jogador.id %}"
+                                    class="jogador-link"
+                                    title="Ver histórico de jogos de {{ item.jogador.nome }}"
+                                >
+                                    {{ item.jogador.nome }}
+                                    <span class="jogador-link-seta">→</span>
+                                </a>
                             </td>
 
                             <td>{{ item.jogos }}</td>
