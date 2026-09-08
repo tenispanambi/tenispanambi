@@ -3287,6 +3287,160 @@ def estatisticas_championship(request):
         }
     )
     
+
+def estatisticas_simples(request):
+
+    participacoes = ParticipanteJogo.objects.filter(
+        jogo__status='CONFIRMADO',
+        jogo__tipo_jogo='SIMPLES'
+    ).select_related(
+        'jogador',
+        'jogo'
+    ).prefetch_related(
+        'jogo__sets'
+    )
+
+    jogadores_ids = participacoes.values_list(
+        'jogador_id',
+        flat=True
+    ).distinct()
+
+    jogadores = Jogador.objects.filter(
+        id__in=jogadores_ids
+    ).exclude(
+        usuario__is_staff=True
+    ).exclude(
+        usuario__is_superuser=True
+    ).order_by('nome')
+
+    estatisticas = []
+
+    for jogador in jogadores:
+
+        participacoes_jogador = participacoes.filter(
+            jogador=jogador
+        )
+
+        jogos = participacoes_jogador.count()
+        vitorias = participacoes_jogador.filter(
+            vencedor=True
+        ).count()
+        derrotas = jogos - vitorias
+
+        aproveitamento = 0
+
+        if jogos > 0:
+            aproveitamento = round(
+                (vitorias / jogos) * 100,
+                1
+            )
+
+        sets_vencidos = 0
+        sets_perdidos = 0
+        games_feitos = 0
+        games_sofridos = 0
+
+        for participacao in participacoes_jogador:
+
+            jogo = participacao.jogo
+
+            for set_jogo in jogo.sets.all():
+
+                if participacao.lado == 'A':
+                    games_jogador = set_jogo.games_lado_a
+                    games_adversario = set_jogo.games_lado_b
+                else:
+                    games_jogador = set_jogo.games_lado_b
+                    games_adversario = set_jogo.games_lado_a
+
+                games_feitos += games_jogador
+                games_sofridos += games_adversario
+
+                if games_jogador > games_adversario:
+                    sets_vencidos += 1
+                elif games_adversario > games_jogador:
+                    sets_perdidos += 1
+
+        saldo_games = games_feitos - games_sofridos
+
+        estatisticas.append({
+            'jogador': jogador,
+            'jogos': jogos,
+            'vitorias': vitorias,
+            'derrotas': derrotas,
+            'aproveitamento': aproveitamento,
+            'sets_vencidos': sets_vencidos,
+            'sets_perdidos': sets_perdidos,
+            'games_feitos': games_feitos,
+            'games_sofridos': games_sofridos,
+            'saldo_games': saldo_games,
+        })
+
+    estatisticas = sorted(
+        estatisticas,
+        key=lambda item: (
+            item['vitorias'],
+            item['aproveitamento'],
+            item['saldo_games'],
+            item['jogos'],
+            item['jogador'].nome
+        ),
+        reverse=True
+    )
+
+    total_jogadores = len(estatisticas)
+
+    total_jogos = Jogo.objects.filter(
+        status='CONFIRMADO',
+        tipo_jogo='SIMPLES'
+    ).count()
+
+    mais_vitorias = None
+
+    if estatisticas:
+        mais_vitorias = sorted(
+            estatisticas,
+            key=lambda item: (
+                item['vitorias'],
+                item['aproveitamento'],
+                item['jogos']
+            ),
+            reverse=True
+        )[0]
+
+    # Para evitar que 1 vitória em 1 jogo seja considerada o melhor
+    # aproveitamento histórico, exigimos pelo menos 5 jogos.
+    jogadores_minimo_5 = [
+        item for item in estatisticas
+        if item['jogos'] >= 5
+    ]
+
+    melhor_aproveitamento = None
+
+    if jogadores_minimo_5:
+        melhor_aproveitamento = sorted(
+            jogadores_minimo_5,
+            key=lambda item: (
+                item['aproveitamento'],
+                item['vitorias'],
+                item['saldo_games'],
+                item['jogos']
+            ),
+            reverse=True
+        )[0]
+
+    return render(
+        request,
+        'estatisticas/simples.html',
+        {
+            'estatisticas': estatisticas,
+            'total_jogadores': total_jogadores,
+            'total_jogos': total_jogos,
+            'mais_vitorias': mais_vitorias,
+            'melhor_aproveitamento': melhor_aproveitamento,
+        }
+    )
+
 def selos_championship(request):
 
     jogadores_ids_sistema = ParticipanteJogo.objects.filter(

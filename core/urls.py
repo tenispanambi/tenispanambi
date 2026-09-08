@@ -195,6 +195,13 @@ path(
     name='estatisticas_championship'
 ),
 
+
+path(
+    'estatisticas-simples/',
+    views.estatisticas_simples,
+    name='estatisticas_simples'
+),
+
 path(
     'champ-duplas/selos/',
     views.selos_championship,

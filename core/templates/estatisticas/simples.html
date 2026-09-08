@@ -1,0 +1,438 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+.stats-page{
+    max-width:1350px;
+    margin:0 auto;
+    padding:25px;
+}
+
+.stats-hero{
+    background:
+        radial-gradient(circle at 90% 15%, rgba(163,230,53,.30), transparent 20%),
+        linear-gradient(135deg,#020617,#06345d,#064e3b);
+    color:white;
+    border-radius:34px;
+    padding:45px;
+    margin-bottom:28px;
+    box-shadow:0 18px 45px rgba(0,0,0,.25);
+    position:relative;
+    overflow:hidden;
+}
+
+.stats-hero::after{
+    content:"🎾";
+    position:absolute;
+    right:40px;
+    top:18px;
+    font-size:135px;
+    opacity:.14;
+    transform:rotate(-18deg);
+}
+
+.stats-hero h1{
+    font-size:48px;
+    margin:0;
+    font-weight:1000;
+    text-transform:uppercase;
+    position:relative;
+    z-index:2;
+}
+
+.stats-hero h1 span{
+    color:#a3e635;
+}
+
+.stats-hero p{
+    font-size:18px;
+    opacity:.9;
+    margin-top:10px;
+    position:relative;
+    z-index:2;
+}
+
+.cards-resumo{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.card-resumo{
+    background:white;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 10px 28px rgba(0,0,0,.10);
+    text-align:center;
+}
+
+.card-numero{
+    font-size:36px;
+    font-weight:1000;
+    color:#0b4d91;
+}
+
+.card-label{
+    color:#475569;
+    font-weight:800;
+    margin-top:6px;
+    line-height:1.4;
+}
+
+.card-destaque{
+    color:#16a34a;
+}
+
+.filtro-box{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    margin-bottom:25px;
+    box-shadow:0 10px 28px rgba(0,0,0,.10);
+}
+
+.filtro-input{
+    width:100%;
+    box-sizing:border-box;
+    padding:16px 20px;
+    border:2px solid #e5e7eb;
+    border-radius:16px;
+    font-size:17px;
+    transition:.3s;
+}
+
+.filtro-input:focus{
+    outline:none;
+    border-color:#16a34a;
+    box-shadow:0 0 0 4px rgba(22,163,74,.12);
+}
+
+.tabela-card{
+    background:white;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 14px 36px rgba(0,0,0,.12);
+}
+
+.tabela-header{
+    background:#073763;
+    color:white;
+    padding:22px 26px;
+    font-size:24px;
+    font-weight:1000;
+    text-transform:uppercase;
+}
+
+.tabela-scroll{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:980px;
+}
+
+th{
+    background:#111827;
+    color:white;
+    padding:15px 10px;
+    text-align:center;
+    font-size:13px;
+    text-transform:uppercase;
+    white-space:nowrap;
+}
+
+td{
+    padding:15px 10px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:center;
+    font-weight:800;
+    color:#0f172a;
+}
+
+tbody tr:hover{
+    background:#f8fafc;
+}
+
+td.nome{
+    text-align:left;
+    font-size:17px;
+    min-width:190px;
+}
+
+.posicao{
+    font-size:22px;
+}
+
+.aproveitamento-bar{
+    background:#e5e7eb;
+    border-radius:999px;
+    height:10px;
+    overflow:hidden;
+    margin-top:6px;
+    min-width:85px;
+}
+
+.aproveitamento-fill{
+    background:linear-gradient(90deg,#16a34a,#a3e635);
+    height:100%;
+}
+
+.percentual{
+    font-weight:1000;
+    color:#15803d;
+}
+
+.saldo-positivo{
+    color:#16a34a;
+    font-weight:1000;
+}
+
+.saldo-negativo{
+    color:#dc2626;
+    font-weight:1000;
+}
+
+.saldo-zero{
+    color:#64748b;
+    font-weight:1000;
+}
+
+.legenda{
+    margin-top:15px;
+    color:#64748b;
+    font-size:13px;
+    padding:0 5px;
+}
+
+@media(max-width:800px){
+    .stats-page{
+        padding:12px;
+    }
+
+    .stats-hero{
+        padding:30px 22px;
+        border-radius:26px;
+    }
+
+    .stats-hero h1{
+        font-size:34px;
+    }
+
+    .stats-hero::after{
+        font-size:95px;
+        right:15px;
+    }
+
+    .tabela-header{
+        font-size:19px;
+        padding:18px;
+    }
+
+    .card-numero{
+        font-size:31px;
+    }
+}
+</style>
+
+<div class="stats-page">
+
+    <div class="stats-hero">
+        <h1>🎾 Estatísticas de <span>Simples</span></h1>
+        <p>
+            Estatísticas dos jogos de simples confirmados registrados no portal.
+        </p>
+    </div>
+
+    <div class="cards-resumo">
+
+        <div class="card-resumo">
+            <div class="card-numero">{{ total_jogadores }}</div>
+            <div class="card-label">Jogadores</div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero">{{ total_jogos }}</div>
+            <div class="card-label">Jogos de simples</div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero card-destaque">
+                {% if mais_vitorias %}
+                    {{ mais_vitorias.vitorias }}
+                {% else %}
+                    0
+                {% endif %}
+            </div>
+            <div class="card-label">
+                Mais vitórias
+                {% if mais_vitorias %}
+                    <br>{{ mais_vitorias.jogador.nome }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card-resumo">
+            <div class="card-numero card-destaque">
+                {% if melhor_aproveitamento %}
+                    {{ melhor_aproveitamento.aproveitamento }}%
+                {% else %}
+                    -
+                {% endif %}
+            </div>
+            <div class="card-label">
+                Melhor aproveitamento
+                <br>mín. 5 jogos
+                {% if melhor_aproveitamento %}
+                    <br>{{ melhor_aproveitamento.jogador.nome }}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="filtro-box">
+        <input
+            type="text"
+            id="pesquisaJogador"
+            class="filtro-input"
+            placeholder="🔎 Procurar jogador..."
+        >
+    </div>
+
+    <div class="tabela-card">
+
+        <div class="tabela-header">
+            Ranking estatístico dos jogos de simples
+        </div>
+
+        <div class="tabela-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Jogador</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>D</th>
+                        <th>Aprov.</th>
+                        <th>Sets +</th>
+                        <th>Sets -</th>
+                        <th>Games +</th>
+                        <th>Games -</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabelaJogadores">
+                    {% for item in estatisticas %}
+                        <tr class="linha-jogador">
+
+                            <td class="posicao">
+                                {% if forloop.counter == 1 %}
+                                    🥇
+                                {% elif forloop.counter == 2 %}
+                                    🥈
+                                {% elif forloop.counter == 3 %}
+                                    🥉
+                                {% else %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+                            </td>
+
+                            <td class="nome">
+                                {{ item.jogador.nome }}
+                            </td>
+
+                            <td>{{ item.jogos }}</td>
+                            <td>{{ item.vitorias }}</td>
+                            <td>{{ item.derrotas }}</td>
+
+                            <td>
+                                <span class="percentual">
+                                    {{ item.aproveitamento }}%
+                                </span>
+
+                                <div class="aproveitamento-bar">
+                                    <div
+                                        class="aproveitamento-fill"
+                                        style="width:{{ item.aproveitamento }}%"
+                                    ></div>
+                                </div>
+                            </td>
+
+                            <td>{{ item.sets_vencidos }}</td>
+                            <td>{{ item.sets_perdidos }}</td>
+                            <td>{{ item.games_feitos }}</td>
+                            <td>{{ item.games_sofridos }}</td>
+
+                            <td>
+                                {% if item.saldo_games > 0 %}
+                                    <span class="saldo-positivo">
+                                        +{{ item.saldo_games }}
+                                    </span>
+                                {% elif item.saldo_games < 0 %}
+                                    <span class="saldo-negativo">
+                                        {{ item.saldo_games }}
+                                    </span>
+                                {% else %}
+                                    <span class="saldo-zero">0</span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="11">
+                                Nenhum jogo de simples confirmado encontrado.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legenda">
+            J = Jogos · V = Vitórias · D = Derrotas ·
+            Sets + = Sets vencidos · Sets - = Sets perdidos ·
+            Games + = Games feitos · Games - = Games sofridos.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const pesquisa = document.getElementById("pesquisaJogador");
+
+if(pesquisa){
+    pesquisa.addEventListener("keyup", function(){
+
+        let texto = this.value.toLowerCase();
+        let linhas = document.querySelectorAll(".linha-jogador");
+
+        linhas.forEach(function(linha){
+
+            let jogador = linha
+                .querySelector(".nome")
+                .innerText
+                .toLowerCase();
+
+            if(jogador.indexOf(texto) > -1){
+                linha.style.display = "";
+            }else{
+                linha.style.display = "none";
+            }
+
+        });
+    });
+}
+</script>
+
+{% endblock %}
